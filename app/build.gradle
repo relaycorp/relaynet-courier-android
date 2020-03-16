@@ -7,7 +7,7 @@ android {
   buildToolsVersion "29.0.2"
 
   defaultConfig {
-    applicationId "link.relaynet.courier"
+    applicationId "tech.relaycorp.courier"
     minSdkVersion 21
     targetSdkVersion 29
     versionCode 1

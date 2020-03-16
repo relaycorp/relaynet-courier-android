@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="link.relaynet.courier">
+    package="tech.relaycorp.courier">
 
     <application
         android:allowBackup="false"

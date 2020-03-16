@@ -1,4 +1,4 @@
-package link.relaynet.courier
+package tech.relaycorp.courier
 
 import org.junit.Test
 
