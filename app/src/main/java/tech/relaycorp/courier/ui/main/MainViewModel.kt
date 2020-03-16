@@ -1,7 +1,7 @@
 package tech.relaycorp.courier.ui.main
 
-import tech.relaycorp.courier.ui.BaseViewModel
 import javax.inject.Inject
+import tech.relaycorp.courier.ui.BaseViewModel
 
 class MainViewModel
 @Inject constructor() : BaseViewModel()

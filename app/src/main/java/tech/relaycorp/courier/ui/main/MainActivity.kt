@@ -3,9 +3,9 @@ package tech.relaycorp.courier.ui.main
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
+import javax.inject.Inject
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.ui.BaseActivity
-import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
