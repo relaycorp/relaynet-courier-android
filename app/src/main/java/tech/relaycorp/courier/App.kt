@@ -11,6 +11,15 @@ class App : Application() {
         DaggerAppComponent.builder().build()
     }
 
+    val mode by lazy {
+        try {
+            classLoader.loadClass("tech.relaycorp.courier.AppTest")
+            Mode.Test
+        } catch (e: Exception) {
+            Mode.Normal
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         setupLogger()
@@ -21,4 +30,6 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
     }
+
+    enum class Mode { Normal, Test }
 }
