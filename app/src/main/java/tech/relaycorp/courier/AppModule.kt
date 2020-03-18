@@ -2,6 +2,7 @@ package tech.relaycorp.courier
 
 import android.content.Context
 import android.content.res.Resources
+import android.net.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 
@@ -21,4 +22,8 @@ class AppModule(
 
     @Provides
     fun resources(): Resources = app.resources
+
+    @Provides
+    fun connectivityManager() =
+        app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 }

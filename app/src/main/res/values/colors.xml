@@ -6,6 +6,7 @@
     <color name="relaynet_secondary_variant">#2979FF</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="gray_dark">#666666</color>
     <color name="black">#000000</color>
     <color name="red">#F44336</color>
 
