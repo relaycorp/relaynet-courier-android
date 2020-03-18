@@ -1,21 +1,24 @@
-package tech.relaycorp.courier.common.di
+package tech.relaycorp.courier
 
-import android.app.Application
 import android.content.Context
+import android.content.res.Resources
 import dagger.Module
 import dagger.Provides
 
 @Module
 class AppModule(
-    val app: Application
+    private val app: App
 ) {
 
     @Provides
     fun app() = app
 
     @Provides
+    fun appMode() = app.mode
+
+    @Provides
     fun context(): Context = app
 
     @Provides
-    fun resources() = app.resources
+    fun resources(): Resources = app.resources
 }
