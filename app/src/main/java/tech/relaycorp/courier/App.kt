@@ -15,7 +15,7 @@ class App : Application() {
         try {
             classLoader.loadClass("tech.relaycorp.courier.AppTest")
             Mode.Test
-        } catch (e: Exception) {
+        } catch (e: ClassNotFoundException) {
             Mode.Normal
         }
     }
