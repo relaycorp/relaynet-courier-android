@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fb3a04584d10d46fc5bb13be2ccfd61f",
+    "identityHash": "4056a2f52fe6f834146b1ab85d35e7a8",
     "entities": [
       {
         "tableName": "cargo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `creationTime` INTEGER NOT NULL, `expirationTime` INTEGER NOT NULL, `ttl` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, `senderAddress` TEXT NOT NULL, PRIMARY KEY(`recipientAddress`, `messageId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `creationTime` INTEGER NOT NULL, `expirationTime` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, `senderAddress` TEXT NOT NULL, PRIMARY KEY(`recipientAddress`, `messageId`))",
         "fields": [
           {
             "fieldPath": "recipientAddress",
@@ -29,12 +29,6 @@
           {
             "fieldPath": "expirationTime",
             "columnName": "expirationTime",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "ttl",
-            "columnName": "ttl",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -88,7 +82,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fb3a04584d10d46fc5bb13be2ccfd61f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4056a2f52fe6f834146b1ab85d35e7a8')"
     ]
   }
 }

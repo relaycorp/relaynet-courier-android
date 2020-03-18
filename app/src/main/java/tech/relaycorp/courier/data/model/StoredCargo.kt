@@ -17,7 +17,6 @@ data class StoredCargo(
     val messageId: MessageId,
     val creationTime: Date, // in UTC
     val expirationTime: Date, // in UTC
-    val ttl: Int, // seconds
     val storagePath: String,
     val size: Long,
     val senderAddress: MessageAddress
