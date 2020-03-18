@@ -26,4 +26,8 @@
         <item name="toolbarStyle">@style/Widget.Courier.Toolbar</item>
         <item name="android:toolbarStyle">@style/Widget.Courier.Toolbar</item>
     </style>
+
+    <style name="Theme.Courier.Splash">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 </resources>
