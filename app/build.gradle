@@ -100,8 +100,8 @@ dependencies {
 }
 
 spotless {
-  kotlin {
-    ktlint("0.36.0")
-    target '**/*.kt'
-  }
+    kotlin {
+        ktlint('0.36.0').userData(['disabled_rules': 'import-ordering'])
+        target '**/*.kt'
+    }
 }
