@@ -1,6 +1,8 @@
 package tech.relaycorp.courier
 
 import android.app.Application
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import tech.relaycorp.courier.common.di.AppComponent
 import tech.relaycorp.courier.common.di.DaggerAppComponent
 import timber.log.Timber
@@ -8,7 +10,9 @@ import timber.log.Timber
 class App : Application() {
 
     val component: AppComponent by lazy {
-        DaggerAppComponent.builder().build()
+        DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .build()
     }
 
     val mode by lazy {
@@ -23,11 +27,23 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         setupLogger()
+        setupStrictMode()
     }
 
     private fun setupLogger() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+        }
+    }
+
+    private fun setupStrictMode() {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder().detectAll().penaltyDeath().build()
+            )
+            StrictMode.setVmPolicy(
+                VmPolicy.Builder().detectAll().penaltyDeath().build()
+            )
         }
     }
 
