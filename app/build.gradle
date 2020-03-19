@@ -56,12 +56,6 @@ android {
         checkAllWarnings true
         warningsAsErrors true
         abortOnError true
-        /*
-        disable 'DefaultLocale', 'RtlSymmetry', 'NegativeMargin', 'UnknownNullness', 'PluralsCandidate',
-                'UnsupportedChromeOsHardware', 'SyntheticAccessor', 'DuplicateStrings',
-                'LockedOrientationActivity', 'AnnotationProcessorOnCompilePath'
-        warning 'ConvertToWebp', 'NewerVersionAvailable'
-        */
     }
     sourceSets {
         androidTest {
@@ -123,4 +117,13 @@ spotless {
         ktlint('0.36.0').userData(['disabled_rules': 'import-ordering'])
         target '**/*.kt'
     }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += [
+            '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
+            '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
+            '-Xuse-experimental=kotlinx.coroutines.ExperimentalTime',
+            '-Xuse-experimental=kotlin.time.ExperimentalTime'
+    ]
 }

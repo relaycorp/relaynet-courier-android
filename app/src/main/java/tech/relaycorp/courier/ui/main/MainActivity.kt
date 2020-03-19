@@ -7,10 +7,12 @@ import androidx.lifecycle.lifecycleScope
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.syncInternetLayout
 import kotlinx.android.synthetic.main.activity_main.syncPeopleLayout
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.activity_main.syncWithInternet
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.sync.internet.InternetSyncActivity
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -27,13 +29,18 @@ class MainActivity : BaseActivity() {
         component.inject(this)
         setContentView(R.layout.activity_main)
 
-        lifecycleScope.launch {
-            viewModel
-                .syncMode
-                .collect {
-                    syncPeopleLayout.isVisible = it == MainViewModel.SyncMode.People
-                    syncInternetLayout.isVisible = it == MainViewModel.SyncMode.Internet
-                }
-        }
+        syncWithInternet.setOnClickListener { openSyncWithInternet() }
+
+        viewModel
+            .syncMode
+            .onEach {
+                syncPeopleLayout.isVisible = it == MainViewModel.SyncMode.People
+                syncInternetLayout.isVisible = it == MainViewModel.SyncMode.Internet
+            }
+            .launchIn(lifecycleScope)
+    }
+
+    private fun openSyncWithInternet() {
+        startActivity(InternetSyncActivity.getIntent(this))
     }
 }
