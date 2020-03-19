@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4056a2f52fe6f834146b1ab85d35e7a8",
+    "identityHash": "011b4f5a90e3c27ac4a0d9daf6061ec3",
     "entities": [
       {
-        "tableName": "cargo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `creationTime` INTEGER NOT NULL, `expirationTime` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, `senderAddress` TEXT NOT NULL, PRIMARY KEY(`recipientAddress`, `messageId`))",
+        "tableName": "Message",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `recipientType` TEXT NOT NULL, `senderAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `messageType` TEXT NOT NULL, `creationTime` INTEGER NOT NULL, `expirationTime` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, PRIMARY KEY(`senderAddress`, `messageId`))",
         "fields": [
           {
             "fieldPath": "recipientAddress",
@@ -15,8 +15,26 @@
             "notNull": true
           },
           {
+            "fieldPath": "recipientType",
+            "columnName": "recipientType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "senderAddress",
+            "columnName": "senderAddress",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "messageId",
             "columnName": "messageId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageType",
+            "columnName": "messageType",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -43,37 +61,39 @@
             "columnName": "size",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "senderAddress",
-            "columnName": "senderAddress",
-            "affinity": "TEXT",
-            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "recipientAddress",
+            "senderAddress",
             "messageId"
           ],
           "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_cargo_expirationTime",
+            "name": "index_Message_recipientAddress",
+            "unique": false,
+            "columnNames": [
+              "recipientAddress"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_recipientAddress` ON `${TABLE_NAME}` (`recipientAddress`)"
+          },
+          {
+            "name": "index_Message_messageType",
+            "unique": false,
+            "columnNames": [
+              "messageType"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_messageType` ON `${TABLE_NAME}` (`messageType`)"
+          },
+          {
+            "name": "index_Message_expirationTime",
             "unique": false,
             "columnNames": [
               "expirationTime"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_cargo_expirationTime` ON `${TABLE_NAME}` (`expirationTime`)"
-          },
-          {
-            "name": "index_cargo_senderAddress",
-            "unique": false,
-            "columnNames": [
-              "senderAddress"
-            ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_cargo_senderAddress` ON `${TABLE_NAME}` (`senderAddress`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_expirationTime` ON `${TABLE_NAME}` (`expirationTime`)"
           }
         ],
         "foreignKeys": []
@@ -82,7 +102,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4056a2f52fe6f834146b1ab85d35e7a8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '011b4f5a90e3c27ac4a0d9daf6061ec3')"
     ]
   }
 }

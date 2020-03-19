@@ -4,7 +4,7 @@
   <!-- Sync -->
   <string name="sync">Sync</string>
   <string name="sync_people">Sync with People</string>
-  <string name="sync_internet">Sync with People</string>
+  <string name="sync_internet">Sync with Internet</string>
   <string name="sync_people_instructions">Disconnect from the Internet to sync with People via WiFi hotspot.</string>
   <string name="sync_internet_instructions">Connect to the Internet to sync data online.</string>
 </resources>

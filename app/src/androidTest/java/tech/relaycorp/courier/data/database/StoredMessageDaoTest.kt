@@ -8,37 +8,37 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.relaycorp.courier.test.AppTestProvider.database
-import tech.relaycorp.courier.test.factory.StoredCargoFactory
+import tech.relaycorp.courier.test.factory.StoredMessageFactory
 
 @RunWith(AndroidJUnit4::class)
-class StoredCargoDaoTest {
+class StoredMessageDaoTest {
 
-    private lateinit var storedCargoDao: StoredCargoDao
+    private lateinit var storedMessageDao: StoredMessageDao
 
     @Before
     fun setUp() {
-        storedCargoDao = database.storedCargoDao()
+        storedMessageDao = database.storedMessageDao()
     }
 
     @Test
     fun insertAndGet() = runBlockingTest {
-        val cargo = StoredCargoFactory.build()
-        storedCargoDao.insert(cargo)
+        val messages = StoredMessageFactory.build()
+        storedMessageDao.insert(messages)
         assertEquals(
-            listOf(cargo),
-            storedCargoDao.getAll().first()
+            listOf(messages),
+            storedMessageDao.getAll().first()
         )
     }
 
     @Test
     fun getFullSize() = runBlockingTest {
-        val cargo =
+        val messages =
             (1..3)
-                .map { StoredCargoFactory.build() }
-                .also { it.map { c -> storedCargoDao.insert(c) } }
+                .map { StoredMessageFactory.build() }
+                .also { it.map { c -> storedMessageDao.insert(c) } }
         assertEquals(
-            cargo.map { it.size }.sum(),
-            storedCargoDao.getFullSize().first()
+            messages.map { it.size }.sum(),
+            storedMessageDao.getFullSize().first()
         )
     }
 }
