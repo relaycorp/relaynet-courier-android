@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import tech.relaycorp.courier.data.model.MessageAddress
+import tech.relaycorp.courier.data.model.MessageId
+import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
 
 @Dao
@@ -19,11 +21,23 @@ interface StoredMessageDao {
     suspend fun delete(message: StoredMessage)
 
     @Query("SELECT * FROM Message")
-    fun getAll(): Flow<List<StoredMessage>>
-
-    @Query("SELECT * FROM Message WHERE recipientAddress = :recipientAddress")
-    fun getForRecipient(recipientAddress: MessageAddress): Flow<List<StoredMessage>>
+    fun observeAll(): Flow<List<StoredMessage>>
 
     @Query("SELECT SUM(Message.size) FROM Message")
-    fun getFullSize(): Flow<Long>
+    fun observeFullSize(): Flow<Long>
+
+    @Query("SELECT * FROM Message WHERE senderAddress = :senderAddress AND messageId = :messageId LIMIT 1")
+    suspend fun get(senderAddress: MessageAddress, messageId: MessageId): StoredMessage
+
+    @Query(
+        """
+            SELECT * FROM Message 
+            WHERE recipientType = :recipientType AND messageType = :type
+            ORDER BY expirationTimeUtc ASC
+            """
+    )
+    suspend fun getByRecipientTypeAndMessageType(
+        recipientType: MessageAddress.Type,
+        type: MessageType
+    ): List<StoredMessage>
 }

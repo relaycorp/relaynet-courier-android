@@ -7,7 +7,10 @@ import javax.inject.Inject
 import kotlin.time.seconds
 
 class PublicSync
-@Inject constructor() {
+@Inject constructor(
+    private val deliverPublicCargo: DeliverPublicCargo,
+    private val collectPublicCargo: CollectPublicCargo
+) {
 
     private val state = BehaviorChannel<State>()
     fun state() = state.asFlow()
@@ -16,22 +19,19 @@ class PublicSync
     fun dataTransferred() = dataTransferred.asFlow()
 
     suspend fun sync() {
+        // TODO: Collect up-to-date data transferred data
         dataTransferred.send(DataCount())
+
         state.send(State.DeliveringCargo)
-        deliverCargo()
+        deliverPublicCargo.deliver()
+
         state.send(State.Waiting)
         delay(WAIT_PERIOD)
+
         state.send(State.CollectingCargo)
-        collectCargo()
+        collectPublicCargo.collect()
+
         state.send(State.Finished)
-    }
-
-    private suspend fun deliverCargo() {
-        delay(3.seconds)
-    }
-
-    private suspend fun collectCargo() {
-        delay(3.seconds)
     }
 
     enum class State {

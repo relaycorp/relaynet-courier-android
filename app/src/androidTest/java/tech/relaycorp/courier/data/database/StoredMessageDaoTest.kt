@@ -26,7 +26,7 @@ class StoredMessageDaoTest {
         storedMessageDao.insert(messages)
         assertEquals(
             listOf(messages),
-            storedMessageDao.getAll().first()
+            storedMessageDao.observeAll().first()
         )
     }
 
@@ -38,7 +38,7 @@ class StoredMessageDaoTest {
                 .also { it.map { c -> storedMessageDao.insert(c) } }
         assertEquals(
             messages.map { it.size }.sum(),
-            storedMessageDao.getFullSize().first()
+            storedMessageDao.observeFullSize().first()
         )
     }
 }

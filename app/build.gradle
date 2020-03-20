@@ -14,7 +14,7 @@ repositories {
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "tech.relaycorp.courier"
@@ -94,7 +94,7 @@ dependencies {
     implementation 'tech.relaycorp:relaynet:1.2.1'
 
     // ORM
-    def room_version = "2.2.4"
+    def room_version = "2.2.5"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
@@ -123,7 +123,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions.freeCompilerArgs += [
             '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
             '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
-            '-Xuse-experimental=kotlinx.coroutines.ExperimentalTime',
             '-Xuse-experimental=kotlin.time.ExperimentalTime'
     ]
 }

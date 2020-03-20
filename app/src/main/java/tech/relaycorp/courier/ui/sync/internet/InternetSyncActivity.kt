@@ -38,8 +38,8 @@ class InternetSyncActivity : BaseActivity() {
             .state
             .onEach {
                 stateMessage.text = it.toString()
-                stop.isVisible = it == PublicSync.State.Finished
-                close.isVisible = it != PublicSync.State.Finished
+                stop.isVisible = it != PublicSync.State.Finished
+                close.isVisible = it == PublicSync.State.Finished
             }
             .launchIn(lifecycleScope)
 
