@@ -14,8 +14,8 @@ object StoredMessageFactory {
         senderAddress = MessageAddress(Random().nextInt().toString()),
         messageId = MessageId(Random().nextInt().toString()),
         messageType = MessageType.values()[Random().nextInt(MessageType.values().size)],
-        creationTime = Date(),
-        expirationTime = Date(),
+        creationTimeUtc = Date(),
+        expirationTimeUtc = Date(),
         storagePath = "",
         size = Random().nextInt(1000).toLong()
     )

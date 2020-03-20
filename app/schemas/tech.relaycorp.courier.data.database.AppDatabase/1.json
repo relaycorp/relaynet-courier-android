@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "011b4f5a90e3c27ac4a0d9daf6061ec3",
+    "identityHash": "ac7057872d7c8066491d2d48263acf0e",
     "entities": [
       {
         "tableName": "Message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `recipientType` TEXT NOT NULL, `senderAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `messageType` TEXT NOT NULL, `creationTime` INTEGER NOT NULL, `expirationTime` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, PRIMARY KEY(`senderAddress`, `messageId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `recipientType` TEXT NOT NULL, `senderAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `messageType` TEXT NOT NULL, `creationTimeUtc` INTEGER NOT NULL, `expirationTimeUtc` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, PRIMARY KEY(`senderAddress`, `messageId`))",
         "fields": [
           {
             "fieldPath": "recipientAddress",
@@ -39,14 +39,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "creationTime",
-            "columnName": "creationTime",
+            "fieldPath": "creationTimeUtc",
+            "columnName": "creationTimeUtc",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "expirationTime",
-            "columnName": "expirationTime",
+            "fieldPath": "expirationTimeUtc",
+            "columnName": "expirationTimeUtc",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -80,6 +80,14 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_recipientAddress` ON `${TABLE_NAME}` (`recipientAddress`)"
           },
           {
+            "name": "index_Message_recipientType",
+            "unique": false,
+            "columnNames": [
+              "recipientType"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_recipientType` ON `${TABLE_NAME}` (`recipientType`)"
+          },
+          {
             "name": "index_Message_messageType",
             "unique": false,
             "columnNames": [
@@ -88,12 +96,12 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_messageType` ON `${TABLE_NAME}` (`messageType`)"
           },
           {
-            "name": "index_Message_expirationTime",
+            "name": "index_Message_expirationTimeUtc",
             "unique": false,
             "columnNames": [
-              "expirationTime"
+              "expirationTimeUtc"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_expirationTime` ON `${TABLE_NAME}` (`expirationTime`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_expirationTimeUtc` ON `${TABLE_NAME}` (`expirationTimeUtc`)"
           }
         ],
         "foreignKeys": []
@@ -102,7 +110,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '011b4f5a90e3c27ac4a0d9daf6061ec3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ac7057872d7c8066491d2d48263acf0e')"
     ]
   }
 }
