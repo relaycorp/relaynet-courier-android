@@ -15,30 +15,34 @@ class DiskRepository
     private val context: Context
 ) {
 
-    private val messagesDir by lazy {
-        File(context.filesDir, MESSAGE_FOLDER_NAME).also {
-            if (!it.exists()) it.mkdir()
-        }
-    }
-
-    suspend fun writeMessage(message: ByteArray) =
+    suspend fun writeMessage(message: ByteArray): String =
         withContext(Dispatchers.IO) {
+            val messagesDir = getOrCreateMessagesDir()
             val file = File.createTempFile(MESSAGE_FILE_PREFIX, "", messagesDir)
             file.writeBytes(message)
             file.name
         }
 
     // TODO: Avoid through exceptions by handling here
-    fun readMessage(path: String): InputStream =
-        File(messagesDir, path).inputStream()
+    suspend fun readMessage(path: String): InputStream =
+        File(getOrCreateMessagesDir(), path).inputStream()
 
     suspend fun deleteMessage(path: String) {
         withContext(Dispatchers.IO) {
+            val messagesDir = getOrCreateMessagesDir()
             File(messagesDir, path).delete()
         }
     }
 
+    private suspend fun getOrCreateMessagesDir() =
+        withContext(Dispatchers.IO) {
+            File(context.filesDir, MESSAGE_FOLDER_NAME).also {
+                if (!it.exists()) it.mkdir()
+            }
+        }
+
     companion object {
+        // Warning: changing this folder name will make users lose the paths to their cargo
         private const val MESSAGE_FOLDER_NAME = "messages"
         private const val MESSAGE_FILE_PREFIX = "message_"
     }

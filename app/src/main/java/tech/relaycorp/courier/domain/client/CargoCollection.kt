@@ -1,4 +1,4 @@
-package tech.relaycorp.courier.domain
+package tech.relaycorp.courier.domain.client
 
 import kotlinx.coroutines.flow.collect
 import tech.relaycorp.courier.data.database.StoredMessageDao
@@ -6,13 +6,14 @@ import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.CogRPC
+import tech.relaycorp.courier.data.network.CogRPCClient
+import tech.relaycorp.courier.domain.DeleteMessage
+import tech.relaycorp.courier.domain.StoreMessage
 import javax.inject.Inject
 
-class CollectPublicCargo
+class CargoCollection
 @Inject constructor(
     private val storedMessageDao: StoredMessageDao,
-    private val cogRPC: CogRPC,
     private val storeMessage: StoreMessage,
     private val deleteMessage: DeleteMessage,
     private val diskRepository: DiskRepository
@@ -21,15 +22,10 @@ class CollectPublicCargo
     suspend fun collect() {
         getCCAs()
             .forEach { cca ->
-                cogRPC
-                    .collectCargo(cca.recipientAddress.value, cca.toCogRPCMessage())
-                    .collect {
-                        storeMessage.storeCargo(
-                            cca.recipientAddress,
-                            MessageAddress.Type.Private,
-                            it.data
-                        )
-                    }
+                val cogRPCClient = CogRPCClient.build(cca.recipientAddress.value)
+                cogRPCClient
+                    .collectCargo(cca.toCogRPCMessage())
+                    .collect { storeMessage.storeCargo(it.data) }
                 deleteMessage.delete(cca)
             }
     }
@@ -40,10 +36,9 @@ class CollectPublicCargo
             MessageType.Cargo
         )
 
-    private fun StoredMessage.toCogRPCMessage() =
-        CogRPC.MessageDelivery(
-            senderAddress = senderAddress.value,
-            messageId = messageId.value,
+    private suspend fun StoredMessage.toCogRPCMessage() =
+        CogRPCClient.MessageDelivery(
+            localId = uniqueMessageId.value,
             data = diskRepository.readMessage(storagePath)
         )
 }

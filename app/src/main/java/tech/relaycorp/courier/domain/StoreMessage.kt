@@ -5,6 +5,7 @@ import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
+import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.data.network.Message
 import java.io.InputStream
@@ -17,17 +18,15 @@ class StoreMessage
     private val diskRepository: DiskRepository
 ) {
 
-    suspend fun storeCargo(
-        senderAddress: MessageAddress,
-        recipientType: MessageAddress.Type,
-        data: InputStream
-    ) {
+    suspend fun storeCargo(data: InputStream) {
         val message = Message.wrap(data)
         val storagePath = diskRepository.writeMessage(message.payload)
+        val recipientAddress =
+            MessageAddress.of(message.recipientPublicAddress ?: message.recipientPrivateAddress)
         val storedMessage = StoredMessage(
-            recipientAddress = MessageAddress(message.recipientAddress),
-            recipientType = recipientType, // Or can we tell from the recipientAddress?
-            senderAddress = senderAddress,
+            recipientAddress = recipientAddress,
+            recipientType = recipientAddress.type,
+            senderAddress = PrivateMessageAddress(message.senderPrivateAddress),
             messageId = MessageId(message.messageId),
             messageType = MessageType.Cargo,
             creationTimeUtc = message.creationTime,

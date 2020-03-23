@@ -4,13 +4,20 @@ import androidx.room.TypeConverter
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
+import tech.relaycorp.courier.data.model.PrivateMessageAddress
 
 class MessageConverter {
     @TypeConverter
-    fun toAddress(value: String) = MessageAddress(value)
+    fun toAddress(value: String) = MessageAddress.of(value)
 
     @TypeConverter
     fun fromAddress(address: MessageAddress) = address.value
+
+    @TypeConverter
+    fun toPrivateAddress(value: String) = PrivateMessageAddress(value)
+
+    @TypeConverter
+    fun fromPrivateAddress(address: PrivateMessageAddress) = address.value
 
     @TypeConverter
     fun toAddressType(value: String) = MessageAddress.Type.fromValue(value)

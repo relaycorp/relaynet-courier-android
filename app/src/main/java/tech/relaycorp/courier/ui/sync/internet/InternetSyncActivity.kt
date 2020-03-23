@@ -38,23 +38,16 @@ class InternetSyncActivity : BaseActivity() {
             .state
             .onEach {
                 stateMessage.text = it.toString()
-                stop.isVisible = it != PublicSync.State.Finished
-                close.isVisible = it == PublicSync.State.Finished
+                val isDone = it == PublicSync.State.Finished || it == PublicSync.State.Error
+                stop.isVisible = !isDone
+                close.isVisible = isDone
             }
             .launchIn(lifecycleScope)
 
         viewModel
-            .errors
-            .onEach { showError(it) }
+            .finish
+            .onEach { finish() }
             .launchIn(lifecycleScope)
-    }
-
-    private fun showError(error: InternetSyncViewModel.Error) {
-        messageManager.showError(
-            when (error) {
-                InternetSyncViewModel.Error.Sync -> R.string.sync_error
-            }
-        )
     }
 
     companion object {

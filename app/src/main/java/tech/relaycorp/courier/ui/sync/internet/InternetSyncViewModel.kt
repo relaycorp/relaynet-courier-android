@@ -2,7 +2,6 @@ package tech.relaycorp.courier.ui.sync.internet
 
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -11,6 +10,7 @@ import tech.relaycorp.courier.common.PublishChannel
 import tech.relaycorp.courier.domain.PublicSync
 import tech.relaycorp.courier.ui.BaseViewModel
 import tech.relaycorp.courier.ui.common.Click
+import tech.relaycorp.courier.ui.common.Finish
 import javax.inject.Inject
 
 class InternetSyncViewModel
@@ -31,6 +31,9 @@ class InternetSyncViewModel
     private val errorsChannel = PublishChannel<Error>()
     val errors get() = errorsChannel.asFlow()
 
+    private val finishChannel = PublishChannel<Finish>()
+    val finish get() = finishChannel.asFlow()
+
     init {
         val syncJob = ioScope.launch {
             publicSync.sync()
@@ -38,13 +41,15 @@ class InternetSyncViewModel
 
         publicSync
             .state()
-            .catch { errorsChannel.send(Error.Sync) }
             .onEach { stateChannel.send(it) }
             .launchIn(ioScope)
 
         stopClicks
             .asFlow()
-            .onEach { syncJob.cancel() }
+            .onEach {
+                syncJob.cancel()
+                finishChannel.send(Finish)
+            }
             .launchIn(ioScope)
     }
 

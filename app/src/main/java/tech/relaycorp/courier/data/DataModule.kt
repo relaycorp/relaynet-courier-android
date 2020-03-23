@@ -6,8 +6,6 @@ import dagger.Module
 import dagger.Provides
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.data.database.AppDatabase
-import tech.relaycorp.courier.data.network.CogRPC
-import tech.relaycorp.courier.data.network.MockCogRPC
 import javax.inject.Named
 
 @Module
@@ -27,7 +25,4 @@ class DataModule {
 
     @Provides
     fun storedMessageDao(database: AppDatabase) = database.storedMessageDao()
-
-    @Provides
-    fun cogRPC(): CogRPC = MockCogRPC()
 }

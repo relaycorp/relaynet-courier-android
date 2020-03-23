@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
+import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
 
 @Dao
@@ -27,7 +28,7 @@ interface StoredMessageDao {
     fun observeFullSize(): Flow<Long>
 
     @Query("SELECT * FROM Message WHERE senderAddress = :senderAddress AND messageId = :messageId LIMIT 1")
-    suspend fun get(senderAddress: MessageAddress, messageId: MessageId): StoredMessage
+    suspend fun get(senderAddress: PrivateMessageAddress, messageId: MessageId): StoredMessage
 
     @Query(
         """
