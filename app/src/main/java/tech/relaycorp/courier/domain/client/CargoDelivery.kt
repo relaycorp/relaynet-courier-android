@@ -3,10 +3,12 @@ package tech.relaycorp.courier.domain.client
 import kotlinx.coroutines.flow.collect
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
+import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.CogRPCClient
+import tech.relaycorp.courier.data.network.cogrpc.CogRPC
+import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.DeleteMessage
 import javax.inject.Inject
 
@@ -20,36 +22,43 @@ class CargoDelivery
     suspend fun deliver() {
         getCargoesToDeliver()
             .groupByRecipient()
-            .entries
             .forEach { (recipientAddress, cargoes) ->
-                val cogRPCClient = CogRPCClient.build(recipientAddress.value)
-                cogRPCClient
+                CogRPCClient
+                    .build(recipientAddress.value)
                     .deliverCargo(cargoes.toCogRPCMessages())
-                    .collect {
-                        it.deleteCorrespondingCargo()
-                    }
+                    .collect { deleteDeliveredCargo(it) }
             }
     }
 
-    suspend fun getCargoesToDeliver() =
+    private suspend fun getCargoesToDeliver() =
         storedMessageDao.getByRecipientTypeAndMessageType(
             MessageAddress.Type.Public,
             MessageType.Cargo
         )
 
-    private fun List<StoredMessage>.groupByRecipient() =
-        groupBy { it.recipientAddress }
-
-    private suspend fun List<StoredMessage>.toCogRPCMessages() =
-        map {
-            CogRPCClient.MessageDelivery(
-                localId = it.uniqueMessageId.value,
-                data = diskRepository.readMessage(it.storagePath)
-            )
+    private suspend fun deleteDeliveredCargo(ack: CogRPC.MessageDeliveryAck) =
+        UniqueMessageId.from(ack.localId).let {
+            deleteMessage.delete(it.senderPrivateAddress, it.messageId)
         }
 
-    private suspend fun CogRPCClient.MessageDeliveryAck.deleteCorrespondingCargo() =
-        UniqueMessageId.from(localId).let {
-            deleteMessage.delete(it.senderPrivateAddress, it.messageId)
+    private fun List<StoredMessage>.groupByRecipient() =
+        groupBy { it.recipientAddress }.entries
+
+    private suspend fun Iterable<StoredMessage>.toCogRPCMessages() =
+        mapNotNull {
+            readMessage(it)
+                ?.let { data ->
+                    CogRPC.MessageDelivery(
+                        localId = it.uniqueMessageId.value,
+                        data = data
+                    )
+                }
+        }
+
+    private suspend fun readMessage(message: StoredMessage) =
+        try {
+            diskRepository.readMessage(message.storagePath)
+        } catch (e: MessageDataNotFoundException) {
+            null
         }
 }

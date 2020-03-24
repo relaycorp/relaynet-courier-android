@@ -7,7 +7,9 @@ import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.Message
+import tech.relaycorp.courier.data.network.Cargo
+import tech.relaycorp.courier.data.network.CargoCollectionAuthorization
+import tech.relaycorp.courier.data.network.RAMFMessage
 import java.io.InputStream
 import java.util.Date
 import javax.inject.Inject
@@ -18,22 +20,32 @@ class StoreMessage
     private val diskRepository: DiskRepository
 ) {
 
-    suspend fun storeCargo(data: InputStream) {
-        val message = Message.wrap(data)
+    suspend fun storeCargo(data: InputStream) =
+        storeMessage(Cargo.wrap(data), MessageType.Cargo)
+
+    suspend fun storeCCA(data: InputStream) =
+        storeMessage(CargoCollectionAuthorization.wrap(data), MessageType.Cargo)
+
+    private suspend fun storeMessage(message: RAMFMessage, type: MessageType): StoredMessage {
         val storagePath = diskRepository.writeMessage(message.payload)
+        val storedMessage = message.toStoredMessage(type, storagePath)
+        storedMessageDao.insert(storedMessage)
+        return storedMessage
+    }
+
+    private fun RAMFMessage.toStoredMessage(type: MessageType, storagePath: String): StoredMessage {
         val recipientAddress =
-            MessageAddress.of(message.recipientPublicAddress ?: message.recipientPrivateAddress)
-        val storedMessage = StoredMessage(
+            MessageAddress.of(recipientPublicAddress ?: recipientPrivateAddress)
+        return StoredMessage(
             recipientAddress = recipientAddress,
             recipientType = recipientAddress.type,
-            senderAddress = PrivateMessageAddress(message.senderPrivateAddress),
-            messageId = MessageId(message.messageId),
-            messageType = MessageType.Cargo,
-            creationTimeUtc = message.creationTime,
-            expirationTimeUtc = Date(message.creationTime.time + message.ttl * 1000),
-            size = message.payload.size.toLong(),
+            senderAddress = PrivateMessageAddress(senderPrivateAddress),
+            messageId = MessageId(messageId),
+            messageType = type,
+            creationTimeUtc = creationTime,
+            expirationTimeUtc = Date(creationTime.time + ttl * 1000),
+            size = payload.size.toLong(),
             storagePath = storagePath
         )
-        storedMessageDao.insert(storedMessage)
     }
 }

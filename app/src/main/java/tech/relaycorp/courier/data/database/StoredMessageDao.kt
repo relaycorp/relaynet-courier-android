@@ -41,4 +41,16 @@ interface StoredMessageDao {
         recipientType: MessageAddress.Type,
         type: MessageType
     ): List<StoredMessage>
+
+    @Query(
+        """
+            SELECT * FROM Message 
+            WHERE recipientAddress = :recipientAddress AND messageType = :type
+            ORDER BY expirationTimeUtc ASC
+            """
+    )
+    suspend fun getByRecipientAddressAndMessageType(
+        recipientAddress: MessageAddress,
+        type: MessageType
+    ): List<StoredMessage>
 }

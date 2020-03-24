@@ -3,12 +3,16 @@ package tech.relaycorp.courier.domain.client
 import kotlinx.coroutines.flow.collect
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
+import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.CogRPCClient
+import tech.relaycorp.courier.data.network.cogrpc.CogRPC
+import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
+import timber.log.Timber
+import java.io.InputStream
 import javax.inject.Inject
 
 class CargoCollection
@@ -22,11 +26,8 @@ class CargoCollection
     suspend fun collect() {
         getCCAs()
             .forEach { cca ->
-                val cogRPCClient = CogRPCClient.build(cca.recipientAddress.value)
-                cogRPCClient
-                    .collectCargo(cca.toCogRPCMessage())
-                    .collect { storeMessage.storeCargo(it.data) }
-                deleteMessage.delete(cca)
+                collectAndStoreCargoForCCA(cca)
+                deleteCCA(cca)
             }
     }
 
@@ -36,8 +37,26 @@ class CargoCollection
             MessageType.Cargo
         )
 
+    private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
+        try {
+            CogRPCClient
+                .build(cca.recipientAddress.value)
+                .collectCargo(cca.toCogRPCMessage())
+                .collect { storeCargo(it.data) }
+        } catch (e: MessageDataNotFoundException) {
+            Timber.w(e, "CCA data could not found on disk")
+        }
+    }
+
+    private suspend fun storeCargo(data: InputStream) =
+        storeMessage.storeCargo(data)
+
+    private suspend fun deleteCCA(cca: StoredMessage) =
+        deleteMessage.delete(cca)
+
+    @Throws(MessageDataNotFoundException::class)
     private suspend fun StoredMessage.toCogRPCMessage() =
-        CogRPCClient.MessageDelivery(
+        CogRPC.MessageDelivery(
             localId = uniqueMessageId.value,
             data = diskRepository.readMessage(storagePath)
         )

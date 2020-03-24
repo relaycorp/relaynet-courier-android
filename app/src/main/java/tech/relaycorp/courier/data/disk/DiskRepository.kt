@@ -4,28 +4,33 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-// TODO: Avoid letting exceptions go through this class, and handle them inside its methods
 class DiskRepository
 @Inject constructor(
     private val context: Context
 ) {
 
+    @Throws(DiskException::class)
     suspend fun writeMessage(message: ByteArray): String =
-        withContext(Dispatchers.IO) {
-            val messagesDir = getOrCreateMessagesDir()
-            val file = File.createTempFile(MESSAGE_FILE_PREFIX, "", messagesDir)
-            file.writeBytes(message)
-            file.name
+        try {
+            writeMessageUnsafe(message)
+        } catch (e: IOException) {
+            throw DiskException(e)
         }
 
-    // TODO: Avoid through exceptions by handling here
+    @Throws(MessageDataNotFoundException::class)
     suspend fun readMessage(path: String): InputStream =
-        File(getOrCreateMessagesDir(), path).inputStream()
+        try {
+            File(getOrCreateMessagesDir(), path).inputStream()
+        } catch (e: FileNotFoundException) {
+            throw MessageDataNotFoundException("Message data not found on path '$path'", e)
+        }
 
     suspend fun deleteMessage(path: String) {
         withContext(Dispatchers.IO) {
@@ -33,6 +38,14 @@ class DiskRepository
             File(messagesDir, path).delete()
         }
     }
+
+    private suspend fun writeMessageUnsafe(message: ByteArray) =
+        withContext(Dispatchers.IO) {
+            val messagesDir = getOrCreateMessagesDir()
+            val file = File.createTempFile(MESSAGE_FILE_PREFIX, "", messagesDir)
+            file.writeBytes(message)
+            file.name
+        }
 
     private suspend fun getOrCreateMessagesDir() =
         withContext(Dispatchers.IO) {

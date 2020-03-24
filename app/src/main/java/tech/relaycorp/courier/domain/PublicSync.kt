@@ -3,7 +3,7 @@ package tech.relaycorp.courier.domain
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import tech.relaycorp.courier.common.BehaviorChannel
-import tech.relaycorp.courier.data.network.CogRPCClient
+import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.client.CargoCollection
 import tech.relaycorp.courier.domain.client.CargoDelivery
 import javax.inject.Inject
@@ -18,21 +18,15 @@ class PublicSync
     private val state = BehaviorChannel<State>()
     fun state() = state.asFlow()
 
-    private val dataTransferred = BehaviorChannel<DataCount>()
-    fun dataTransferred() = dataTransferred.asFlow()
-
     suspend fun sync() {
         try {
-            syncUnhandled()
+            syncUnsafe()
         } catch (e: CogRPCClient.Exception) {
             state.send(State.Error)
         }
     }
 
-    private suspend fun syncUnhandled() {
-        // TODO: Collect up-to-date data transferred data
-        dataTransferred.send(DataCount())
-
+    private suspend fun syncUnsafe() {
         state.send(State.DeliveringCargo)
         cargoDelivery.deliver()
 
@@ -48,11 +42,6 @@ class PublicSync
     enum class State {
         DeliveringCargo, Waiting, CollectingCargo, Finished, Error
     }
-
-    data class DataCount(
-        val upload: Long = 0,
-        val download: Long = 0
-    )
 
     companion object {
         private val WAIT_PERIOD = 2.seconds

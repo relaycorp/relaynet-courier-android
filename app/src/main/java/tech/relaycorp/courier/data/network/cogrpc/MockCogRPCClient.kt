@@ -1,4 +1,4 @@
-package tech.relaycorp.courier.data.network
+package tech.relaycorp.courier.data.network.cogrpc
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -10,17 +10,19 @@ import kotlinx.coroutines.flow.onEach
 // Mock implementation of the CogRPC protocol that just waits a bit and emits Acks
 class MockCogRPCClient(serverAddress: String) : CogRPCClient(serverAddress) {
 
-    override fun deliverCargo(cargoes: List<MessageDelivery>) =
+    override fun deliverCargo(cargoes: Iterable<CogRPC.MessageDelivery>) =
         cargoes
             .asFlow()
             .onEach { delay(500) }
             .map { cargo ->
-                MessageDeliveryAck(cargo.localId)
+                CogRPC.MessageDeliveryAck(cargo.localId)
             }
 
-    override fun collectCargo(cca: MessageDelivery): Flow<MessageReceived> =
+    override fun collectCargo(cca: CogRPC.MessageDelivery): Flow<CogRPC.MessageReceived> =
         flow {
             delay(500)
-            emit(MessageReceived(ByteArray(0).inputStream()))
+            emit(
+                CogRPC.MessageReceived(ByteArray(0).inputStream())
+            )
         }
 }
