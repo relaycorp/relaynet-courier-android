@@ -2,7 +2,7 @@
 
     <style name="Theme.Courier" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/relaynet_primary</item>
-        <item name="colorPrimaryVariant">@color/relaynet_primary</item>
+        <item name="colorPrimaryVariant">@color/relaynet_primary_variant</item>
         <item name="colorSecondary">@color/relaynet_secondary</item>
         <item name="colorSecondaryVariant">@color/relaynet_secondary_variant</item>
 

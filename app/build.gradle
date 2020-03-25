@@ -14,7 +14,7 @@ repositories {
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "tech.relaycorp.courier"
@@ -52,6 +52,11 @@ android {
     packagingOptions {
         exclude 'META-INF/*'
     }
+    lintOptions {
+        checkAllWarnings true
+        warningsAsErrors true
+        abortOnError true
+    }
     sourceSets {
         androidTest {
             java.srcDirs += "src/sharedTest/java"
@@ -69,7 +74,7 @@ dependencies {
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 
     // Android
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -79,8 +84,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
 
     // Dependency Injection
-    api 'com.google.dagger:dagger:2.26'
-    kapt 'com.google.dagger:dagger-compiler:2.26'
+    api 'com.google.dagger:dagger:2.27'
+    kapt 'com.google.dagger:dagger-compiler:2.27'
 
     // Logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -89,18 +94,18 @@ dependencies {
     implementation 'tech.relaycorp:relaynet:1.2.1'
 
     // ORM
-    def room_version = "2.2.4"
+    def room_version = "2.2.5"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
     // Testing
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
     testImplementation 'org.mockito:mockito-inline:3.3.3'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.4'
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation('com.schibsted.spain:barista:3.2.0') {
         exclude group: 'org.jetbrains.kotlin'
@@ -112,4 +117,12 @@ spotless {
         ktlint('0.36.0').userData(['disabled_rules': 'import-ordering'])
         target '**/*.kt'
     }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += [
+            '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
+            '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
+            '-Xuse-experimental=kotlin.time.ExperimentalTime'
+    ]
 }

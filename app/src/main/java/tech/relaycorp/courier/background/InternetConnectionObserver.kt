@@ -17,7 +17,7 @@ class InternetConnectionObserver
     connectivityManager: ConnectivityManager
 ) {
 
-    private val state = ConflatedBroadcastChannel(InternetConnection.Offline)
+    internal val state = ConflatedBroadcastChannel(InternetConnection.Offline)
 
     private val networkRequest =
         NetworkRequest.Builder()

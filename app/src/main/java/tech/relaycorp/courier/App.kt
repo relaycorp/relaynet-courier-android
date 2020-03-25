@@ -2,7 +2,6 @@ package tech.relaycorp.courier
 
 import android.app.Application
 import android.os.StrictMode
-import android.os.StrictMode.VmPolicy
 import tech.relaycorp.courier.common.di.AppComponent
 import tech.relaycorp.courier.common.di.DaggerAppComponent
 import timber.log.Timber
@@ -41,9 +40,11 @@ class App : Application() {
             StrictMode.setThreadPolicy(
                 StrictMode.ThreadPolicy.Builder().detectAll().penaltyDeath().build()
             )
-            StrictMode.setVmPolicy(
-                VmPolicy.Builder().detectAll().penaltyDeath().build()
-            )
+            if (mode != Mode.Test) {
+                StrictMode.setVmPolicy(
+                    StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build()
+                )
+            }
         }
     }
 

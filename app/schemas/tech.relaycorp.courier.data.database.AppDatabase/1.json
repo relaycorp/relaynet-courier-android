@@ -2,15 +2,27 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4056a2f52fe6f834146b1ab85d35e7a8",
+    "identityHash": "ac7057872d7c8066491d2d48263acf0e",
     "entities": [
       {
-        "tableName": "cargo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `creationTime` INTEGER NOT NULL, `expirationTime` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, `senderAddress` TEXT NOT NULL, PRIMARY KEY(`recipientAddress`, `messageId`))",
+        "tableName": "Message",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `recipientType` TEXT NOT NULL, `senderAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `messageType` TEXT NOT NULL, `creationTimeUtc` INTEGER NOT NULL, `expirationTimeUtc` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, PRIMARY KEY(`senderAddress`, `messageId`))",
         "fields": [
           {
             "fieldPath": "recipientAddress",
             "columnName": "recipientAddress",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipientType",
+            "columnName": "recipientType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "senderAddress",
+            "columnName": "senderAddress",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -21,14 +33,20 @@
             "notNull": true
           },
           {
-            "fieldPath": "creationTime",
-            "columnName": "creationTime",
+            "fieldPath": "messageType",
+            "columnName": "messageType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationTimeUtc",
+            "columnName": "creationTimeUtc",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "expirationTime",
-            "columnName": "expirationTime",
+            "fieldPath": "expirationTimeUtc",
+            "columnName": "expirationTimeUtc",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -43,37 +61,47 @@
             "columnName": "size",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "senderAddress",
-            "columnName": "senderAddress",
-            "affinity": "TEXT",
-            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "recipientAddress",
+            "senderAddress",
             "messageId"
           ],
           "autoGenerate": false
         },
         "indices": [
           {
-            "name": "index_cargo_expirationTime",
+            "name": "index_Message_recipientAddress",
             "unique": false,
             "columnNames": [
-              "expirationTime"
+              "recipientAddress"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_cargo_expirationTime` ON `${TABLE_NAME}` (`expirationTime`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_recipientAddress` ON `${TABLE_NAME}` (`recipientAddress`)"
           },
           {
-            "name": "index_cargo_senderAddress",
+            "name": "index_Message_recipientType",
             "unique": false,
             "columnNames": [
-              "senderAddress"
+              "recipientType"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_cargo_senderAddress` ON `${TABLE_NAME}` (`senderAddress`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_recipientType` ON `${TABLE_NAME}` (`recipientType`)"
+          },
+          {
+            "name": "index_Message_messageType",
+            "unique": false,
+            "columnNames": [
+              "messageType"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_messageType` ON `${TABLE_NAME}` (`messageType`)"
+          },
+          {
+            "name": "index_Message_expirationTimeUtc",
+            "unique": false,
+            "columnNames": [
+              "expirationTimeUtc"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_expirationTimeUtc` ON `${TABLE_NAME}` (`expirationTimeUtc`)"
           }
         ],
         "foreignKeys": []
@@ -82,7 +110,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4056a2f52fe6f834146b1ab85d35e7a8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ac7057872d7c8066491d2d48263acf0e')"
     ]
   }
 }
