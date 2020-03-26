@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.sync.internet.InternetSyncActivity">
+    tools:context=".ui.sync.people.HotspotInstructionsActivity">
 
     <include layout="@layout/common_app_bar" />
 
@@ -16,24 +16,34 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:id="@+id/stateMessage"
+            android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true" />
+            android:gravity="center"
+            android:textAppearance="?textAppearanceHeadline4"
+            android:textIsSelectable="true"
+            tools:text="@string/hotspot_instructions_disabled" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textIsSelectable="true"
+            tools:text="@string/hotspot_instructions_disabled_text" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/stop"
+            android:id="@+id/openSettings"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sync_stop" />
+            android:text="@string/hotspot_instructions_open_settings" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/close"
+            android:id="@+id/startSync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sync_close"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:text="@string/hotspot_instructions_start_sync" />
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

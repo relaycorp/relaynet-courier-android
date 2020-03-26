@@ -36,7 +36,7 @@ class PeopleSyncActivity : BaseActivity() {
         close.setOnClickListener { finish() }
 
         viewModel
-            .state
+            .state()
             .onEach {
                 stateMessage.text = it.toString()
                 val isDone = it == PrivateSync.State.Stopped
@@ -46,16 +46,25 @@ class PeopleSyncActivity : BaseActivity() {
             .launchIn(lifecycleScope)
 
         viewModel
-            .clientsConnected
+            .clientsConnected()
             .onEach {
                 clientsConnected.text = it.toString()
             }
             .launchIn(lifecycleScope)
 
         viewModel
-            .finish
+            .openHotspotInstructions()
+            .onEach { openHotspotInstructions() }
+            .launchIn(lifecycleScope)
+
+        viewModel
+            .finish()
             .onEach { finish() }
             .launchIn(lifecycleScope)
+    }
+
+    private fun openHotspotInstructions() {
+        startActivity(HotspotInstructionsActivity.getIntent(this))
     }
 
     companion object {

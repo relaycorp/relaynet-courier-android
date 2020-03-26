@@ -34,8 +34,7 @@ class StoreMessage
     }
 
     private fun RAMFMessage.toStoredMessage(type: MessageType, storagePath: String): StoredMessage {
-        val recipientAddress =
-            MessageAddress.of(recipientPublicAddress ?: recipientPrivateAddress)
+        val recipientAddress = MessageAddress.of(recipientAddress)
         return StoredMessage(
             recipientAddress = recipientAddress,
             recipientType = recipientAddress.type,

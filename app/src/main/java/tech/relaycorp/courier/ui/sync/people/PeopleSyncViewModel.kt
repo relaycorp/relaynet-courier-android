@@ -2,9 +2,12 @@ package tech.relaycorp.courier.ui.sync.people
 
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import tech.relaycorp.courier.background.WifiHotspotState
+import tech.relaycorp.courier.background.WifiHotspotStateReceiver
 import tech.relaycorp.courier.common.BehaviorChannel
 import tech.relaycorp.courier.common.PublishChannel
 import tech.relaycorp.courier.domain.PrivateSync
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 class PeopleSyncViewModel
 @Inject constructor(
-    private val privateSync: PrivateSync
+    private val privateSync: PrivateSync,
+    private val wifiHotspotStateReceiver: WifiHotspotStateReceiver
 ) : BaseViewModel() {
 
     // Inputs
@@ -25,39 +29,41 @@ class PeopleSyncViewModel
 
     // Outputs
 
-    private val stateChannel = BehaviorChannel<PrivateSync.State>()
-    val state get() = stateChannel.asFlow()
+    private val state = BehaviorChannel<PrivateSync.State>()
+    fun state() = state.asFlow()
 
-    private val clientsConnectedChannel = BehaviorChannel<Int>()
-    val clientsConnected get() = clientsConnectedChannel.asFlow()
+    fun clientsConnected() = privateSync.clientsConnected()
 
-    private val finishChannel = PublishChannel<Finish>()
-    val finish get() = finishChannel.asFlow()
+    private val openHotspotInstructions = PublishChannel<Unit>()
+    fun openHotspotInstructions() = openHotspotInstructions.asFlow()
+
+    private val finish = PublishChannel<Finish>()
+    fun finish() = finish.asFlow()
 
     init {
         ioScope.launch {
-            privateSync.startSync()
-            clientsConnectedChannel.send(0)
+            when (getHotspotState()) {
+                WifiHotspotState.Enabled -> privateSync.startSync()
+                WifiHotspotState.Disabled -> {
+                    openHotspotInstructions.send(Unit)
+                    finish.send(Finish)
+                }
+            }
         }
 
         privateSync
             .state()
-            .onEach { stateChannel.send(it) }
-            .launchIn(ioScope)
-
-        privateSync
-            .clientConnected()
-            .onEach {
-                clientsConnectedChannel.send((clientsConnectedChannel.valueOrNull ?: 0) + 1)
-            }
+            .onEach { state.send(it) }
             .launchIn(ioScope)
 
         stopClicks
             .asFlow()
             .onEach {
                 privateSync.stopSync()
-                finishChannel.send(Finish)
+                finish.send(Finish)
             }
             .launchIn(ioScope)
     }
+
+    private suspend fun getHotspotState() = wifiHotspotStateReceiver.state().first()
 }

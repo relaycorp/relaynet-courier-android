@@ -19,7 +19,7 @@ class DiskRepository
     @Throws(DiskException::class)
     suspend fun writeMessage(message: ByteArray): String =
         try {
-            writeMessageUnsafe(message)
+            writeMessageUnhandled(message)
         } catch (e: IOException) {
             throw DiskException(e)
         }
@@ -39,10 +39,9 @@ class DiskRepository
         }
     }
 
-    private suspend fun writeMessageUnsafe(message: ByteArray) =
+    private suspend fun writeMessageUnhandled(message: ByteArray) =
         withContext(Dispatchers.IO) {
-            val messagesDir = getOrCreateMessagesDir()
-            val file = File.createTempFile(MESSAGE_FILE_PREFIX, "", messagesDir)
+            val file = createUniqueFile()
             file.writeBytes(message)
             file.name
         }
@@ -52,6 +51,13 @@ class DiskRepository
             File(context.filesDir, MESSAGE_FOLDER_NAME).also {
                 if (!it.exists()) it.mkdir()
             }
+        }
+
+    private suspend fun createUniqueFile() =
+        withContext(Dispatchers.IO) {
+            val messagesDir = getOrCreateMessagesDir()
+            // The file created isn't temporary, but it ensures a unique filename
+            File.createTempFile(MESSAGE_FILE_PREFIX, "", messagesDir)
         }
 
     companion object {

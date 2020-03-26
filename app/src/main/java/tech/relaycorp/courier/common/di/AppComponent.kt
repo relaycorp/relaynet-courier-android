@@ -1,6 +1,7 @@
 package tech.relaycorp.courier.common.di
 
 import dagger.Component
+import tech.relaycorp.courier.App
 import javax.inject.Singleton
 import tech.relaycorp.courier.AppModule
 import tech.relaycorp.courier.data.DataModule
@@ -14,4 +15,5 @@ import tech.relaycorp.courier.data.DataModule
 )
 interface AppComponent {
     fun activityComponent(): ActivityComponent
+    fun inject(app: App)
 }

@@ -20,13 +20,13 @@ class PublicSync
 
     suspend fun sync() {
         try {
-            syncUnsafe()
+            syncUnhandled()
         } catch (e: CogRPCClient.Exception) {
             state.send(State.Error)
         }
     }
 
-    private suspend fun syncUnsafe() {
+    private suspend fun syncUnhandled() {
         state.send(State.DeliveringCargo)
         cargoDelivery.deliver()
 

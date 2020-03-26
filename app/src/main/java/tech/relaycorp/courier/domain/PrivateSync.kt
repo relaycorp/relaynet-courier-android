@@ -16,7 +16,7 @@ class PrivateSync
     private val state = BehaviorChannel<State>()
     fun state() = state.asFlow()
 
-    fun clientConnected() = connectionService.clientConnected()
+    fun clientsConnected() = cogRPCServer.clientsConnected()
 
     suspend fun startSync() {
         if (cogRPCServer.isStarted) throw IllegalStateException("Sync already started")

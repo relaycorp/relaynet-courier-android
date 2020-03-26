@@ -6,8 +6,7 @@ import java.util.Date
 // Mock RAMFMessage to help us with the high-level implementation
 // The fields won't be available exactly like this, but it's enough for now
 open class RAMFMessage protected constructor(
-    val recipientPublicAddress: String? = "",
-    val recipientPrivateAddress: String = "",
+    val recipientAddress: String = "",
     val senderPrivateAddress: String = "",
     val messageId: String = "",
     val creationTime: Date = Date(),

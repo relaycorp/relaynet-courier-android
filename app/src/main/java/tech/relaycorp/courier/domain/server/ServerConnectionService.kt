@@ -1,7 +1,5 @@
 package tech.relaycorp.courier.domain.server
 
-import kotlinx.coroutines.flow.asFlow
-import tech.relaycorp.courier.common.PublishChannel
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
@@ -22,11 +20,7 @@ class ServerConnectionService
     private val deleteMessage: DeleteMessage
 ) : CogRPCServer.ConnectionService {
 
-    private val clientConnected = PublishChannel<Unit>()
-    fun clientConnected() = clientConnected.asFlow()
-
     override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
-        clientConnected.send(Unit)
         val ccaMessage = storeMessage.storeCCA(cca.data)
         return storedMessageDao
             .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
