@@ -24,7 +24,7 @@ interface StoredMessageDao {
     @Query("SELECT * FROM Message")
     fun observeAll(): Flow<List<StoredMessage>>
 
-    @Query("SELECT SUM(Message.size) FROM Message")
+    @Query("SELECT COALESCE(SUM(Message.size), 0) FROM Message")
     fun observeFullSize(): Flow<Long>
 
     @Query("SELECT * FROM Message WHERE senderAddress = :senderAddress AND messageId = :messageId LIMIT 1")

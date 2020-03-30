@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Courier</string>
 
+    <!-- Main -->
+    <string name="main_storage_usage">Storage Usage</string>
+    <string name="main_storage_usage_values">%1$s of %2$s (%3$d%%)</string>
+
     <!-- Sync -->
 
     <string name="sync">Sync</string>
