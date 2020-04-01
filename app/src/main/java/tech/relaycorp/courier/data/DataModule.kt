@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.data.database.AppDatabase
+import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
 import javax.inject.Named
 
 @Module
@@ -25,4 +26,8 @@ class DataModule {
 
     @Provides
     fun storedMessageDao(database: AppDatabase) = database.storedMessageDao()
+
+    @Provides
+    fun cogRPCServer() =
+        CogRPCServer.build("127.0.0.1:8080")
 }

@@ -1,12 +1,32 @@
 <resources>
-  <string name="app_name">Courier</string>
+    <string name="app_name">Courier</string>
 
-  <!-- Sync -->
-  <string name="sync">Sync</string>
-  <string name="sync_people">Sync with People</string>
-  <string name="sync_internet">Sync with Internet</string>
-  <string name="sync_people_instructions">Disconnect from the Internet to sync with People via WiFi hotspot.</string>
-  <string name="sync_internet_instructions">Connect to the Internet to sync data online.</string>
-  <string name="sync_stop">Stop Sync</string>
-  <string name="sync_close">Close</string>
+    <!-- Sync -->
+
+    <string name="sync">Sync</string>
+    <string name="sync_people">Sync with People</string>
+    <string name="sync_internet">Sync with Internet</string>
+    <string name="sync_people_instructions">
+      Disconnect from the Internet to sync with People via WiFi hotspot.
+    </string>
+    <string name="sync_internet_instructions">
+      Connect to the Internet to sync data online.
+    </string>
+    <string name="sync_stop">Stop Sync</string>
+    <string name="sync_close">Close</string>
+
+    <!-- Hotspot Instructions -->
+
+    <string name="hotspot_instructions">Sync Instructions</string>
+    <string name="hotspot_instructions_disabled">WiFi Hotspot disabled</string>
+    <string name="hotspot_instructions_disabled_text">
+      Your WiFi Hotspot is disabled at the moment.
+      You need to enable it in your device settings to be able to Sync with People.
+    </string>
+    <string name="hotspot_instructions_open_settings">Open WiFi Hotspot Settings</string>
+    <string name="hotspot_instructions_enabled">WiFi Hotspot enabled</string>
+    <string name="hotspot_instructions_enabled_text">
+      Your WiFi Hotspot is now enabled. You can start the Sync with People.
+    </string>
+    <string name="hotspot_instructions_start_sync">Start Sync with People</string>
 </resources>
