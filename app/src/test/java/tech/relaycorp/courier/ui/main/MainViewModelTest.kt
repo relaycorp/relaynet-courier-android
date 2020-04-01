@@ -13,8 +13,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
-import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.domain.ObserveStorageUsage
+import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.test.test
 
 internal class MainViewModelTest {
@@ -45,7 +45,7 @@ internal class MainViewModelTest {
 
     @Test
     internal fun storageUsage() = runBlockingTest {
-        val storageUsage = StorageUsage(0, 1)
+        val storageUsage = StorageUsageFactory.build()
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
         val viewModel = buildViewModel()

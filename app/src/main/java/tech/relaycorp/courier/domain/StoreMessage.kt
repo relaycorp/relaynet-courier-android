@@ -6,6 +6,7 @@ import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.PrivateMessageAddress
+import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.data.network.Cargo
 import tech.relaycorp.courier.data.network.CargoCollectionAuthorization
@@ -43,7 +44,7 @@ class StoreMessage
             messageType = type,
             creationTimeUtc = creationTime,
             expirationTimeUtc = Date(creationTime.time + ttl * 1000),
-            size = payload.size.toLong(),
+            size = StorageSize(payload.size.toLong()),
             storagePath = storagePath
         )
     }

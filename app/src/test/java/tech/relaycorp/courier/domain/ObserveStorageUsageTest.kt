@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskStats
+import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 
@@ -21,26 +22,26 @@ internal class ObserveStorageUsageTest {
 
     @Test
     internal fun `observe when there is enough space`() = runBlockingTest {
-        whenever(storedMessageDao.observeFullSize()).thenReturn(flowOf(1))
-        whenever(storagePreferences.getMaxStoragePercentage()).thenReturn(flowOf(10))
-        whenever(diskStats.totalStorage).thenReturn(1_000_000)
-        whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(999_999))
+        whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
+        whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
+        whenever(diskStats.totalStorage).thenReturn(StorageSize(1_000_000))
+        whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(999_999)))
 
         assertEquals(
-            StorageUsage(1, 100_000),
+            StorageUsage(StorageSize(1), StorageSize(100_000), StorageSize(100_000)),
             subject.observe().first()
         )
     }
 
     @Test
     internal fun `observe when there is less space than configured`() = runBlockingTest {
-        whenever(storedMessageDao.observeFullSize()).thenReturn(flowOf(1))
-        whenever(storagePreferences.getMaxStoragePercentage()).thenReturn(flowOf(10))
-        whenever(diskStats.totalStorage).thenReturn(1_000_000)
-        whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(10_000))
+        whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
+        whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
+        whenever(diskStats.totalStorage).thenReturn(StorageSize(1_000_000))
+        whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(10_000)))
 
         assertEquals(
-            StorageUsage(1, 10_001),
+            StorageUsage(StorageSize(1), StorageSize(100_000), StorageSize(10_001)),
             subject.observe().first()
         )
     }

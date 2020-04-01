@@ -22,7 +22,7 @@ data class StoredMessage(
     @ColumnInfo(index = true)
     val expirationTimeUtc: Date, // in UTC
     val storagePath: String,
-    val size: Long
+    val size: StorageSize
 ) {
 
     val uniqueMessageId get() = UniqueMessageId(senderAddress, messageId)

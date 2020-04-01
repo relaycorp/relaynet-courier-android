@@ -56,8 +56,8 @@ class MainActivity : BaseActivity() {
         storageProgress.progress = usage.percentage
         storageValues.text = getString(
             R.string.main_storage_usage_values,
-            Formatter.formatFileSize(this, usage.used),
-            Formatter.formatFileSize(this, usage.totalAvailable),
+            Formatter.formatFileSize(this, usage.usedByApp.bytes),
+            Formatter.formatFileSize(this, usage.actualMax.bytes),
             usage.percentage
         )
     }

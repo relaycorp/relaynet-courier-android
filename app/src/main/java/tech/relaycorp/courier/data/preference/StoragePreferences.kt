@@ -2,7 +2,8 @@ package tech.relaycorp.courier.data.preference
 
 import androidx.annotation.VisibleForTesting
 import com.tfcporciuncula.flow.FlowSharedPreferences
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import tech.relaycorp.courier.data.model.StorageSize
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -12,16 +13,14 @@ class StoragePreferences
 ) {
 
     private val maxStorage by lazy {
-        preferences.get().getInt("max_storage", DEFAULT_MAX_STORAGE_PERCENTAGE)
+        preferences.get().getLong("max_storage", DEFAULT_MAX_STORAGE_SIZE.bytes)
     }
 
-    fun getMaxStoragePercentage() = { maxStorage }.toFlow()
-    suspend fun setMaxStoragePercentage(value: Int) = maxStorage.setAndCommit(value)
-
-    fun a() = { 1 }.asFlow()
+    fun getMaxStorageSize() = { maxStorage }.toFlow().map { StorageSize(it) }
+    suspend fun setMaxStorageSize(value: StorageSize) = maxStorage.setAndCommit(value.bytes)
 
     companion object {
         @VisibleForTesting
-        internal const val DEFAULT_MAX_STORAGE_PERCENTAGE = 10
+        internal val DEFAULT_MAX_STORAGE_SIZE = StorageSize(1_000_000_000)
     }
 }

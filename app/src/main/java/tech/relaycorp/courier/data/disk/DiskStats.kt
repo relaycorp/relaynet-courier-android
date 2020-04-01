@@ -5,6 +5,7 @@ import android.os.StatFs
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import tech.relaycorp.courier.data.model.StorageSize
 import javax.inject.Inject
 import kotlin.time.seconds
 
@@ -15,11 +16,11 @@ class DiskStats
 
     val totalStorage
         get() =
-            internalStats.totalBytes
+            StorageSize(internalStats.totalBytes)
 
     val availableStorage
         get() =
-            internalStats.availableBytes
+            StorageSize(internalStats.availableBytes)
 
     fun observeAvailableStorage() =
         flow {
