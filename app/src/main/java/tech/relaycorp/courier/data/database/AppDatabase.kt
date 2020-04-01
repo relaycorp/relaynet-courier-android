@@ -13,7 +13,7 @@ import tech.relaycorp.courier.data.model.StoredMessage
     value = [
         DateConverter::class,
         MessageConverter::class,
-        StorageConverter::class
+        StorageSizeConverter::class
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -3,7 +3,7 @@ package tech.relaycorp.courier.data.database
 import androidx.room.TypeConverter
 import tech.relaycorp.courier.data.model.StorageSize
 
-class StorageConverter {
+class StorageSizeConverter {
     @TypeConverter
     fun toStorageSize(value: Long) = StorageSize(value)
 
