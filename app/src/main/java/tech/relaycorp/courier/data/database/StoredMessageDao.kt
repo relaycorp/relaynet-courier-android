@@ -22,6 +22,9 @@ interface StoredMessageDao {
     @Delete
     suspend fun delete(message: StoredMessage)
 
+    @Query("DELETE FROM Message")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM Message")
     fun observeAll(): Flow<List<StoredMessage>>
 

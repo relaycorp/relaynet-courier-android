@@ -12,11 +12,13 @@ import kotlinx.android.synthetic.main.activity_main.syncInternetLayout
 import kotlinx.android.synthetic.main.activity_main.syncPeopleLayout
 import kotlinx.android.synthetic.main.activity_main.syncWithInternet
 import kotlinx.android.synthetic.main.activity_main.syncWithPeople
+import kotlinx.android.synthetic.main.common_app_bar.toolbar
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.settings.SettingsActivity
 import tech.relaycorp.courier.ui.sync.internet.InternetSyncActivity
 import tech.relaycorp.courier.ui.sync.people.PeopleSyncActivity
 import javax.inject.Inject
@@ -34,6 +36,12 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         component.inject(this)
         setContentView(R.layout.activity_main)
+
+        toolbar.inflateMenu(R.menu.main)
+        toolbar.menu.findItem(R.id.settings).setOnMenuItemClickListener {
+            openSettings()
+            true
+        }
 
         syncWithPeople.setOnClickListener { openSyncWithPeople() }
         syncWithInternet.setOnClickListener { openSyncWithInternet() }
@@ -60,6 +68,10 @@ class MainActivity : BaseActivity() {
             Formatter.formatFileSize(this, usage.actualMax.bytes),
             usage.percentage
         )
+    }
+
+    private fun openSettings() {
+        startActivity(SettingsActivity.getIntent(this))
     }
 
     private fun openSyncWithInternet() {
