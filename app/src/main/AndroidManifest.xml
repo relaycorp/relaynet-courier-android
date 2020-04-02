@@ -35,5 +35,9 @@
         <activity
             android:name=".ui.sync.people.HotspotInstructionsActivity"
             android:label="@string/hotspot_instructions" />
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/settings" />
     </application>
 </manifest>

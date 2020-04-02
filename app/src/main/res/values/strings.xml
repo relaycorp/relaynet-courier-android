@@ -1,12 +1,16 @@
 <resources>
+
+    <!-- Common -->
     <string name="app_name">Courier</string>
+    <string name="close">Close</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Main -->
     <string name="main_storage_usage">Storage Usage</string>
     <string name="main_storage_usage_values">%1$s of %2$s (%3$d%%)</string>
 
     <!-- Sync -->
-
     <string name="sync">Sync</string>
     <string name="sync_people">Sync with People</string>
     <string name="sync_internet">Sync with Internet</string>
@@ -17,10 +21,8 @@
       Connect to the Internet to sync data online.
     </string>
     <string name="sync_stop">Stop Sync</string>
-    <string name="sync_close">Close</string>
 
     <!-- Hotspot Instructions -->
-
     <string name="hotspot_instructions">Sync Instructions</string>
     <string name="hotspot_instructions_disabled">WiFi Hotspot disabled</string>
     <string name="hotspot_instructions_disabled_text">
@@ -33,4 +35,13 @@
       Your WiFi Hotspot is now enabled. You can start the Sync with People.
     </string>
     <string name="hotspot_instructions_start_sync">Start Sync with People</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="settings_delete_data">Delete all stored data</string>
+    <string name="settings_delete_data_description">
+        Deleting the data stored on your device will not lose anyone\'s messages.
+        Messages will be delivered by the next courier exchange.
+    </string>
+    <string name="settings_delete_dialog_title">Are you sure?</string>
 </resources>

@@ -5,6 +5,8 @@ import kotlin.math.min
 data class StorageSize(
     val bytes: Long
 ) {
+    val isZero get() = bytes == 0L
+
     operator fun plus(size: StorageSize) = StorageSize(bytes + size.bytes)
     operator fun minus(size: StorageSize) = StorageSize(bytes - size.bytes)
 
