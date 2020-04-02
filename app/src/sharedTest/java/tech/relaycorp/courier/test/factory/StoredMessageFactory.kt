@@ -20,7 +20,7 @@ object StoredMessageFactory {
             creationTimeUtc = Date(),
             expirationTimeUtc = Date(),
             storagePath = "",
-            size = Random().nextInt(1000).toLong()
+            size = StorageSizeFactory.build()
         )
     }
 }

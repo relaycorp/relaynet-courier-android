@@ -10,6 +10,7 @@ import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.PrivateMessageAddress
+import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
 
 @Dao
@@ -24,8 +25,8 @@ interface StoredMessageDao {
     @Query("SELECT * FROM Message")
     fun observeAll(): Flow<List<StoredMessage>>
 
-    @Query("SELECT SUM(Message.size) FROM Message")
-    fun observeFullSize(): Flow<Long>
+    @Query("SELECT COALESCE(SUM(Message.size), 0) FROM Message")
+    fun observeTotalSize(): Flow<StorageSize>
 
     @Query("SELECT * FROM Message WHERE senderAddress = :senderAddress AND messageId = :messageId LIMIT 1")
     suspend fun get(senderAddress: PrivateMessageAddress, messageId: MessageId): StoredMessage

@@ -15,6 +15,25 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/main_storage_usage"/>
+
+        <ProgressBar
+            android:id="@+id/storageProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            />
+
+        <TextView
+            android:id="@+id/storageValues"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/main_storage_usage_values"/>
+
         <LinearLayout
             android:id="@+id/syncPeopleLayout"
             android:layout_width="match_parent"

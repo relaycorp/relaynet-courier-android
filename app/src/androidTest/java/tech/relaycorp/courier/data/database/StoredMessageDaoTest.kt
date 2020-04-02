@@ -32,13 +32,18 @@ class StoredMessageDaoTest {
 
     @Test
     fun getFullSize() = runBlockingTest {
+        assertEquals(
+            0L,
+            storedMessageDao.observeTotalSize().first()
+        )
+
         val messages =
             (1..3)
                 .map { StoredMessageFactory.build() }
                 .also { it.map { c -> storedMessageDao.insert(c) } }
         assertEquals(
-            messages.map { it.size }.sum(),
-            storedMessageDao.observeFullSize().first()
+            messages.map { it.size.bytes }.sum(),
+            storedMessageDao.observeTotalSize().first().bytes
         )
     }
 }
