@@ -19,7 +19,7 @@ class WifiHotspotStateReceiver
     private val context: Context
 ) : BroadcastReceiver() {
 
-    private val state = BehaviorChannel<WifiHotspotState>()
+    private val state = BehaviorChannel(WifiHotspotState.Disabled)
     fun state() = state.asFlow().distinctUntilChanged()
 
     fun register() {

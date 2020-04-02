@@ -10,6 +10,7 @@ import tech.relaycorp.courier.App
 import tech.relaycorp.courier.data.database.AppDatabase
 import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
 import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 class DataModule {
@@ -23,6 +24,7 @@ class DataModule {
         }
 
     @Provides
+    @Singleton
     fun database(context: Context, @Named("database_name") databaseName: String) =
         Room.databaseBuilder(context, AppDatabase::class.java, databaseName).build()
 

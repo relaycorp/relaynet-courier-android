@@ -22,7 +22,7 @@ class MockCogRPCClient(serverAddress: String) : CogRPCClient(serverAddress) {
         flow {
             delay(500)
             emit(
-                CogRPC.MessageReceived(ByteArray(0).inputStream())
+                CogRPC.MessageReceived("CARGO".toByteArray().inputStream())
             )
         }
 }

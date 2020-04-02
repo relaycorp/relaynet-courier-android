@@ -2,21 +2,22 @@ package tech.relaycorp.courier.data.network
 
 import java.io.InputStream
 import java.util.Date
+import java.util.UUID
 
 // Mock RAMFMessage to help us with the high-level implementation
 // The fields won't be available exactly like this, but it's enough for now
 open class RAMFMessage protected constructor(
-    val recipientAddress: String = "",
-    val senderPrivateAddress: String = "",
-    val messageId: String = "",
+    val recipientAddress: String = UUID.randomUUID().toString(),
+    val senderPrivateAddress: String = UUID.randomUUID().toString(),
+    val messageId: String = UUID.randomUUID().toString(),
     val creationTime: Date = Date(),
-    val ttl: Int = 0,
+    val ttl: Int = Int.MAX_VALUE,
     val payload: ByteArray = ByteArray(0)
 )
 
-class Cargo private constructor() : RAMFMessage() {
+class Cargo private constructor(payload: ByteArray) : RAMFMessage(payload = payload) {
     companion object {
-        fun wrap(data: InputStream) = Cargo()
+        fun wrap(data: InputStream) = Cargo(data.readBytes())
     }
 }
 

@@ -31,7 +31,7 @@ class MockCogRPCServer(
                 clientsConnected.send(1)
 
                 val cargoes = connectionService.collectCargo(
-                    CogRPC.MessageReceived(ByteArray(0).inputStream())
+                    CogRPC.MessageReceived("CARGO".toByteArray().inputStream())
                 )
 
                 cargoes.forEach {
@@ -44,7 +44,7 @@ class MockCogRPCServer(
 
                 repeat(3) {
                     connectionService.deliverCargo(
-                        CogRPC.MessageReceived(ByteArray(0).inputStream())
+                        CogRPC.MessageReceived("CARGO".toByteArray().inputStream())
                     )
                 }
                 clientsConnected.send(0)

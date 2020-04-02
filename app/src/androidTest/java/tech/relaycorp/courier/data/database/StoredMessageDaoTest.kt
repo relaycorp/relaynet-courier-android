@@ -7,6 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.test.AppTestProvider.database
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
 
@@ -31,9 +32,9 @@ class StoredMessageDaoTest {
     }
 
     @Test
-    fun getFullSize() = runBlockingTest {
+    fun observeTotalSize() = runBlockingTest {
         assertEquals(
-            0L,
+            StorageSize.ZERO,
             storedMessageDao.observeTotalSize().first()
         )
 

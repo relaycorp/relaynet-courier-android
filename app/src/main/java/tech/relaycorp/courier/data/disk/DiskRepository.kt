@@ -39,6 +39,15 @@ class DiskRepository
         }
     }
 
+    suspend fun deleteAllMessages() {
+        withContext(Dispatchers.IO) {
+            val messagesDir = getOrCreateMessagesDir()
+            messagesDir.listFiles()?.forEach { file ->
+                file.delete()
+            }
+        }
+    }
+
     private suspend fun writeMessageUnhandled(message: ByteArray) =
         withContext(Dispatchers.IO) {
             val file = createUniqueFile()

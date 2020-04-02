@@ -25,5 +25,44 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_delete_data_description" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_max_storage"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/storageMaxSeek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/storageMaxValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            tools:text="1.00 GB" />
+
+        <TextView
+            android:id="@+id/storageUsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_used_storage"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/storageAvailable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_available_storage"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/storageTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_total_storage"
+            android:textIsSelectable="true" />
+
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
