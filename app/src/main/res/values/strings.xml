@@ -9,6 +9,10 @@
     <!-- Main -->
     <string name="main_storage_usage">Storage Usage</string>
     <string name="main_storage_usage_values">%1$s of %2$s (%3$d%%)</string>
+    <string name="main_low_storage">
+        Your available storage is running low.
+        The app might not be able to store new data to be exchanged.
+    </string>
     <string name="main_deleted_expired_messages">%s of expired data has been deleted</string>
 
     <!-- Sync -->
@@ -49,4 +53,5 @@
     <string name="settings_used_storage">Used: %1$s (%2$d%%)</string>
     <string name="settings_available_storage">Available: %s</string>
     <string name="settings_total_storage">Total: %s</string>
+    
 </resources>

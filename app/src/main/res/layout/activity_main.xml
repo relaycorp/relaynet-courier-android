@@ -18,21 +18,28 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/main_storage_usage"/>
+            android:text="@string/main_storage_usage" />
 
         <ProgressBar
             android:id="@+id/storageProgress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="100"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            />
+            android:max="100" />
 
         <TextView
             android:id="@+id/storageValues"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/main_storage_usage_values"/>
+            android:text="@string/main_storage_usage_values" />
+
+        <TextView
+            android:id="@+id/lowStorageMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/main_low_storage"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/syncPeopleLayout"

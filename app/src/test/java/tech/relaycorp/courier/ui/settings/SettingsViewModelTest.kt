@@ -17,13 +17,13 @@ import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import tech.relaycorp.courier.domain.DeleteAllStorage
-import tech.relaycorp.courier.domain.ObserveStorageUsage
+import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.ui.common.EnableState
 
 internal class SettingsViewModelTest {
 
-    private val observeStorageUsage = mock<ObserveStorageUsage>()
+    private val observeStorageUsage = mock<GetStorageUsage>()
     private val deleteAllStorage = mock<DeleteAllStorage>()
     private val storagePreferences = mock<StoragePreferences>()
     private val diskStats = mock<DiskStats>() {

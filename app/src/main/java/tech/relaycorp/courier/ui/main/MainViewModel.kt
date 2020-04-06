@@ -11,14 +11,14 @@ import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteExpiredMessages
-import tech.relaycorp.courier.domain.ObserveStorageUsage
+import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.ui.BaseViewModel
 import javax.inject.Inject
 
 class MainViewModel
 @Inject constructor(
     internetConnectionObserver: InternetConnectionObserver,
-    observeStorageUsage: ObserveStorageUsage,
+    getStorageUsage: GetStorageUsage,
     deleteExpiredMessages: DeleteExpiredMessages
 ) : BaseViewModel() {
 
@@ -27,6 +27,9 @@ class MainViewModel
 
     private val storageUsage = BehaviorChannel<StorageUsage>()
     fun storageUsage() = storageUsage.asFlow()
+
+    private val lowStorageMessageIsVisible = BehaviorChannel<Boolean>(false)
+    fun lowStorageMessageIsVisible() = lowStorageMessageIsVisible.asFlow()
 
     private val expiredMessagesDeleted = BehaviorChannel<StorageSize>()
     fun expiredMessagesDeleted() = expiredMessagesDeleted.asFlow()
@@ -44,9 +47,12 @@ class MainViewModel
             }
             .launchIn(ioScope)
 
-        observeStorageUsage
+        getStorageUsage
             .observe()
-            .onEach(storageUsage::send)
+            .onEach {
+                storageUsage.send(it)
+                lowStorageMessageIsVisible.send(it.isLowOnSpace)
+            }
             .launchIn(ioScope)
 
         ioScope.launch {

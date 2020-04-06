@@ -7,6 +7,7 @@ import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
+import tech.relaycorp.courier.data.network.Cargo
 import tech.relaycorp.courier.data.network.cogrpc.CogRPC
 import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.DeleteMessage
@@ -49,7 +50,7 @@ class CargoCollection
     }
 
     private suspend fun storeCargo(data: InputStream) =
-        storeMessage.storeCargo(data)
+        storeMessage.storeCargo(Cargo.wrap(data))
 
     private suspend fun deleteCCA(cca: StoredMessage) =
         deleteMessage.delete(cca)
