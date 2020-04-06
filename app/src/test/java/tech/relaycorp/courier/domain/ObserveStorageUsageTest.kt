@@ -24,7 +24,6 @@ internal class ObserveStorageUsageTest {
     internal fun `observe when there is enough space`() = runBlockingTest {
         whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
         whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
-        whenever(diskStats.totalStorage).thenReturn(StorageSize(1_000_000))
         whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(999_999)))
 
         assertEquals(
@@ -37,7 +36,6 @@ internal class ObserveStorageUsageTest {
     internal fun `observe when there is less space than configured`() = runBlockingTest {
         whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
         whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
-        whenever(diskStats.totalStorage).thenReturn(StorageSize(1_000_000))
         whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(10_000)))
 
         assertEquals(

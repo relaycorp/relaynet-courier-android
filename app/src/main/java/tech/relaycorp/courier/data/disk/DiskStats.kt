@@ -2,9 +2,11 @@ package tech.relaycorp.courier.data.disk
 
 import android.os.Environment
 import android.os.StatFs
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import tech.relaycorp.courier.data.model.StorageSize
 import javax.inject.Inject
 import kotlin.time.seconds
@@ -14,18 +16,16 @@ class DiskStats
 
     private val internalStats by lazy { StatFs(Environment.getDataDirectory().path) }
 
-    val totalStorage
-        get() =
-            StorageSize(internalStats.totalBytes)
+    suspend fun getTotalStorage() =
+        withContext(Dispatchers.IO) { StorageSize(internalStats.totalBytes) }
 
-    val availableStorage
-        get() =
-            StorageSize(internalStats.availableBytes)
+    suspend fun getAvailableStorage() =
+        withContext(Dispatchers.IO) { StorageSize(internalStats.availableBytes) }
 
     fun observeAvailableStorage() =
         flow {
             while (true) {
-                emit(availableStorage)
+                emit(getAvailableStorage())
                 delay(10.seconds)
             }
         }.distinctUntilChanged()

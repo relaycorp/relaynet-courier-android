@@ -1,7 +1,6 @@
 package tech.relaycorp.courier.ui.main
 
 import android.os.Bundle
-import android.text.format.Formatter
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.common.format
 import tech.relaycorp.courier.ui.settings.SettingsActivity
 import tech.relaycorp.courier.ui.sync.internet.InternetSyncActivity
 import tech.relaycorp.courier.ui.sync.people.PeopleSyncActivity
@@ -64,8 +64,8 @@ class MainActivity : BaseActivity() {
         storageProgress.progress = usage.percentage
         storageValues.text = getString(
             R.string.main_storage_usage_values,
-            Formatter.formatFileSize(this, usage.usedByApp.bytes),
-            Formatter.formatFileSize(this, usage.actualMax.bytes),
+            usage.usedByApp.format(this),
+            usage.actualMax.format(this),
             usage.percentage
         )
     }

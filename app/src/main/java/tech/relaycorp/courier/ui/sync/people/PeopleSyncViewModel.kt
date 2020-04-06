@@ -34,10 +34,10 @@ class PeopleSyncViewModel
 
     fun clientsConnected() = privateSync.clientsConnected()
 
-    private val openHotspotInstructions = PublishChannel<Unit>()
+    private val openHotspotInstructions = BehaviorChannel<Unit>()
     fun openHotspotInstructions() = openHotspotInstructions.asFlow()
 
-    private val finish = PublishChannel<Finish>()
+    private val finish = BehaviorChannel<Finish>()
     fun finish() = finish.asFlow()
 
     init {
