@@ -99,9 +99,9 @@ class SettingsViewModel
 
     companion object {
         @VisibleForTesting
-        val MIN_STORAGE_SIZE = StorageSize(500_000_000)
+        val MIN_STORAGE_SIZE = StorageSize(100_000_000)
 
         @VisibleForTesting
-        val STORAGE_SIZE_STEP = StorageSize(500_000_000)
+        val STORAGE_SIZE_STEP = StorageSize(100_000_000)
     }
 }
