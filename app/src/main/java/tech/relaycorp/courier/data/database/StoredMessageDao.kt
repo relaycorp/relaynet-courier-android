@@ -12,6 +12,7 @@ import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
+import java.util.Date
 
 @Dao
 interface StoredMessageDao {
@@ -57,4 +58,7 @@ interface StoredMessageDao {
         recipientAddress: MessageAddress,
         type: MessageType
     ): List<StoredMessage>
+
+    @Query("SELECT * FROM Message WHERE expirationTimeUtc <= :timeUtc")
+    suspend fun getExpiredBy(timeUtc: Date): List<StoredMessage>
 }

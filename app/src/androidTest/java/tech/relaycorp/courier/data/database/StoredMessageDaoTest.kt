@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.test.AppTestProvider.database
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class StoredMessageDaoTest {
@@ -45,6 +46,23 @@ class StoredMessageDaoTest {
         assertEquals(
             messages.map { it.size.bytes }.sum(),
             storedMessageDao.observeTotalSize().first().bytes
+        )
+    }
+
+    @Test
+    fun getExpiredBy() = runBlockingTest {
+        val date = Date()
+        val expiredMessage = StoredMessageFactory.build()
+            .copy(expirationTimeUtc = Date(date.time - 1))
+        val unexpiredMessage = StoredMessageFactory.build()
+            .copy(expirationTimeUtc = Date(date.time + 1))
+
+        storedMessageDao.insert(expiredMessage)
+        storedMessageDao.insert(unexpiredMessage)
+
+        assertEquals(
+            listOf(expiredMessage),
+            storedMessageDao.getExpiredBy(date)
         )
     }
 }

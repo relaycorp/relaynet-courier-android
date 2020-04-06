@@ -1,6 +1,7 @@
 package tech.relaycorp.courier.ui.main
 
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
+import tech.relaycorp.courier.domain.DeleteExpiredMessages
 import tech.relaycorp.courier.domain.ObserveStorageUsage
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.test.test
@@ -21,6 +23,7 @@ internal class MainViewModelTest {
 
     private val connectionObserver = mock<InternetConnectionObserver>()
     private val observeStorageUsage = mock<ObserveStorageUsage>()
+    private val deleteExpiredMessages = mock<DeleteExpiredMessages>()
 
     @BeforeEach
     internal fun setUp() {
@@ -52,5 +55,12 @@ internal class MainViewModelTest {
         assertEquals(storageUsage, viewModel.storageUsage().first())
     }
 
-    private fun buildViewModel() = MainViewModel(connectionObserver, observeStorageUsage)
+    @Test
+    internal fun `deletes expired messages`() = runBlockingTest {
+        buildViewModel()
+        verify(deleteExpiredMessages).delete()
+    }
+
+    private fun buildViewModel() =
+        MainViewModel(connectionObserver, observeStorageUsage, deleteExpiredMessages)
 }

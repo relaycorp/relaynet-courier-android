@@ -3,10 +3,12 @@ package tech.relaycorp.courier.ui.main
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
 import tech.relaycorp.courier.common.BehaviorChannel
 import tech.relaycorp.courier.data.model.StorageUsage
+import tech.relaycorp.courier.domain.DeleteExpiredMessages
 import tech.relaycorp.courier.domain.ObserveStorageUsage
 import tech.relaycorp.courier.ui.BaseViewModel
 import javax.inject.Inject
@@ -14,7 +16,8 @@ import javax.inject.Inject
 class MainViewModel
 @Inject constructor(
     internetConnectionObserver: InternetConnectionObserver,
-    observeStorageUsage: ObserveStorageUsage
+    observeStorageUsage: ObserveStorageUsage,
+    deleteExpiredMessages: DeleteExpiredMessages
 ) : BaseViewModel() {
 
     private val syncMode = BehaviorChannel<SyncMode>()
@@ -40,6 +43,10 @@ class MainViewModel
             .observe()
             .onEach(storageUsage::send)
             .launchIn(ioScope)
+
+        ioScope.launch {
+            deleteExpiredMessages.delete()
+        }
     }
 
     enum class SyncMode {
