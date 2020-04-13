@@ -69,7 +69,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':relaynet-jvm') // TODO: remove when real version is finished
+    implementation project(':relaynet-cogrpc-jvm')
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -101,6 +102,10 @@ dependencies {
     // Preferences
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.github.tfcporciuncula:flow-preferences:1.1.0'
+
+    // TLS implementation for CogRPC Netty server
+    implementation 'io.netty:netty-handler:4.1.48.Final'
+    implementation 'org.conscrypt:conscrypt-android:2.4.0'
 
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'

@@ -3,7 +3,7 @@ package tech.relaycorp.courier.domain
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import tech.relaycorp.courier.common.BehaviorChannel
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
+import tech.relaycorp.relaynet.CargoRelayClient
 import tech.relaycorp.courier.domain.client.CargoCollection
 import tech.relaycorp.courier.domain.client.CargoDelivery
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class PublicSync
     suspend fun sync() {
         try {
             syncUnhandled()
-        } catch (e: CogRPCClient.Exception) {
+        } catch (e: CargoRelayClient.Exception) {
             state.send(State.Error)
         }
     }

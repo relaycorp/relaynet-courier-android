@@ -1,24 +1,27 @@
-package tech.relaycorp.courier.data.network.cogrpc
+package tech.relaycorp.relaynet.cogrpc
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
-import tech.relaycorp.courier.common.BehaviorChannel
+import tech.relaycorp.relaynet.CargoRelay
+import tech.relaycorp.relaynet.CargoRelayServer
 
-class MockCogRPCServer(
+class MockCargoRelayServer
+internal constructor(
     networkLocation: String
-) : CogRPCServer(networkLocation) {
+) : CargoRelayServer {
 
-    private val clientsConnected = BehaviorChannel(0)
+    private val clientsConnected = ConflatedBroadcastChannel(0)
 
     override var isStarted: Boolean = false
 
     private var fakeClientThread: Job? = null
 
     override suspend fun start(
-        connectionService: ConnectionService,
+        connectionService: CargoRelayServer.ConnectionService,
         onForcedStop: ((Throwable) -> Unit)
     ) {
         isStarted = true
@@ -31,20 +34,20 @@ class MockCogRPCServer(
                 clientsConnected.send(1)
 
                 val cargoes = connectionService.collectCargo(
-                    CogRPC.MessageReceived("CARGO".toByteArray().inputStream())
+                    CargoRelay.MessageReceived("CARGO".toByteArray().inputStream())
                 )
 
                 cargoes.forEach {
                     delay(500)
                     it.data.close()
-                    connectionService.processCargoCollectionAck(CogRPC.MessageDeliveryAck(it.localId))
+                    connectionService.processCargoCollectionAck(CargoRelay.MessageDeliveryAck(it.localId))
                 }
 
                 delay(3000)
 
                 repeat(3) {
                     connectionService.deliverCargo(
-                        CogRPC.MessageReceived("CARGO".toByteArray().inputStream())
+                        CargoRelay.MessageReceived("CARGO".toByteArray().inputStream())
                     )
                 }
                 clientsConnected.send(0)
@@ -57,4 +60,9 @@ class MockCogRPCServer(
     }
 
     override fun clientsConnected() = clientsConnected.asFlow()
+
+    object Builder : CargoRelayServer.Builder {
+        override fun build(networkLocation: String) =
+            MockCargoRelayServer(networkLocation)
+    }
 }

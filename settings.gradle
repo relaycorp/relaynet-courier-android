@@ -1,2 +1,4 @@
 rootProject.name='Relaynet Courier'
 include ':app'
+include ':relaynet-jvm'
+include ':relaynet-cogrpc-jvm'

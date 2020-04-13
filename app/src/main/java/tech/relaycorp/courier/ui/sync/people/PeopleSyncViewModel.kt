@@ -65,5 +65,12 @@ class PeopleSyncViewModel
             .launchIn(ioScope)
     }
 
+    override fun onCleared() {
+        ioScope.launch {
+            privateSync.stopSync()
+        }
+        super.onCleared()
+    }
+
     private suspend fun getHotspotState() = wifiHotspotStateReceiver.state().first()
 }

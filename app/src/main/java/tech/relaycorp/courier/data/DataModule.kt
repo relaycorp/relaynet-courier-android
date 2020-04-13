@@ -2,13 +2,19 @@ package tech.relaycorp.courier.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.TrafficStats
 import androidx.room.Room
 import com.tfcporciuncula.flow.FlowSharedPreferences
+import dagger.BindsInstance
 import dagger.Module
 import dagger.Provides
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.data.database.AppDatabase
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
+import tech.relaycorp.relaynet.CargoRelayClient
+import tech.relaycorp.relaynet.cogrpc.MockCargoRelayClient
+import tech.relaycorp.relaynet.cogrpc.MockCargoRelayServer
+import tech.relaycorp.relaynet.CargoRelayServer
+import tech.relaycorp.relaynet.cogrpc.server.CogRPCServer
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -51,6 +57,9 @@ class DataModule {
         FlowSharedPreferences(sharedPreferences)
 
     @Provides
-    fun cogRPCServer() =
-        CogRPCServer.build("127.0.0.1:8080")
+    fun cargoRelayClientBuilder(): CargoRelayClient.Builder = MockCargoRelayClient.Builder
+
+    @Provides
+    fun cargoRelayServer(): CargoRelayServer =
+        CogRPCServer.Builder.build("0.0.0.0:21478")
 }

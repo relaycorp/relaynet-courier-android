@@ -5,11 +5,11 @@ import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.cogrpc.CogRPC
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
 import tech.relaycorp.courier.domain.client.UniqueMessageId
+import tech.relaycorp.relaynet.CargoRelay
+import tech.relaycorp.relaynet.CargoRelayServer
 import javax.inject.Inject
 
 class ServerConnectionService
@@ -18,22 +18,22 @@ class ServerConnectionService
     private val storedMessageDao: StoredMessageDao,
     private val diskRepository: DiskRepository,
     private val deleteMessage: DeleteMessage
-) : CogRPCServer.ConnectionService {
+) : CargoRelayServer.ConnectionService {
 
-    override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
+    override suspend fun collectCargo(cca: CargoRelay.MessageReceived): Iterable<CargoRelay.MessageDelivery> {
         val ccaMessage = storeMessage.storeCCA(cca.data) ?: return emptyList()
         return storedMessageDao
             .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
             .toCogRPCMessages()
     }
 
-    override suspend fun processCargoCollectionAck(ack: CogRPC.MessageDeliveryAck) {
+    override suspend fun processCargoCollectionAck(ack: CargoRelay.MessageDeliveryAck) {
         UniqueMessageId.from(ack.localId).let {
             deleteMessage.delete(it.senderPrivateAddress, it.messageId)
         }
     }
 
-    override suspend fun deliverCargo(cargo: CogRPC.MessageReceived) {
+    override suspend fun deliverCargo(cargo: CargoRelay.MessageReceived) {
         storeMessage.storeCargo(cargo.data)
     }
 
@@ -43,7 +43,7 @@ class ServerConnectionService
     private suspend fun StoredMessage.toCogRPCMessage() =
         readMessage(this)
             ?.let { data ->
-                CogRPC.MessageDelivery(
+                CargoRelay.MessageDelivery(
                     localId = uniqueMessageId.value,
                     data = data
                 )

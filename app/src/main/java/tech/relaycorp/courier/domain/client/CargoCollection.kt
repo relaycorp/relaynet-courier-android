@@ -7,17 +7,17 @@ import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.Cargo
-import tech.relaycorp.courier.data.network.cogrpc.CogRPC
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
+import tech.relaycorp.relaynet.CargoRelay
+import tech.relaycorp.relaynet.CargoRelayClient
 import timber.log.Timber
 import java.io.InputStream
 import javax.inject.Inject
 
 class CargoCollection
 @Inject constructor(
+    private val cargoRelayClientBuilder: CargoRelayClient.Builder,
     private val storedMessageDao: StoredMessageDao,
     private val storeMessage: StoreMessage,
     private val deleteMessage: DeleteMessage,
@@ -40,7 +40,7 @@ class CargoCollection
 
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
         try {
-            CogRPCClient
+            cargoRelayClientBuilder
                 .build(cca.recipientAddress.value)
                 .collectCargo(cca.toCogRPCMessage())
                 .collect { storeCargo(it.data) }
@@ -57,7 +57,7 @@ class CargoCollection
 
     @Throws(MessageDataNotFoundException::class)
     private suspend fun StoredMessage.toCogRPCMessage() =
-        CogRPC.MessageDelivery(
+        CargoRelay.MessageDelivery(
             localId = uniqueMessageId.value,
             data = diskRepository.readMessage(storagePath)
         )

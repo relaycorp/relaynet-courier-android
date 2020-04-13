@@ -1,4 +1,4 @@
-package tech.relaycorp.courier.data.network
+package tech.relaycorp.relaynet
 
 import java.util.Date
 import java.util.UUID

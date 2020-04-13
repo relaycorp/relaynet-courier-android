@@ -1,0 +1,17 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += [
+            '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
+            '-Xuse-experimental=kotlinx.coroutines.FlowPreview'
+    ]
+}
