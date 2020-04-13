@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
@@ -21,8 +22,12 @@ internal class DeleteExpiredMessagesTest {
         val message = StoredMessageFactory.build()
         whenever(storedMessageDao.getExpiredBy(any())).thenReturn(listOf(message))
 
-        subject.delete()
+        val result = subject.delete()
 
         verify(deleteMessage).delete(eq(message))
+        assertEquals(
+            result,
+            listOf(message)
+        )
     }
 }

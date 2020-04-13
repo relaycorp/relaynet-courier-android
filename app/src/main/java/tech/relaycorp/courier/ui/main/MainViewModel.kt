@@ -7,7 +7,9 @@ import kotlinx.coroutines.launch
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
 import tech.relaycorp.courier.common.BehaviorChannel
+import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
+import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteExpiredMessages
 import tech.relaycorp.courier.domain.ObserveStorageUsage
 import tech.relaycorp.courier.ui.BaseViewModel
@@ -25,6 +27,9 @@ class MainViewModel
 
     private val storageUsage = BehaviorChannel<StorageUsage>()
     fun storageUsage() = storageUsage.asFlow()
+
+    private val expiredMessagesDeleted = BehaviorChannel<StorageSize>()
+    fun expiredMessagesDeleted() = expiredMessagesDeleted.asFlow()
 
     init {
         internetConnectionObserver
@@ -45,9 +50,15 @@ class MainViewModel
             .launchIn(ioScope)
 
         ioScope.launch {
-            deleteExpiredMessages.delete()
+            val messagesDeleted = deleteExpiredMessages.delete()
+            if (messagesDeleted.any()) {
+                expiredMessagesDeleted.send(messagesDeleted.sumMessageSize())
+            }
         }
     }
+
+    private fun List<StoredMessage>.sumMessageSize() =
+        map { it.size }.reduce { acc, messageSize -> acc + messageSize }
 
     enum class SyncMode {
         People, Internet

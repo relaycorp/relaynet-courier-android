@@ -103,7 +103,7 @@ dependencies {
     implementation 'com.github.tfcporciuncula:flow-preferences:1.1.0'
 
     // Testing
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
     testImplementation 'org.mockito:mockito-inline:3.3.3'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'

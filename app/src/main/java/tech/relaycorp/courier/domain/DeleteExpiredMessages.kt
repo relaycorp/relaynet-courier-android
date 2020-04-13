@@ -10,10 +10,12 @@ class DeleteExpiredMessages
     private val deleteMessage: DeleteMessage
 ) {
 
-    suspend fun delete() {
-        val messagesToDelete = storedMessageDao.getExpiredBy(Date())
-        messagesToDelete.forEach {
-            deleteMessage.delete(it)
-        }
-    }
+    suspend fun delete() =
+        storedMessageDao
+            .getExpiredBy(Date())
+            .also { messagesToDelete ->
+                messagesToDelete.forEach {
+                    deleteMessage.delete(it)
+                }
+            }
 }
