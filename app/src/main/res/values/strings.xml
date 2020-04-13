@@ -9,6 +9,7 @@
     <!-- Main -->
     <string name="main_storage_usage">Storage Usage</string>
     <string name="main_storage_usage_values">%1$s of %2$s (%3$d%%)</string>
+    <string name="main_deleted_expired_messages">%s of expired data has been deleted</string>
 
     <!-- Sync -->
     <string name="sync">Sync</string>

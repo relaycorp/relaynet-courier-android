@@ -58,6 +58,15 @@ class MainActivity : BaseActivity() {
                 syncInternetLayout.isVisible = it == MainViewModel.SyncMode.Internet
             }
             .launchIn(lifecycleScope)
+
+        viewModel
+            .expiredMessagesDeleted()
+            .onEach {
+                messageManager.showMessage(
+                    getString(R.string.main_deleted_expired_messages, it.format(this))
+                )
+            }
+            .launchIn(lifecycleScope)
     }
 
     private fun updateStorageUsage(usage: StorageUsage) {

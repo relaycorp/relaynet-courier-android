@@ -13,14 +13,19 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
+import tech.relaycorp.courier.domain.DeleteExpiredMessages
 import tech.relaycorp.courier.domain.ObserveStorageUsage
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
+import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import tech.relaycorp.courier.test.test
 
 internal class MainViewModelTest {
 
     private val connectionObserver = mock<InternetConnectionObserver>()
     private val observeStorageUsage = mock<ObserveStorageUsage>()
+    private val deleteExpiredMessages = mock<DeleteExpiredMessages>() {
+        onBlocking { delete() }.thenReturn(emptyList())
+    }
 
     @BeforeEach
     internal fun setUp() {
@@ -52,5 +57,17 @@ internal class MainViewModelTest {
         assertEquals(storageUsage, viewModel.storageUsage().first())
     }
 
-    private fun buildViewModel() = MainViewModel(connectionObserver, observeStorageUsage)
+    @Test
+    internal fun `deletes expired messages and show notice with size deleted`() = runBlockingTest {
+        val messagesToDelete = listOf(StoredMessageFactory.build())
+        whenever(deleteExpiredMessages.delete()).thenReturn(messagesToDelete)
+        val viewModel = buildViewModel()
+        assertEquals(
+            messagesToDelete.first().size,
+            viewModel.expiredMessagesDeleted().first()
+        )
+    }
+
+    private fun buildViewModel() =
+        MainViewModel(connectionObserver, observeStorageUsage, deleteExpiredMessages)
 }
