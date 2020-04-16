@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.withContext
 import tech.relaycorp.relaynet.CargoRelayServer
 import java.net.InetSocketAddress
+import java.security.Security
 import java.util.logging.Logger
+import org.conscrypt.Conscrypt
 
 class CogRPCServer
 internal constructor(
@@ -35,6 +37,8 @@ internal constructor(
         connectionService: CargoRelayServer.ConnectionService,
         onForcedStop: (Throwable) -> Unit
     ) {
+        Security.insertProviderAt(Conscrypt.newProvider(), 1)
+
         job = SupervisorJob()
         _isStarted = true
 
@@ -68,10 +72,11 @@ internal constructor(
     override fun clientsConnected() = emptyFlow<Int>()
 
     private fun getResource(path: String) =
-        javaClass.classLoader.getResourceAsStream(path)
+        javaClass.classLoader!!.getResourceAsStream(path)
 
     object Builder : CargoRelayServer.Builder {
-        override fun build(networkLocation: String) = CogRPCServer(networkLocation)
+        override fun build(networkLocation: String) =
+            CogRPCServer(networkLocation)
     }
 
     companion object {

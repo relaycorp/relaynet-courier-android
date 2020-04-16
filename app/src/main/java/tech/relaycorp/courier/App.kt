@@ -3,12 +3,10 @@ package tech.relaycorp.courier
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
-import org.conscrypt.Conscrypt
 import tech.relaycorp.courier.background.WifiHotspotStateReceiver
 import tech.relaycorp.courier.common.di.AppComponent
 import tech.relaycorp.courier.common.di.DaggerAppComponent
 import timber.log.Timber
-import java.security.Security
 import javax.inject.Inject
 
 class App : Application() {
@@ -33,7 +31,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Security.insertProviderAt(Conscrypt.newProvider(), 1)
         component.inject(this)
         setupLogger()
         setupStrictMode()

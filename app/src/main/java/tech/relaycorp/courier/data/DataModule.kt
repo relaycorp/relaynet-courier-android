@@ -2,18 +2,15 @@ package tech.relaycorp.courier.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.TrafficStats
 import androidx.room.Room
 import com.tfcporciuncula.flow.FlowSharedPreferences
-import dagger.BindsInstance
 import dagger.Module
 import dagger.Provides
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.data.database.AppDatabase
 import tech.relaycorp.relaynet.CargoRelayClient
-import tech.relaycorp.relaynet.cogrpc.MockCargoRelayClient
-import tech.relaycorp.relaynet.cogrpc.MockCargoRelayServer
 import tech.relaycorp.relaynet.CargoRelayServer
+import tech.relaycorp.relaynet.cogrpc.MockCargoRelayClient
 import tech.relaycorp.relaynet.cogrpc.server.CogRPCServer
 import javax.inject.Named
 import javax.inject.Singleton
