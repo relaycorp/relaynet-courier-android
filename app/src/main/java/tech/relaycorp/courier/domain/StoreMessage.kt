@@ -11,6 +11,7 @@ import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.data.network.Cargo
 import tech.relaycorp.courier.data.network.CargoCollectionAuthorization
 import tech.relaycorp.courier.data.network.RAMFMessage
+import java.io.InputStream
 import java.util.Date
 import javax.inject.Inject
 
@@ -21,25 +22,40 @@ class StoreMessage
     private val getStorageUsage: GetStorageUsage
 ) {
 
-    suspend fun storeCargo(cargo: Cargo) =
-        storeMessage(cargo, MessageType.Cargo)
+    suspend fun storeCargo(cargoInputStream: InputStream): StoredMessage? {
+        val cargoBytes = cargoInputStream.readBytes()
+        val cargo = Cargo.deserialize(cargoBytes)
+        return storeMessage(MessageType.Cargo, cargo, cargoBytes)
+    }
 
-    suspend fun storeCCA(cca: CargoCollectionAuthorization) =
-        storeMessage(cca, MessageType.CCA)
+    suspend fun storeCCA(ccaInputStream: InputStream): StoredMessage? {
+        val ccaBytes = ccaInputStream.readBytes()
+        val cca = CargoCollectionAuthorization.deserialize(ccaBytes)
+        return storeMessage(MessageType.CCA, cca, ccaBytes)
+    }
 
-    private suspend fun storeMessage(message: RAMFMessage, type: MessageType): StoredMessage? {
-        if (!checkForAvailableSpace(message)) return null
+    private suspend fun storeMessage(
+        type: MessageType,
+        message: RAMFMessage,
+        data: ByteArray
+    ): StoredMessage? {
+        val dataSize = StorageSize(data.size.toLong())
+        if (!checkForAvailableSpace(dataSize)) return null
 
-        val storagePath = diskRepository.writeMessage(message.payload)
-        val storedMessage = message.toStoredMessage(type, storagePath)
+        val storagePath = diskRepository.writeMessage(data)
+        val storedMessage = message.toStoredMessage(type, storagePath, dataSize)
         storedMessageDao.insert(storedMessage)
         return storedMessage
     }
 
-    private suspend fun checkForAvailableSpace(message: RAMFMessage) =
-        getStorageUsage.get().available.bytes >= message.payload.size
+    private suspend fun checkForAvailableSpace(dataSize: StorageSize) =
+        getStorageUsage.get().available >= dataSize
 
-    private fun RAMFMessage.toStoredMessage(type: MessageType, storagePath: String): StoredMessage {
+    private fun RAMFMessage.toStoredMessage(
+        type: MessageType,
+        storagePath: String,
+        dataSize: StorageSize
+    ): StoredMessage {
         val recipientAddress = MessageAddress.of(recipientAddress)
         return StoredMessage(
             recipientAddress = recipientAddress,
@@ -49,7 +65,7 @@ class StoreMessage
             messageType = type,
             creationTimeUtc = creationTime,
             expirationTimeUtc = Date(creationTime.time + ttl * 1000),
-            size = StorageSize(payload.size.toLong()),
+            size = dataSize,
             storagePath = storagePath
         )
     }

@@ -4,10 +4,7 @@ import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageType
-import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.Cargo
-import tech.relaycorp.courier.data.network.CargoCollectionAuthorization
 import tech.relaycorp.courier.data.network.cogrpc.CogRPC
 import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
 import tech.relaycorp.courier.domain.DeleteMessage
@@ -24,11 +21,9 @@ class ServerConnectionService
 ) : CogRPCServer.ConnectionService {
 
     override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
-        val ccaMessage = CargoCollectionAuthorization.wrap(cca.data)
-        storeMessage.storeCCA(ccaMessage)
-        val senderAddress = PrivateMessageAddress(ccaMessage.senderPrivateAddress)
+        val ccaMessage = storeMessage.storeCCA(cca.data) ?: return emptyList()
         return storedMessageDao
-            .getByRecipientAddressAndMessageType(senderAddress, MessageType.Cargo)
+            .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
             .toCogRPCMessages()
     }
 
@@ -39,7 +34,7 @@ class ServerConnectionService
     }
 
     override suspend fun deliverCargo(cargo: CogRPC.MessageReceived) {
-        storeMessage.storeCargo(Cargo.wrap(cargo.data))
+        storeMessage.storeCargo(cargo.data)
     }
 
     private suspend fun List<StoredMessage>.toCogRPCMessages() =

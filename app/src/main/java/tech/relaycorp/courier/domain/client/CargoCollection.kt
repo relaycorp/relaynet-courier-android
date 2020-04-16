@@ -50,7 +50,7 @@ class CargoCollection
     }
 
     private suspend fun storeCargo(data: InputStream) =
-        storeMessage.storeCargo(Cargo.wrap(data))
+        storeMessage.storeCargo(data)
 
     private suspend fun deleteCCA(cca: StoredMessage) =
         deleteMessage.delete(cca)

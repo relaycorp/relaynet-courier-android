@@ -13,7 +13,6 @@ import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
-import tech.relaycorp.courier.test.factory.RAMFMessageFactory
 
 internal class StoreMessageTest {
 
@@ -24,10 +23,10 @@ internal class StoreMessageTest {
 
     @Test
     internal fun `store message`() = runBlockingTest {
-        val messageSize = 10L
-        val message = RAMFMessageFactory.buildCargo(messageSize.toInt())
+        val messageSize = 10
+        val message = ByteArray(messageSize).inputStream()
 
-        val storage = StorageUsage(StorageSize(0), StorageSize(messageSize))
+        val storage = StorageUsage(StorageSize(0), StorageSize(messageSize.toLong()))
         whenever(getStorageUsage.get()).thenReturn(storage)
         whenever(diskRepository.writeMessage(any())).thenReturn("")
 
@@ -39,7 +38,7 @@ internal class StoreMessageTest {
     @Test
     internal fun `do not store message if no space is available`() = runBlockingTest {
         val messageSize = 10
-        val message = RAMFMessageFactory.buildCargo(messageSize)
+        val message = ByteArray(messageSize).inputStream()
 
         val fullStorage = StorageUsage(StorageSize(1_000), StorageSize(1_000))
         whenever(getStorageUsage.get()).thenReturn(fullStorage)
