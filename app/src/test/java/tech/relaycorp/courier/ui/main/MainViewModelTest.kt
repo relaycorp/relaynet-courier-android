@@ -9,12 +9,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
+import tech.relaycorp.courier.data.model.StorageSize
+import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.domain.DeleteExpiredMessages
-import tech.relaycorp.courier.domain.ObserveStorageUsage
+import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import tech.relaycorp.courier.test.test
@@ -22,15 +25,15 @@ import tech.relaycorp.courier.test.test
 internal class MainViewModelTest {
 
     private val connectionObserver = mock<InternetConnectionObserver>()
-    private val observeStorageUsage = mock<ObserveStorageUsage>()
-    private val deleteExpiredMessages = mock<DeleteExpiredMessages>() {
+    private val getStorageUsage = mock<GetStorageUsage>()
+    private val deleteExpiredMessages = mock<DeleteExpiredMessages> {
         onBlocking { delete() }.thenReturn(emptyList())
     }
 
     @BeforeEach
     internal fun setUp() {
         whenever(connectionObserver.observe()).thenReturn(emptyFlow())
-        whenever(observeStorageUsage.observe()).thenReturn(emptyFlow())
+        whenever(getStorageUsage.observe()).thenReturn(emptyFlow())
     }
 
     @Test
@@ -51,7 +54,7 @@ internal class MainViewModelTest {
     @Test
     internal fun storageUsage() = runBlockingTest {
         val storageUsage = StorageUsageFactory.build()
-        whenever(observeStorageUsage.observe()).thenReturn(flowOf(storageUsage))
+        whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
         val viewModel = buildViewModel()
         assertEquals(storageUsage, viewModel.storageUsage().first())
@@ -68,6 +71,15 @@ internal class MainViewModelTest {
         )
     }
 
+    @Test
+    internal fun `low storage message is visible`() = runBlockingTest {
+        val storageUsage = StorageUsage(StorageSize(1), StorageSize(1))
+        whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
+
+        val viewModel = buildViewModel()
+        assertTrue(viewModel.lowStorageMessageIsVisible().first())
+    }
+
     private fun buildViewModel() =
-        MainViewModel(connectionObserver, observeStorageUsage, deleteExpiredMessages)
+        MainViewModel(connectionObserver, getStorageUsage, deleteExpiredMessages)
 }

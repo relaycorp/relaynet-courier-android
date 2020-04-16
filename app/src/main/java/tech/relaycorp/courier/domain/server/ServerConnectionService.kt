@@ -21,7 +21,7 @@ class ServerConnectionService
 ) : CogRPCServer.ConnectionService {
 
     override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
-        val ccaMessage = storeMessage.storeCCA(cca.data)
+        val ccaMessage = storeMessage.storeCCA(cca.data) ?: return emptyList()
         return storedMessageDao
             .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
             .toCogRPCMessages()

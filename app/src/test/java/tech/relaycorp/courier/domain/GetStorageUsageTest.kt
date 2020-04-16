@@ -13,12 +13,12 @@ import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 
-internal class ObserveStorageUsageTest {
+internal class GetStorageUsageTest {
 
     private val storedMessageDao = mock<StoredMessageDao>()
     private val storagePreferences = mock<StoragePreferences>()
     private val diskStats = mock<DiskStats>()
-    private val subject = ObserveStorageUsage(storedMessageDao, storagePreferences, diskStats)
+    private val subject = GetStorageUsage(storedMessageDao, storagePreferences, diskStats)
 
     @Test
     internal fun `observe when there is enough space`() = runBlockingTest {

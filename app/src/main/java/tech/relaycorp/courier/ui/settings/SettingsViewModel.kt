@@ -13,7 +13,7 @@ import tech.relaycorp.courier.data.disk.DiskStats
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import tech.relaycorp.courier.domain.DeleteAllStorage
-import tech.relaycorp.courier.domain.ObserveStorageUsage
+import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.ui.BaseViewModel
 import tech.relaycorp.courier.ui.common.Click
 import tech.relaycorp.courier.ui.common.EnableState
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 class SettingsViewModel
 @Inject constructor(
-    observeStorageUsage: ObserveStorageUsage,
+    getStorageUsage: GetStorageUsage,
     deleteAllStorage: DeleteAllStorage,
     storagePreferences: StoragePreferences,
     diskStats: DiskStats
@@ -51,13 +51,13 @@ class SettingsViewModel
     fun storageStats() = storageStats.asFlow()
 
     init {
-        observeStorageUsage
+        getStorageUsage
             .observe()
             .onEach { deleteDataEnabled.send((!it.usedByApp.isZero).toEnableState()) }
             .launchIn(ioScope)
 
         combine(
-            observeStorageUsage.observe(),
+            getStorageUsage.observe(),
             diskStats.observeAvailableStorage()
         ) { usage, available ->
             StorageStats(

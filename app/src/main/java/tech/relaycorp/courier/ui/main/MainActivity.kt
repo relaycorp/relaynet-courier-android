@@ -5,6 +5,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
+import kotlinx.android.synthetic.main.activity_main.lowStorageMessage
 import kotlinx.android.synthetic.main.activity_main.storageProgress
 import kotlinx.android.synthetic.main.activity_main.storageValues
 import kotlinx.android.synthetic.main.activity_main.syncInternetLayout
@@ -49,6 +50,11 @@ class MainActivity : BaseActivity() {
         viewModel
             .storageUsage()
             .onEach { updateStorageUsage(it) }
+            .launchIn(lifecycleScope)
+
+        viewModel
+            .lowStorageMessageIsVisible()
+            .onEach { lowStorageMessage.isVisible = it }
             .launchIn(lifecycleScope)
 
         viewModel

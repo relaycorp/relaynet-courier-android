@@ -18,23 +18,44 @@ import javax.inject.Inject
 class StoreMessage
 @Inject constructor(
     private val storedMessageDao: StoredMessageDao,
-    private val diskRepository: DiskRepository
+    private val diskRepository: DiskRepository,
+    private val getStorageUsage: GetStorageUsage
 ) {
 
-    suspend fun storeCargo(data: InputStream) =
-        storeMessage(Cargo.wrap(data), MessageType.Cargo)
+    suspend fun storeCargo(cargoInputStream: InputStream): StoredMessage? {
+        val cargoBytes = cargoInputStream.readBytes()
+        val cargo = Cargo.deserialize(cargoBytes)
+        return storeMessage(MessageType.Cargo, cargo, cargoBytes)
+    }
 
-    suspend fun storeCCA(data: InputStream) =
-        storeMessage(CargoCollectionAuthorization.wrap(data), MessageType.Cargo)
+    suspend fun storeCCA(ccaInputStream: InputStream): StoredMessage? {
+        val ccaBytes = ccaInputStream.readBytes()
+        val cca = CargoCollectionAuthorization.deserialize(ccaBytes)
+        return storeMessage(MessageType.CCA, cca, ccaBytes)
+    }
 
-    private suspend fun storeMessage(message: RAMFMessage, type: MessageType): StoredMessage {
-        val storagePath = diskRepository.writeMessage(message.payload)
-        val storedMessage = message.toStoredMessage(type, storagePath)
+    private suspend fun storeMessage(
+        type: MessageType,
+        message: RAMFMessage,
+        data: ByteArray
+    ): StoredMessage? {
+        val dataSize = StorageSize(data.size.toLong())
+        if (!checkForAvailableSpace(dataSize)) return null
+
+        val storagePath = diskRepository.writeMessage(data)
+        val storedMessage = message.toStoredMessage(type, storagePath, dataSize)
         storedMessageDao.insert(storedMessage)
         return storedMessage
     }
 
-    private fun RAMFMessage.toStoredMessage(type: MessageType, storagePath: String): StoredMessage {
+    private suspend fun checkForAvailableSpace(dataSize: StorageSize) =
+        getStorageUsage.get().available >= dataSize
+
+    private fun RAMFMessage.toStoredMessage(
+        type: MessageType,
+        storagePath: String,
+        dataSize: StorageSize
+    ): StoredMessage {
         val recipientAddress = MessageAddress.of(recipientAddress)
         return StoredMessage(
             recipientAddress = recipientAddress,
@@ -44,7 +65,7 @@ class StoreMessage
             messageType = type,
             creationTimeUtc = creationTime,
             expirationTimeUtc = Date(creationTime.time + ttl * 1000),
-            size = StorageSize(payload.size.toLong()),
+            size = dataSize,
             storagePath = storagePath
         )
     }

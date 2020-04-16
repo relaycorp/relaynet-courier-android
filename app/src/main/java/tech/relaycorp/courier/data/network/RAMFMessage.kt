@@ -1,6 +1,5 @@
 package tech.relaycorp.courier.data.network
 
-import java.io.InputStream
 import java.util.Date
 import java.util.UUID
 
@@ -11,18 +10,17 @@ open class RAMFMessage protected constructor(
     val senderPrivateAddress: String = UUID.randomUUID().toString(),
     val messageId: String = UUID.randomUUID().toString(),
     val creationTime: Date = Date(),
-    val ttl: Int = Int.MAX_VALUE,
-    val payload: ByteArray = ByteArray(0)
+    val ttl: Int = Int.MAX_VALUE
 )
 
-class Cargo private constructor(payload: ByteArray) : RAMFMessage(payload = payload) {
+class Cargo private constructor() : RAMFMessage() {
     companion object {
-        fun wrap(data: InputStream) = Cargo(data.readBytes())
+        fun deserialize(data: ByteArray) = Cargo()
     }
 }
 
 class CargoCollectionAuthorization private constructor() : RAMFMessage() {
     companion object {
-        fun wrap(data: InputStream) = CargoCollectionAuthorization()
+        fun deserialize(data: ByteArray) = CargoCollectionAuthorization()
     }
 }

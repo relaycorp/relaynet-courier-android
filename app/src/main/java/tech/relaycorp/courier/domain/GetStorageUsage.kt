@@ -1,6 +1,7 @@
 package tech.relaycorp.courier.domain
 
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskStats
 import tech.relaycorp.courier.data.model.StorageSize.Companion.min
@@ -8,12 +9,14 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import javax.inject.Inject
 
-class ObserveStorageUsage
+class GetStorageUsage
 @Inject constructor(
     private val storedMessageDao: StoredMessageDao,
     private val storagePreferences: StoragePreferences,
     private val diskStats: DiskStats
 ) {
+
+    suspend fun get() = observe().first()
 
     fun observe() =
         combine(

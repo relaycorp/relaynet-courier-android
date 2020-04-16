@@ -78,7 +78,7 @@ dependencies {
     // Android
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
 
@@ -90,7 +90,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Relaynet
-    implementation 'tech.relaycorp:relaynet:1.2.1'
+    implementation 'tech.relaycorp:relaynet:1.11.1'
 
     // ORM
     def room_version = "2.2.5"
@@ -99,7 +99,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
 
     // Preferences
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.github.tfcporciuncula:flow-preferences:1.1.0'
 
     // Testing
