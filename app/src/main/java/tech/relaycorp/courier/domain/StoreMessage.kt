@@ -64,8 +64,7 @@ class StoreMessage
             messageId = MessageId(messageId),
             messageType = type,
             creationTimeUtc = creationTime,
-            expirationTimeUtc = Date(creationTime.time + ttl * 1000),
-            size = dataSize,
+            expirationTimeUtc = Date(creationTime.time + ttl.toLong() * 1000),
             storagePath = storagePath
         )
     }

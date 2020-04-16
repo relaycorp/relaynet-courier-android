@@ -5,8 +5,8 @@ import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
-import java.io.InputStream
-import java.util.Base64
+import io.netty.handler.codec.base64.Base64Decoder
+import org.apache.commons.codec.binary.Base64
 
 internal object Authorization {
     internal val metadataKey =
@@ -39,11 +39,8 @@ internal object Authorization {
         }
 
         val ccaBase64 = auth.substring(CCA_HEADER.length)
-        return decodeBase64(ccaBase64)
+        return Base64().decode(ccaBase64.toByteArray())
     }
-
-    private fun decodeBase64(encoded: String) =
-        Base64.getDecoder().decode(encoded)
 
     private const val CCA_HEADER = "Relaynet-CCA "
 }

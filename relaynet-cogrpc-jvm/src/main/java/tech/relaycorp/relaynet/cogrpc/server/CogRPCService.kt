@@ -93,5 +93,5 @@ class CogRPCService(
     internal fun CargoDeliveryAck.toMessageDeliveryAck() =
         CargoRelay.MessageDeliveryAck(id)
 
-    internal val logger = Logger.getLogger(this.javaClass.name)
+    internal val logger = Logger.getLogger(javaClass.name)
 }

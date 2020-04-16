@@ -79,5 +79,5 @@ internal constructor(
         private const val MAX_METADATA_SIZE = 10_000 // CCAs
     }
 
-    private val logger = Logger.getLogger(this.javaClass.name)
+    private val logger = Logger.getLogger(javaClass.name)
 }
