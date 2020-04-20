@@ -7,7 +7,6 @@ apply plugin: 'com.diffplug.gradle.spotless'
 apply from: 'jacoco.gradle'
 
 repositories {
-    maven { url "https://dl.bintray.com/relaycorp/maven" }
     maven { url "https://jitpack.io" }
 }
 
@@ -90,7 +89,8 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Relaynet
-    implementation 'tech.relaycorp:relaynet:1.11.1'
+    implementation 'tech.relaycorp:relaynet:1.11.2'
+    implementation 'tech.relaycorp:relaynet-cogrpc:1.0.1'
 
     // ORM
     def room_version = "2.2.5"
