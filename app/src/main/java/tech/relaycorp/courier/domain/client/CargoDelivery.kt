@@ -7,14 +7,14 @@ import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.relaynet.CargoRelay
-import tech.relaycorp.relaynet.CargoRelayClient
 import tech.relaycorp.courier.domain.DeleteMessage
+import tech.relaycorp.relaynet.cogrpc.CogRPC
+import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import javax.inject.Inject
 
 class CargoDelivery
 @Inject constructor(
-    private val cargoRelayClientBuilder: CargoRelayClient.Builder,
+    private val clientBuilder: CogRPCClient.Builder,
     private val storedMessageDao: StoredMessageDao,
     private val diskRepository: DiskRepository,
     private val deleteMessage: DeleteMessage
@@ -24,7 +24,7 @@ class CargoDelivery
         getCargoesToDeliver()
             .groupByRecipient()
             .forEach { (recipientAddress, cargoes) ->
-                cargoRelayClientBuilder
+                clientBuilder
                     .build(recipientAddress.value)
                     .deliverCargo(cargoes.toCogRPCMessages())
                     .collect { deleteDeliveredCargo(it) }
@@ -37,7 +37,7 @@ class CargoDelivery
             MessageType.Cargo
         )
 
-    private suspend fun deleteDeliveredCargo(ack: CargoRelay.MessageDeliveryAck) =
+    private suspend fun deleteDeliveredCargo(ack: CogRPC.MessageDeliveryAck) =
         UniqueMessageId.from(ack.localId).let {
             deleteMessage.delete(it.senderPrivateAddress, it.messageId)
         }
@@ -49,7 +49,7 @@ class CargoDelivery
         mapNotNull {
             readMessage(it)
                 ?.let { data ->
-                    CargoRelay.MessageDelivery(
+                    CogRPC.MessageDelivery(
                         localId = it.uniqueMessageId.value,
                         data = data
                     )

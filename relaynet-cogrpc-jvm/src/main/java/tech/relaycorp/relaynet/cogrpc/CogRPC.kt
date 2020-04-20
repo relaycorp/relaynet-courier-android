@@ -1,8 +1,8 @@
-package tech.relaycorp.relaynet
+package tech.relaycorp.relaynet.cogrpc
 
 import java.io.InputStream
 
-object CargoRelay {
+object CogRPC {
     data class MessageDelivery(
         val localId: String,
         val data: InputStream

@@ -1,16 +1,17 @@
-package tech.relaycorp.relaynet.cogrpc.server
+package tech.relaycorp.cogrpc.server
 
 import io.grpc.Context
 import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
-import io.netty.handler.codec.base64.Base64Decoder
 import org.apache.commons.codec.binary.Base64
 
 internal object Authorization {
     internal val metadataKey =
         Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER)
+
+    // Context values are bound to the current thread
     internal val contextKey = Context.key<String>("Authorization")
 
     internal val interceptor by lazy {
@@ -32,15 +33,13 @@ internal object Authorization {
         }
     }
 
-    internal fun getCCA(): ByteArray {
+    internal fun getCCA(): ByteArray? {
         val auth = contextKey.get()
-        if (auth == null || !auth.startsWith(CCA_HEADER)) {
-            throw IllegalArgumentException("Cargo Collection Authorization not provided")
-        }
+        if (auth?.startsWith(AUTHORIZATION_TYPE) != true) return null
 
-        val ccaBase64 = auth.substring(CCA_HEADER.length)
+        val ccaBase64 = auth.substring(AUTHORIZATION_TYPE.length)
         return Base64().decode(ccaBase64.toByteArray())
     }
 
-    private const val CCA_HEADER = "Relaynet-CCA "
+    private const val AUTHORIZATION_TYPE = "Relaynet-CCA "
 }
