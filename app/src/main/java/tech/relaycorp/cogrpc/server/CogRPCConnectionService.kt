@@ -10,7 +10,6 @@ import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
 import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
 import tech.relaycorp.relaynet.cogrpc.CogRPC
 import java.util.logging.Level
-import java.util.logging.Logger
 
 class CogRPCConnectionService(
     private val coroutineScope: CoroutineScope,

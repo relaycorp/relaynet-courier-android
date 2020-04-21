@@ -13,7 +13,6 @@ import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.relaynet.cogrpc.CogRPC
 import java.net.InetSocketAddress
 import java.security.Security
-import java.util.logging.Logger
 
 class CogRPCServer
 internal constructor(
