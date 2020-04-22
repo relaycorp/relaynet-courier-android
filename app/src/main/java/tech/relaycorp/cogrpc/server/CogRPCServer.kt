@@ -4,9 +4,7 @@ import io.grpc.Server
 import io.grpc.netty.NettyServerBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.withContext
 import org.conscrypt.Conscrypt
 import tech.relaycorp.courier.common.Logging.logger
@@ -23,11 +21,12 @@ internal constructor(
     var isStarted = false
         private set
 
-    private lateinit var job: Job
+    private val job = SupervisorJob()
     private val coroutineScope get() = CoroutineScope(Dispatchers.Main + job)
 
     private var server: Server? = null
 
+    private val clientsInterceptor by lazy { ClientsConnectedFilter() }
     private val certificateInputStream get() = getResource("cert.pem")
     private val keyInputStream get() = getResource("key.pem")
 
@@ -35,12 +34,10 @@ internal constructor(
         service: Service,
         onForcedStop: (Throwable) -> Unit
     ) {
-        Security.insertProviderAt(Conscrypt.newProvider(), 1)
-
-        job = SupervisorJob()
         isStarted = true
 
         withContext(Dispatchers.IO) {
+            Security.insertProviderAt(Conscrypt.newProvider(), 1)
             server = NettyServerBuilder
                 .forAddress(InetSocketAddress(hostname, port))
                 .maxInboundMessageSize(MAX_MESSAGE_SIZE)
@@ -48,6 +45,7 @@ internal constructor(
                 .useTransportSecurity(certificateInputStream, keyInputStream)
                 .addService(CogRPCConnectionService(coroutineScope, service))
                 .intercept(Authorization.interceptor)
+                .addTransportFilter(clientsInterceptor)
                 .build()
                 .start()
         }
@@ -67,7 +65,7 @@ internal constructor(
         logger.info("Server stopped")
     }
 
-    fun clientsConnected() = emptyFlow<Int>()
+    fun clientsConnected() = clientsInterceptor.clientsCount()
 
     private fun getResource(path: String) =
         javaClass.classLoader!!.getResourceAsStream(path)
