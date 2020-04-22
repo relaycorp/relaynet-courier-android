@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.3.71'
+        kotlinVersion = '1.3.72'
         kotlinCoroutinesVersion = '1.3.5'
         grpcVersion = '1.28.1'
         protobufVersion = '3.11.4'
@@ -13,7 +13,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.2'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.27.2'
     }
