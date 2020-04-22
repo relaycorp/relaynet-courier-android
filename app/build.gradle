@@ -103,12 +103,21 @@ dependencies {
     implementation 'com.github.tfcporciuncula:flow-preferences:1.1.0'
 
     // gRPC
-    implementation "io.grpc:grpc-netty:${grpcVersion}"
+    implementation("io.grpc:grpc-netty:${grpcVersion}") {
+        exclude module: 'netty-handler'
+    }
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
 
     // Android TLS support for Netty
-    implementation 'io.netty:netty-handler:4.1.48.Final'
+    implementation('com.github.netty.netty:netty-handler:79ef0c4706') {
+        exclude module: 'netty-common'
+        exclude module: 'netty-resolver'
+        exclude module: 'netty-buffer'
+        exclude module: 'netty-transport'
+        exclude module: 'netty-codec'
+    }
+    // implementation 'io.netty:netty-handler:4.1.48.Final'
     implementation 'org.conscrypt:conscrypt-android:2.4.0'
 
     // Base64 encoding

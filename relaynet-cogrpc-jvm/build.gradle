@@ -23,7 +23,9 @@ dependencies {
     implementation "com.google.protobuf:protobuf-java-util:$protobufVersion"
 
     // gRPC
-    implementation "io.grpc:grpc-netty:${grpcVersion}"
+    implementation("io.grpc:grpc-netty:${grpcVersion}") {
+        exclude module: 'netty-handler'
+    }
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
 
