@@ -41,5 +41,5 @@ internal object Authorization {
         return Base64().decode(ccaBase64.toByteArray())
     }
 
-    private const val AUTHORIZATION_TYPE = "Relaynet-CCA "
+    internal const val AUTHORIZATION_TYPE = "Relaynet-CCA "
 }

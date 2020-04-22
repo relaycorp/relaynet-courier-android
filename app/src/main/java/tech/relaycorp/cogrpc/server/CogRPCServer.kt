@@ -32,12 +32,13 @@ internal constructor(
 
     suspend fun start(
         service: Service,
-        onForcedStop: (Throwable) -> Unit
+        onForcedStop: (Throwable) -> Unit = {}
     ) {
         isStarted = true
 
         withContext(Dispatchers.IO) {
-            Security.insertProviderAt(Conscrypt.newProvider(), 1)
+            setupTLSProvider()
+
             server = NettyServerBuilder
                 .forAddress(InetSocketAddress(hostname, port))
                 .maxInboundMessageSize(MAX_MESSAGE_SIZE)
@@ -69,6 +70,10 @@ internal constructor(
 
     private fun getResource(path: String) =
         javaClass.classLoader!!.getResourceAsStream(path)
+
+    private fun setupTLSProvider() {
+        Security.insertProviderAt(Conscrypt.newProvider(), 1)
+    }
 
     object Builder {
         fun build(hostname: String, port: Int) = CogRPCServer(hostname, port)

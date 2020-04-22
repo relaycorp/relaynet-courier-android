@@ -40,15 +40,42 @@ class CogRPCConnectionService(
         }
 
     override fun collectCargo(responseObserver: StreamObserver<CargoDelivery>): StreamObserver<CargoDeliveryAck> {
-        Authorization.getCCA()?.let { cca ->
-            collectCargoDelivery(responseObserver, cca)
+        val cca = Authorization.getCCA()
+        if (cca == null) {
+            logger.info("collectCargo completed due to missing CCA")
+            responseObserver.onCompleted()
+            return NoopStreamObserver()
+        }
+
+        val deliveriesToAck = mutableListOf<String>()
+
+        coroutineScope.launch {
+            try {
+                val deliveries = getDeliveriesForCCA(cca)
+                deliveriesToAck.addAll(deliveries.map { it.localId })
+                deliveries.forEach { messageDelivery ->
+                    logger.info("collectCargo delivering ${messageDelivery.localId}")
+                    responseObserver.onNext(messageDelivery.toCargoDelivery())
+                }
+            } catch (exception: Exception) {
+                logger.log(Level.SEVERE, "collectCargo error", exception)
+            }
         }
 
         return object : StreamObserver<CargoDeliveryAck> {
             override fun onNext(ack: CargoDeliveryAck) {
                 logger.info("collectCargo ack next")
                 coroutineScope.launch {
-                    serverService.processCargoCollectionAck(ack.toMessageDeliveryAck())
+                    try {
+                        serverService.processCargoCollectionAck(ack.toMessageDeliveryAck())
+                        deliveriesToAck.remove(ack.id)
+                        if (deliveriesToAck.isEmpty()) {
+                            logger.info("collectCargo completed")
+                            responseObserver.onCompleted()
+                        }
+                    } catch (exception: Exception) {
+                        logger.log(Level.SEVERE, "collectCargo process ack error", exception)
+                    }
                 }
             }
 
@@ -62,24 +89,9 @@ class CogRPCConnectionService(
         }
     }
 
-    private fun collectCargoDelivery(
-        responseObserver: StreamObserver<CargoDelivery>,
-        cca: ByteArray
-    ) {
-        coroutineScope.launch {
-            try {
-                val messageReceived = CogRPC.MessageReceived(cca.inputStream())
-                val deliveries = serverService.collectCargo(messageReceived)
-                deliveries.forEach { messageDelivery ->
-                    logger.info("collectCargo delivering ${messageDelivery.localId}")
-                    responseObserver.onNext(messageDelivery.toCargoDelivery())
-                }
-            } catch (exception: Exception) {
-                logger.log(Level.SEVERE, "collectCargo error", exception)
-            }
-            logger.info("collectCargo completed")
-            responseObserver.onCompleted()
-        }
+    private suspend fun getDeliveriesForCCA(cca: ByteArray): Iterable<CogRPC.MessageDelivery> {
+        val messageReceived = CogRPC.MessageReceived(cca.inputStream())
+        return serverService.collectCargo(messageReceived)
     }
 
     internal fun CargoDelivery.toMessageReceived() =
