@@ -9,7 +9,7 @@ import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import tech.relaycorp.courier.common.BehaviorChannel
-import timber.log.Timber
+import tech.relaycorp.courier.common.Logging.logger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,7 +34,7 @@ class WifiHotspotStateReceiver
         if (intent.action != WIFI_AP_STATE_CHANGED_ACTION) return
 
         val stateFlag = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)
-        Timber.i("Wifi State $stateFlag")
+        logger.info("Wifi State $stateFlag")
         state.sendBlocking(
             if (stateFlag == WIFI_AP_STATE_ENABLED) {
                 WifiHotspotState.Enabled

@@ -1,4 +1,4 @@
-package tech.relaycorp.courier.data.network
+package tech.relaycorp.relaynet
 
 import java.util.Date
 import java.util.UUID
@@ -10,7 +10,7 @@ open class RAMFMessage protected constructor(
     val senderPrivateAddress: String = UUID.randomUUID().toString(),
     val messageId: String = UUID.randomUUID().toString(),
     val creationTime: Date = Date(),
-    val ttl: Int = Int.MAX_VALUE
+    val ttl: Int = 60 * 60 * 24 * 10
 )
 
 class Cargo private constructor() : RAMFMessage() {

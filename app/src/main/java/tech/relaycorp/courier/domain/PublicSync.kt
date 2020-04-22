@@ -3,9 +3,9 @@ package tech.relaycorp.courier.domain
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import tech.relaycorp.courier.common.BehaviorChannel
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.client.CargoCollection
 import tech.relaycorp.courier.domain.client.CargoDelivery
+import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import javax.inject.Inject
 import kotlin.time.seconds
 

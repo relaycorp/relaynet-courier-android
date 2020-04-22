@@ -6,9 +6,11 @@ import androidx.room.Room
 import com.tfcporciuncula.flow.FlowSharedPreferences
 import dagger.Module
 import dagger.Provides
+import tech.relaycorp.cogrpc.server.CogRPCServer
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.data.database.AppDatabase
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
+import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
+import tech.relaycorp.relaynet.cogrpc.client.MockCogRPCClient
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -51,6 +53,8 @@ class DataModule {
         FlowSharedPreferences(sharedPreferences)
 
     @Provides
-    fun cogRPCServer() =
-        CogRPCServer.build("127.0.0.1:8080")
+    fun cogRPCClientBuilder(): CogRPCClient.Builder = MockCogRPCClient.Builder
+
+    @Provides
+    fun cogRPCServer() = CogRPCServer.Builder.build("0.0.0.0", 21473)
 }

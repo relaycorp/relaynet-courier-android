@@ -1,23 +1,24 @@
 package tech.relaycorp.courier.domain.client
 
 import kotlinx.coroutines.flow.collect
+import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.Cargo
-import tech.relaycorp.courier.data.network.cogrpc.CogRPC
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
-import timber.log.Timber
+import tech.relaycorp.relaynet.cogrpc.CogRPC
+import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import java.io.InputStream
+import java.util.logging.Level
 import javax.inject.Inject
 
 class CargoCollection
 @Inject constructor(
+    private val clientBuilder: CogRPCClient.Builder,
     private val storedMessageDao: StoredMessageDao,
     private val storeMessage: StoreMessage,
     private val deleteMessage: DeleteMessage,
@@ -40,12 +41,12 @@ class CargoCollection
 
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
         try {
-            CogRPCClient
+            clientBuilder
                 .build(cca.recipientAddress.value)
                 .collectCargo(cca.toCogRPCMessage())
                 .collect { storeCargo(it.data) }
         } catch (e: MessageDataNotFoundException) {
-            Timber.w(e, "CCA data could not found on disk")
+            logger.log(Level.WARNING, "CCA data could not found on disk", e)
         }
     }
 

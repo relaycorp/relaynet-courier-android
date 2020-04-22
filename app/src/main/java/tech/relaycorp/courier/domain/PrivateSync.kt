@@ -2,15 +2,15 @@ package tech.relaycorp.courier.domain
 
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
+import tech.relaycorp.cogrpc.server.CogRPCServer
 import tech.relaycorp.courier.common.BehaviorChannel
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
-import tech.relaycorp.courier.domain.server.ServerConnectionService
+import tech.relaycorp.courier.domain.server.ServerService
 import javax.inject.Inject
 
 class PrivateSync
 @Inject constructor(
     private val cogRPCServer: CogRPCServer,
-    private val connectionService: ServerConnectionService
+    private val service: ServerService
 ) {
 
     private val state = BehaviorChannel<State>()
@@ -21,7 +21,7 @@ class PrivateSync
     suspend fun startSync() {
         if (cogRPCServer.isStarted) throw IllegalStateException("Sync already started")
 
-        cogRPCServer.start(connectionService) {
+        cogRPCServer.start(service) {
             state.sendBlocking(State.Stopped)
         }
         state.send(State.Syncing)

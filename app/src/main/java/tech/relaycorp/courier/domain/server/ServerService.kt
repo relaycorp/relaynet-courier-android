@@ -1,24 +1,24 @@
 package tech.relaycorp.courier.domain.server
 
+import tech.relaycorp.cogrpc.server.CogRPCServer
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.cogrpc.CogRPC
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCServer
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
 import tech.relaycorp.courier.domain.client.UniqueMessageId
+import tech.relaycorp.relaynet.cogrpc.CogRPC
 import javax.inject.Inject
 
-class ServerConnectionService
+class ServerService
 @Inject constructor(
     private val storeMessage: StoreMessage,
     private val storedMessageDao: StoredMessageDao,
     private val diskRepository: DiskRepository,
     private val deleteMessage: DeleteMessage
-) : CogRPCServer.ConnectionService {
+) : CogRPCServer.Service {
 
     override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
         val ccaMessage = storeMessage.storeCCA(cca.data) ?: return emptyList()

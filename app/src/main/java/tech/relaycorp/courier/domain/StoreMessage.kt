@@ -8,9 +8,9 @@ import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.Cargo
-import tech.relaycorp.courier.data.network.CargoCollectionAuthorization
-import tech.relaycorp.courier.data.network.RAMFMessage
+import tech.relaycorp.relaynet.Cargo
+import tech.relaycorp.relaynet.CargoCollectionAuthorization
+import tech.relaycorp.relaynet.RAMFMessage
 import java.io.InputStream
 import java.util.Date
 import javax.inject.Inject
@@ -64,7 +64,7 @@ class StoreMessage
             messageId = MessageId(messageId),
             messageType = type,
             creationTimeUtc = creationTime,
-            expirationTimeUtc = Date(creationTime.time + ttl * 1000),
+            expirationTimeUtc = Date(creationTime.time + ttl.toLong() * 1000),
             size = dataSize,
             storagePath = storagePath
         )

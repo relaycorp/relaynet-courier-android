@@ -1,4 +1,4 @@
-package tech.relaycorp.courier.data.network.cogrpc
+package tech.relaycorp.relaynet.cogrpc
 
 import java.io.InputStream
 

@@ -7,13 +7,14 @@ import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.courier.data.network.cogrpc.CogRPC
-import tech.relaycorp.courier.data.network.cogrpc.CogRPCClient
 import tech.relaycorp.courier.domain.DeleteMessage
+import tech.relaycorp.relaynet.cogrpc.CogRPC
+import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import javax.inject.Inject
 
 class CargoDelivery
 @Inject constructor(
+    private val clientBuilder: CogRPCClient.Builder,
     private val storedMessageDao: StoredMessageDao,
     private val diskRepository: DiskRepository,
     private val deleteMessage: DeleteMessage
@@ -23,7 +24,7 @@ class CargoDelivery
         getCargoesToDeliver()
             .groupByRecipient()
             .forEach { (recipientAddress, cargoes) ->
-                CogRPCClient
+                clientBuilder
                     .build(recipientAddress.value)
                     .deliverCargo(cargoes.toCogRPCMessages())
                     .collect { deleteDeliveredCargo(it) }

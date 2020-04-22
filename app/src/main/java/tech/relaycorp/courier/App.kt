@@ -1,11 +1,14 @@
 package tech.relaycorp.courier
 
 import android.app.Application
+import android.os.Build
 import android.os.StrictMode
 import tech.relaycorp.courier.background.WifiHotspotStateReceiver
+import tech.relaycorp.courier.common.Logging
 import tech.relaycorp.courier.common.di.AppComponent
 import tech.relaycorp.courier.common.di.DaggerAppComponent
-import timber.log.Timber
+import java.util.logging.Level
+import java.util.logging.LogManager
 import javax.inject.Inject
 
 class App : Application() {
@@ -42,9 +45,8 @@ class App : Application() {
     }
 
     private fun setupLogger() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
+        LogManager.getLogManager()
+        Logging.level = if (BuildConfig.DEBUG) Level.ALL else Level.WARNING
     }
 
     private fun setupStrictMode() {
@@ -53,7 +55,32 @@ class App : Application() {
                 StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build()
             )
             StrictMode.setVmPolicy(
-                StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build()
+                /*
+                  To disable the some of the checks we need to manually set all checks.
+                  This code is based on the `detectAll()` implementation.
+                  Checks disabled:
+                  - UntaggedSockets (we aren't able to tag Netty socket threads)
+                  - CleartextNetwork (it's considering gRPC over TLS communication as cleartext)
+                 */
+                StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectActivityLeaks()
+                    .detectLeakedClosableObjects()
+                    .detectLeakedRegistrationObjects()
+                    .detectFileUriExposure()
+                    .apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            detectContentUriWithoutPermission()
+                        }
+                    }
+                    .apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            detectCredentialProtectedWhileLocked()
+                        }
+                    }
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build()
             )
         }
     }
