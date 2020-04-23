@@ -8,7 +8,7 @@ data class StorageUsage(
     val definedMax: StorageSize,
     val actualMax: StorageSize = definedMax
 ) {
-    private val ratio get() = usedByApp.bytes.toFloat() / actualMax.bytes
+    private val ratio get() = if (actualMax.isZero) 0f else usedByApp.bytes.toFloat() / actualMax.bytes
     val percentage get() = (ratio * 100).roundToInt()
 
     val available get() = (actualMax - usedByApp).coerceAtLeast(StorageSize.ZERO)

@@ -3,7 +3,7 @@ package tech.relaycorp.cogrpc.server
 import com.google.protobuf.ByteString
 import tech.relaycorp.relaynet.cogrpc.CogRPC
 
-class TestCogRPCServerService : CogRPCServer.Service {
+open class MockCogRPCServerService : CogRPCServer.Service {
 
     var collectCargoCalls = mutableListOf<CogRPC.MessageReceived>()
     var processCargoCollectionAckCalls = mutableListOf<CogRPC.MessageDeliveryAck>()
@@ -23,8 +23,9 @@ class TestCogRPCServerService : CogRPCServer.Service {
         processCargoCollectionAckCalls.add(ack)
     }
 
-    override suspend fun deliverCargo(cargo: CogRPC.MessageReceived) {
+    override suspend fun deliverCargo(cargo: CogRPC.MessageReceived): Boolean {
         deliverCargoCalls.add(cargo)
+        return true
     }
 
     companion object {

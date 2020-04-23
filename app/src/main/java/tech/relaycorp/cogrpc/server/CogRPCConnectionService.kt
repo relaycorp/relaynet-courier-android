@@ -21,9 +21,11 @@ class CogRPCConnectionService(
             override fun onNext(cargoDelivery: CargoDelivery) {
                 coroutineScope.launch {
                     logger.info("deliverCargo next")
-                    serverService.deliverCargo(cargoDelivery.toMessageReceived())
-                    logger.info("deliverCargo next ack")
-                    responseObserver.onNext(cargoDelivery.toAck())
+                    val result = serverService.deliverCargo(cargoDelivery.toMessageReceived())
+                    if (result) {
+                        logger.info("deliverCargo next ack")
+                        responseObserver.onNext(cargoDelivery.toAck())
+                    }
                 }
             }
 
@@ -52,10 +54,15 @@ class CogRPCConnectionService(
         coroutineScope.launch {
             try {
                 val deliveries = getDeliveriesForCCA(cca)
-                deliveriesToAck.addAll(deliveries.map { it.localId })
-                deliveries.forEach { messageDelivery ->
-                    logger.info("collectCargo delivering ${messageDelivery.localId}")
-                    responseObserver.onNext(messageDelivery.toCargoDelivery())
+                if (deliveries.any()) {
+                    deliveriesToAck.addAll(deliveries.map { it.localId })
+                    deliveries.forEach { messageDelivery ->
+                        logger.info("collectCargo delivering ${messageDelivery.localId}")
+                        responseObserver.onNext(messageDelivery.toCargoDelivery())
+                    }
+                } else {
+                    logger.info("collectCargo completed empty")
+                    responseObserver.onCompleted()
                 }
             } catch (exception: Exception) {
                 logger.log(Level.SEVERE, "collectCargo error", exception)

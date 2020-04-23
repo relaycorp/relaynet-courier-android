@@ -33,9 +33,8 @@ class ServerService
         }
     }
 
-    override suspend fun deliverCargo(cargo: CogRPC.MessageReceived) {
-        storeMessage.storeCargo(cargo.data)
-    }
+    override suspend fun deliverCargo(cargo: CogRPC.MessageReceived) =
+        storeMessage.storeCargo(cargo.data) != null
 
     private suspend fun List<StoredMessage>.toCogRPCMessages() =
         mapNotNull { it.toCogRPCMessage() }
