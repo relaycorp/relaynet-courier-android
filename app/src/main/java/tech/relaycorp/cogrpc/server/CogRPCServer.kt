@@ -9,9 +9,11 @@ import kotlinx.coroutines.withContext
 import org.conscrypt.Conscrypt
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.relaynet.cogrpc.CogRPC
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.security.Security
 import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 import kotlin.math.roundToLong
 import kotlin.time.minutes
 import kotlin.time.seconds
@@ -43,7 +45,7 @@ internal constructor(
         withContext(Dispatchers.IO) {
             setupTLSProvider()
 
-            server = NettyServerBuilder
+            val server = NettyServerBuilder
                 .forAddress(InetSocketAddress(hostname, port))
                 .maxInboundMessageSize(MAX_MESSAGE_SIZE)
                 .maxInboundMetadataSize(MAX_METADATA_SIZE)
@@ -55,17 +57,21 @@ internal constructor(
                 .intercept(Authorization.interceptor)
                 .addTransportFilter(clientsInterceptor)
                 .build()
-                .start()
-        }
 
-        logger.info("Server started")
+            try {
+                server.start()
+                this@CogRPCServer.server = server
+                logger.info("Server started")
+            } catch (exception: IOException) {
+                logger.log(Level.WARNING, "Could not start server", exception)
+                onForcedStop.invoke(exception)
+            }
+        }
     }
 
-    suspend fun stop() {
-        withContext(Dispatchers.IO) {
-            server?.shutdown()
-            server = null
-        }
+    fun stop() {
+        // server?.shutdown()
+        server = null
 
         job.cancel()
         isStarted = false

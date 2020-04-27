@@ -21,15 +21,15 @@ class PrivateSync
     suspend fun startSync() {
         if (cogRPCServer.isStarted) throw IllegalStateException("Sync already started")
 
+        state.send(State.Syncing)
         cogRPCServer.start(service) {
             state.sendBlocking(State.Stopped)
         }
-        state.send(State.Syncing)
     }
 
-    suspend fun stopSync() {
+    fun stopSync() {
         cogRPCServer.stop()
-        state.send(State.Stopped)
+        state.sendBlocking(State.Stopped)
     }
 
     enum class State {

@@ -58,17 +58,12 @@ class PeopleSyncViewModel
 
         stopClicks
             .asFlow()
-            .onEach {
-                privateSync.stopSync()
-                finish.send(Finish)
-            }
+            .onEach { finish.send(Finish) }
             .launchIn(ioScope)
     }
 
     override fun onCleared() {
-        ioScope.launch {
-            privateSync.stopSync()
-        }
+        privateSync.stopSync()
         super.onCleared()
     }
 
