@@ -8,12 +8,10 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import tech.relaycorp.cogrpc.server.CogRPCFactory.buildDeliveryAck
-import tech.relaycorp.cogrpc.server.CogRPCFactory.wrapClientWithAuth
-import tech.relaycorp.cogrpc.server.CogRPCFactory.wrapClientWithCCA
+import tech.relaycorp.relaynet.cogrpc.Authorization
 import tech.relaycorp.relaynet.cogrpc.CargoDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
 import tech.relaycorp.relaynet.cogrpc.CogRPC
-import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 internal class CogRPCServerCollectCargoTest {
@@ -30,8 +28,9 @@ internal class CogRPCServerCollectCargoTest {
     internal fun `collectCargo with correct CCA and all cargo acked`() = runBlockingTest {
         setupAndStartServer()
 
-        val cca = "ABC"
-        val authClientStub = wrapClientWithCCA(buildClientStub(), cca)
+        val cca = "ABC".toByteArray()
+        val authClientStub =
+            Authorization.authorizeClientWithCCA(buildClientStub(), cca)
 
         val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
         val ackObserver = authClientStub.collectCargo(deliveryRecorder)
@@ -39,8 +38,8 @@ internal class CogRPCServerCollectCargoTest {
         ackObserver.onNext(buildDeliveryAck(cargoReceived.id))
 
         assertEquals(
-            cca,
-            mockService.collectCargoCalls.last().data.readBytes().toString(Charset.defaultCharset())
+            cca.toList(),
+            mockService.collectCargoCalls.last().data.readBytes().toList()
         )
 
         assertEquals(
@@ -73,7 +72,8 @@ internal class CogRPCServerCollectCargoTest {
     internal fun `collectCargo with invalid CCA`() = runBlockingTest {
         setupAndStartServer()
 
-        val authClientStub = wrapClientWithAuth(buildClientStub(), "INVALID")
+        val authClientStub =
+            Authorization.authorizeClient(buildClientStub(), "INVALID")
         val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
         authClientStub.collectCargo(deliveryRecorder)
 
@@ -84,20 +84,20 @@ internal class CogRPCServerCollectCargoTest {
     @Test
     internal fun `collectCargo with no cargo to collect`() {
         setupAndStartServer(object : MockCogRPCServerService() {
-            override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
+            override suspend fun collectCargo(cca: CogRPC.MessageDelivery): Iterable<CogRPC.MessageDelivery> {
                 super.collectCargo(cca)
                 return emptyList()
             }
         })
 
-        val cca = "CCA"
-        val authClientStub = wrapClientWithCCA(buildClientStub(), cca)
+        val cca = "CCA".toByteArray()
+        val authClientStub = Authorization.authorizeClientWithCCA(buildClientStub(), cca)
         val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
         authClientStub.collectCargo(deliveryRecorder)
 
         assertEquals(
-            cca,
-            mockService.collectCargoCalls.last().data.readBytes().toString(Charset.defaultCharset())
+            cca.toList(),
+            mockService.collectCargoCalls.last().data.readBytes().toList()
         )
 
         assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
@@ -108,7 +108,8 @@ internal class CogRPCServerCollectCargoTest {
     internal fun `collectCargo without ack`() {
         setupAndStartServer()
 
-        val authClientStub = wrapClientWithCCA(buildClientStub())
+        val authClientStub =
+            Authorization.authorizeClientWithCCA(buildClientStub(), "CCA".toByteArray())
         val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
         authClientStub.collectCargo(deliveryRecorder)
         val cargoReceived = deliveryRecorder.values.first()

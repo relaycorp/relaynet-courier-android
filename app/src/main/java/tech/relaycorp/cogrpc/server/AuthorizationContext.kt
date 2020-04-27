@@ -5,14 +5,11 @@ import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
-import org.apache.commons.codec.binary.Base64
+import tech.relaycorp.relaynet.cogrpc.Authorization
 
-internal object Authorization {
-    internal val metadataKey =
-        Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER)
-
+internal object AuthorizationContext {
     // Context values are bound to the current thread
-    internal val contextKey = Context.key<String>("Authorization")
+    internal val contextKey = Context.key<ByteArray>("Authorization")
 
     internal val interceptor by lazy {
         object : ServerInterceptor {
@@ -21,7 +18,7 @@ internal object Authorization {
                 headers: Metadata,
                 next: ServerCallHandler<ReqT, RespT>
             ): ServerCall.Listener<ReqT> {
-                val auth = headers[metadataKey]
+                val auth = Authorization.getClientCCA(headers)
                 val context = Context.current().withValue(contextKey, auth)
                 val previousContext = context.attach()
                 return try {
@@ -33,13 +30,5 @@ internal object Authorization {
         }
     }
 
-    internal fun getCCA(): ByteArray? {
-        val auth = contextKey.get()
-        if (auth?.startsWith(AUTHORIZATION_TYPE) != true) return null
-
-        val ccaBase64 = auth.substring(AUTHORIZATION_TYPE.length)
-        return Base64().decode(ccaBase64.toByteArray())
-    }
-
-    internal const val AUTHORIZATION_TYPE = "Relaynet-CCA "
+    internal fun getCCA(): ByteArray = contextKey.get()
 }

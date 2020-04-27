@@ -54,7 +54,7 @@ internal constructor(
                 .maxConnectionIdle(MAX_CONNECTION_IDLE.inSeconds.roundToLong(), TimeUnit.SECONDS)
                 .useTransportSecurity(certificateInputStream, keyInputStream)
                 .addService(CogRPCConnectionService(coroutineScope, service))
-                .intercept(Authorization.interceptor)
+                .intercept(AuthorizationContext.interceptor)
                 .addTransportFilter(clientsInterceptor)
                 .build()
 
@@ -101,8 +101,8 @@ internal constructor(
     }
 
     interface Service {
-        suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery>
+        suspend fun collectCargo(cca: CogRPC.MessageDelivery): Iterable<CogRPC.MessageDelivery>
         suspend fun processCargoCollectionAck(ack: CogRPC.MessageDeliveryAck)
-        suspend fun deliverCargo(cargo: CogRPC.MessageReceived): Boolean
+        suspend fun deliverCargo(cargo: CogRPC.MessageDelivery): Boolean
     }
 }

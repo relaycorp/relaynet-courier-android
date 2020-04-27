@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -38,13 +37,13 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `deleteData clicked called right domain method`() = runBlockingTest {
+    fun `deleteData clicked called right domain method`() = runBlocking {
         buildViewModel().deleteDataClicked()
         verify(deleteAllStorage).delete()
     }
 
     @Test
-    fun `deleteData is disabled when data is empty`() = runBlockingTest {
+    fun `deleteData is disabled when data is empty`() = runBlocking {
         val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(0L))
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
@@ -56,7 +55,7 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `deleteData is enabled when there's data`() = runBlockingTest {
+    fun `deleteData is enabled when there's data`() = runBlocking {
         val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(1L))
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
@@ -68,7 +67,7 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `observe storage stats`() = runBlockingTest {
+    fun `observe storage stats`() = runBlocking {
         val total = StorageSize(1_000_000)
         val available = StorageSize(500_000)
         val used = StorageSize(100_000)
@@ -101,10 +100,12 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    internal fun `max storage value changed`() = runBlockingTest {
-        val newValue = StorageSize(1_000_000_00)
-        buildViewModel().maxStorageChanged(newValue)
-        verify(storagePreferences).setMaxStorageSize(eq(newValue))
+    internal fun `max storage value changed`() {
+        runBlocking {
+            val newValue = StorageSize(1_000_000_00)
+            buildViewModel().maxStorageChanged(newValue)
+            verify(storagePreferences).setMaxStorageSize(eq(newValue))
+        }
     }
 
     private fun buildViewModel() =

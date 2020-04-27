@@ -41,7 +41,7 @@ internal class CogRPCServerDeliveryCargoTest {
     @Test
     internal fun `deliverCargo without ack when unsuccessful`() = runBlockingTest {
         val mockService = object : MockCogRPCServerService() {
-            override suspend fun deliverCargo(cargo: CogRPC.MessageReceived): Boolean {
+            override suspend fun deliverCargo(cargo: CogRPC.MessageDelivery): Boolean {
                 super.deliverCargo(cargo)
                 return false
             }

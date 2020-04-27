@@ -5,11 +5,11 @@ import tech.relaycorp.relaynet.cogrpc.CogRPC
 
 open class MockCogRPCServerService : CogRPCServer.Service {
 
-    var collectCargoCalls = mutableListOf<CogRPC.MessageReceived>()
+    var collectCargoCalls = mutableListOf<CogRPC.MessageDelivery>()
     var processCargoCollectionAckCalls = mutableListOf<CogRPC.MessageDeliveryAck>()
-    var deliverCargoCalls = mutableListOf<CogRPC.MessageReceived>()
+    var deliverCargoCalls = mutableListOf<CogRPC.MessageDelivery>()
 
-    override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
+    override suspend fun collectCargo(cca: CogRPC.MessageDelivery): Iterable<CogRPC.MessageDelivery> {
         collectCargoCalls.add(cca)
         return listOf(
             CogRPC.MessageDelivery(
@@ -23,7 +23,7 @@ open class MockCogRPCServerService : CogRPCServer.Service {
         processCargoCollectionAckCalls.add(ack)
     }
 
-    override suspend fun deliverCargo(cargo: CogRPC.MessageReceived): Boolean {
+    override suspend fun deliverCargo(cargo: CogRPC.MessageDelivery): Boolean {
         deliverCargoCalls.add(cargo)
         return true
     }

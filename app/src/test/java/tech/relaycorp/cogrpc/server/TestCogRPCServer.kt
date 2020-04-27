@@ -18,7 +18,7 @@ class TestCogRPCServer(
         InProcessServerBuilder
             .forName(name)
             .addService(connectionService)
-            .intercept(Authorization.interceptor)
+            .intercept(AuthorizationContext.interceptor)
             .directExecutor()
             .build()
     }

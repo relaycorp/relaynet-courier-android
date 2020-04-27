@@ -20,7 +20,7 @@ class ServerService
     private val deleteMessage: DeleteMessage
 ) : CogRPCServer.Service {
 
-    override suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery> {
+    override suspend fun collectCargo(cca: CogRPC.MessageDelivery): Iterable<CogRPC.MessageDelivery> {
         val ccaMessage = storeMessage.storeCCA(cca.data) ?: return emptyList()
         return storedMessageDao
             .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
@@ -33,7 +33,7 @@ class ServerService
         }
     }
 
-    override suspend fun deliverCargo(cargo: CogRPC.MessageReceived) =
+    override suspend fun deliverCargo(cargo: CogRPC.MessageDelivery) =
         storeMessage.storeCargo(cargo.data) != null
 
     private suspend fun List<StoredMessage>.toCogRPCMessages() =
