@@ -11,6 +11,10 @@ import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.relaynet.cogrpc.CogRPC
 import java.net.InetSocketAddress
 import java.security.Security
+import java.util.concurrent.TimeUnit
+import kotlin.math.roundToLong
+import kotlin.time.minutes
+import kotlin.time.seconds
 
 class CogRPCServer
 internal constructor(
@@ -32,16 +36,20 @@ internal constructor(
 
     suspend fun start(
         service: Service,
-        onForcedStop: (Throwable) -> Unit
+        onForcedStop: (Throwable) -> Unit = {}
     ) {
         isStarted = true
 
         withContext(Dispatchers.IO) {
-            Security.insertProviderAt(Conscrypt.newProvider(), 1)
+            setupTLSProvider()
+
             server = NettyServerBuilder
                 .forAddress(InetSocketAddress(hostname, port))
                 .maxInboundMessageSize(MAX_MESSAGE_SIZE)
                 .maxInboundMetadataSize(MAX_METADATA_SIZE)
+                .maxConcurrentCallsPerConnection(MAX_CONCURRENT_CALLS_PER_CONNECTION)
+                .maxConnectionAge(MAX_CONNECTION_AGE.inSeconds.roundToLong(), TimeUnit.SECONDS)
+                .maxConnectionIdle(MAX_CONNECTION_IDLE.inSeconds.roundToLong(), TimeUnit.SECONDS)
                 .useTransportSecurity(certificateInputStream, keyInputStream)
                 .addService(CogRPCConnectionService(coroutineScope, service))
                 .intercept(Authorization.interceptor)
@@ -70,6 +78,10 @@ internal constructor(
     private fun getResource(path: String) =
         javaClass.classLoader!!.getResourceAsStream(path)
 
+    private fun setupTLSProvider() {
+        Security.insertProviderAt(Conscrypt.newProvider(), 1)
+    }
+
     object Builder {
         fun build(hostname: String, port: Int) = CogRPCServer(hostname, port)
     }
@@ -77,11 +89,14 @@ internal constructor(
     companion object {
         private const val MAX_MESSAGE_SIZE = 8_397_056
         private const val MAX_METADATA_SIZE = 2_048 // CCAs
+        private const val MAX_CONCURRENT_CALLS_PER_CONNECTION = 3
+        private val MAX_CONNECTION_AGE = 15.minutes
+        private val MAX_CONNECTION_IDLE = 10.seconds
     }
 
     interface Service {
         suspend fun collectCargo(cca: CogRPC.MessageReceived): Iterable<CogRPC.MessageDelivery>
         suspend fun processCargoCollectionAck(ack: CogRPC.MessageDeliveryAck)
-        suspend fun deliverCargo(cargo: CogRPC.MessageReceived)
+        suspend fun deliverCargo(cargo: CogRPC.MessageReceived): Boolean
     }
 }

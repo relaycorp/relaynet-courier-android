@@ -24,6 +24,7 @@ dependencies {
 
     // gRPC
     implementation("io.grpc:grpc-netty:${grpcVersion}") {
+        // TODO: remove exclude when there's a new netty release
         exclude module: 'netty-handler'
     }
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"

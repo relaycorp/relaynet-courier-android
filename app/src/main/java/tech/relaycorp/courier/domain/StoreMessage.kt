@@ -1,5 +1,6 @@
 package tech.relaycorp.courier.domain
 
+import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.MessageAddress
@@ -11,6 +12,7 @@ import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.relaynet.Cargo
 import tech.relaycorp.relaynet.CargoCollectionAuthorization
 import tech.relaycorp.relaynet.RAMFMessage
+import tech.relaycorp.relaynet.RAMFMessageMalformedException
 import java.io.InputStream
 import java.util.Date
 import javax.inject.Inject
@@ -19,18 +21,40 @@ class StoreMessage
 @Inject constructor(
     private val storedMessageDao: StoredMessageDao,
     private val diskRepository: DiskRepository,
-    private val getStorageUsage: GetStorageUsage
+    private val getStorageUsage: GetStorageUsage,
+    private val cargoDeserializer: ((@JvmSuppressWildcards ByteArray) -> Cargo),
+    private val ccaDeserializer: ((@JvmSuppressWildcards ByteArray) -> CargoCollectionAuthorization)
 ) {
 
     suspend fun storeCargo(cargoInputStream: InputStream): StoredMessage? {
         val cargoBytes = cargoInputStream.readBytes()
-        val cargo = Cargo.deserialize(cargoBytes)
+        val cargo = try {
+            cargoDeserializer(cargoBytes)
+        } catch (e: RAMFMessageMalformedException) {
+            logger.warning("Malformed Cargo received")
+            return null
+        }
+        if (!cargo.isValid()) {
+            logger.warning("Invalid Cargo received")
+            return null
+        }
+
         return storeMessage(MessageType.Cargo, cargo, cargoBytes)
     }
 
     suspend fun storeCCA(ccaInputStream: InputStream): StoredMessage? {
         val ccaBytes = ccaInputStream.readBytes()
-        val cca = CargoCollectionAuthorization.deserialize(ccaBytes)
+        val cca = try {
+            ccaDeserializer.invoke(ccaBytes)
+        } catch (e: RAMFMessageMalformedException) {
+            logger.warning("Malformed CCA received")
+            return null
+        }
+        if (!cca.isValid()) {
+            logger.warning("Invalid CCA received")
+            return null
+        }
+
         return storeMessage(MessageType.CCA, cca, ccaBytes)
     }
 

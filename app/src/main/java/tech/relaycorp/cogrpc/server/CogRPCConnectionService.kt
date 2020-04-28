@@ -21,9 +21,11 @@ class CogRPCConnectionService(
             override fun onNext(cargoDelivery: CargoDelivery) {
                 coroutineScope.launch {
                     logger.info("deliverCargo next")
-                    serverService.deliverCargo(cargoDelivery.toMessageReceived())
-                    logger.info("deliverCargo next ack")
-                    responseObserver.onNext(cargoDelivery.toAck())
+                    val result = serverService.deliverCargo(cargoDelivery.toMessageReceived())
+                    if (result) {
+                        logger.info("deliverCargo next ack")
+                        responseObserver.onNext(cargoDelivery.toAck())
+                    }
                 }
             }
 
@@ -40,15 +42,47 @@ class CogRPCConnectionService(
         }
 
     override fun collectCargo(responseObserver: StreamObserver<CargoDelivery>): StreamObserver<CargoDeliveryAck> {
-        Authorization.getCCA()?.let { cca ->
-            collectCargoDelivery(responseObserver, cca)
+        val cca = Authorization.getCCA()
+        if (cca == null) {
+            logger.info("collectCargo completed due to missing CCA")
+            responseObserver.onCompleted()
+            return NoopStreamObserver()
+        }
+
+        val deliveriesToAck = mutableListOf<String>()
+
+        coroutineScope.launch {
+            try {
+                val deliveries = getDeliveriesForCCA(cca)
+                if (deliveries.any()) {
+                    deliveriesToAck.addAll(deliveries.map { it.localId })
+                    deliveries.forEach { messageDelivery ->
+                        logger.info("collectCargo delivering ${messageDelivery.localId}")
+                        responseObserver.onNext(messageDelivery.toCargoDelivery())
+                    }
+                } else {
+                    logger.info("collectCargo completed empty")
+                    responseObserver.onCompleted()
+                }
+            } catch (exception: Exception) {
+                logger.log(Level.SEVERE, "collectCargo error", exception)
+            }
         }
 
         return object : StreamObserver<CargoDeliveryAck> {
             override fun onNext(ack: CargoDeliveryAck) {
                 logger.info("collectCargo ack next")
                 coroutineScope.launch {
-                    serverService.processCargoCollectionAck(ack.toMessageDeliveryAck())
+                    try {
+                        serverService.processCargoCollectionAck(ack.toMessageDeliveryAck())
+                        deliveriesToAck.remove(ack.id)
+                        if (deliveriesToAck.isEmpty()) {
+                            logger.info("collectCargo completed")
+                            responseObserver.onCompleted()
+                        }
+                    } catch (exception: Exception) {
+                        logger.log(Level.SEVERE, "collectCargo process ack error", exception)
+                    }
                 }
             }
 
@@ -62,24 +96,9 @@ class CogRPCConnectionService(
         }
     }
 
-    private fun collectCargoDelivery(
-        responseObserver: StreamObserver<CargoDelivery>,
-        cca: ByteArray
-    ) {
-        coroutineScope.launch {
-            try {
-                val messageReceived = CogRPC.MessageReceived(cca.inputStream())
-                val deliveries = serverService.collectCargo(messageReceived)
-                deliveries.forEach { messageDelivery ->
-                    logger.info("collectCargo delivering ${messageDelivery.localId}")
-                    responseObserver.onNext(messageDelivery.toCargoDelivery())
-                }
-            } catch (exception: Exception) {
-                logger.log(Level.SEVERE, "collectCargo error", exception)
-            }
-            logger.info("collectCargo completed")
-            responseObserver.onCompleted()
-        }
+    private suspend fun getDeliveriesForCCA(cca: ByteArray): Iterable<CogRPC.MessageDelivery> {
+        val messageReceived = CogRPC.MessageReceived(cca.inputStream())
+        return serverService.collectCargo(messageReceived)
     }
 
     internal fun CargoDelivery.toMessageReceived() =

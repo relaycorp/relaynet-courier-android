@@ -11,16 +11,22 @@ open class RAMFMessage protected constructor(
     val messageId: String = UUID.randomUUID().toString(),
     val creationTime: Date = Date(),
     val ttl: Int = 60 * 60 * 24 * 10
-)
+) {
+    fun isValid(): Boolean = true
+}
 
 class Cargo private constructor() : RAMFMessage() {
     companion object {
+        @Throws(RAMFMessageMalformedException::class)
         fun deserialize(data: ByteArray) = Cargo()
     }
 }
 
 class CargoCollectionAuthorization private constructor() : RAMFMessage() {
     companion object {
+        @Throws(RAMFMessageMalformedException::class)
         fun deserialize(data: ByteArray) = CargoCollectionAuthorization()
     }
 }
+
+class RAMFMessageMalformedException(message: String? = null) : Exception(message)
