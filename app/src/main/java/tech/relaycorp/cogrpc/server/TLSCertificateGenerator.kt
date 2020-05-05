@@ -33,6 +33,12 @@ class TLSCertificateGenerator(
 
     fun exportCertificate() = derToPem(this.certificateHolder.encoded, "CERTIFICATE")
 
+    private fun derToPem(valueDer: ByteArray, pemLabel: String): ByteArray {
+        val valueBase64 = Base64.toBase64String(valueDer)
+        val valuePem = "-----BEGIN $pemLabel-----\n${valueBase64}\n-----END $pemLabel-----"
+        return valuePem.toByteArray()
+    }
+
     companion object {
         private const val RSA_KEY_MODULUS = 2048
         const val SUBJECT_IP_ADDRESS = "192.168.43.1"
@@ -85,16 +91,10 @@ class TLSCertificateGenerator(
                 BcRSAContentSignerBuilder(signatureAlgorithm, digestAlgorithm)
             return contentSignerBuilder.build(privateKeyParam)
         }
+
+        private fun generateRandomBigInteger(): BigInteger {
+            val random = SecureRandom()
+            return BigInteger(64, random)
+        }
     }
-}
-
-private fun generateRandomBigInteger(): BigInteger {
-    val random = SecureRandom()
-    return BigInteger(64, random)
-}
-
-private fun derToPem(valueDer: ByteArray, pemLabel: String): ByteArray {
-    val valueBase64 = Base64.toBase64String(valueDer)
-    val valuePem = "-----BEGIN $pemLabel-----\n${valueBase64}\n-----END $pemLabel-----"
-    return valuePem.toByteArray()
 }
