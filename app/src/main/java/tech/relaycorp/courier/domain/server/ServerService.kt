@@ -1,6 +1,7 @@
 package tech.relaycorp.courier.domain.server
 
 import tech.relaycorp.cogrpc.server.CogRPCServer
+import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
@@ -8,8 +9,8 @@ import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
-import tech.relaycorp.courier.domain.client.UniqueMessageId
-import tech.relaycorp.relaynet.cogrpc.CogRPC
+import tech.relaycorp.relaynet.CargoDeliveryRequest
+import java.io.InputStream
 import javax.inject.Inject
 
 class ServerService
@@ -20,31 +21,37 @@ class ServerService
     private val deleteMessage: DeleteMessage
 ) : CogRPCServer.Service {
 
-    override suspend fun collectCargo(cca: CogRPC.MessageDelivery): Iterable<CogRPC.MessageDelivery> {
-        val ccaMessage = storeMessage.storeCCA(cca.data) ?: return emptyList()
-        return storedMessageDao
+    private val messagesSentForCollection = mutableMapOf<String, StoredMessage>()
+
+    override suspend fun collectCargo(ccaSerialized: ByteArray): Iterable<CargoDeliveryRequest> {
+        val ccaMessage = storeMessage.storeCCA(ccaSerialized) ?: return emptyList()
+        val messages = storedMessageDao
             .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
-            .toCogRPCMessages()
+        val messagesWithId = messages
+            .map { StoredMessage.generateLocalId() to it }
+            .toMap()
+        messagesSentForCollection.putAll(messagesWithId)
+        return messagesWithId.toRequests()
     }
 
-    override suspend fun processCargoCollectionAck(ack: CogRPC.MessageDeliveryAck) {
-        UniqueMessageId.from(ack.localId).let {
-            deleteMessage.delete(it.senderPrivateAddress, it.messageId)
-        }
+    override suspend fun processCargoCollectionAck(localId: String) {
+        messagesSentForCollection[localId]
+            ?.let { message -> deleteMessage.delete(message) }
+            ?: logger.warning("Ack with unknown id '$localId'")
     }
 
-    override suspend fun deliverCargo(cargo: CogRPC.MessageDelivery) =
-        storeMessage.storeCargo(cargo.data) != null
+    override suspend fun deliverCargo(cargoSerialized: InputStream) =
+        storeMessage.storeCargo(cargoSerialized) != null
 
-    private suspend fun List<StoredMessage>.toCogRPCMessages() =
-        mapNotNull { it.toCogRPCMessage() }
+    private suspend fun Map<String, StoredMessage>.toRequests() =
+        mapNotNull { (localId, message) -> buildRequest(localId, message) }
 
-    private suspend fun StoredMessage.toCogRPCMessage() =
-        readMessage(this)
+    private suspend fun buildRequest(localId: String, message: StoredMessage) =
+        readMessage(message)
             ?.let { data ->
-                CogRPC.MessageDelivery(
-                    localId = uniqueMessageId.value,
-                    data = data
+                CargoDeliveryRequest(
+                    localId = localId,
+                    cargoSerialized = data
                 )
             }
 

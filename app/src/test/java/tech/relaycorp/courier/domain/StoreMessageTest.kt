@@ -45,7 +45,7 @@ internal class StoreMessageTest {
     @Test
     internal fun `store message with just enough space`() = runBlockingTest {
         val messageSize = 10
-        val message = buildMessageData(messageSize)
+        val message = buildMessageStream(messageSize)
 
         val storage = StorageUsage(StorageSize.ZERO, StorageSize(messageSize.toLong()))
         whenever(getStorageUsage.get()).thenReturn(storage)
@@ -60,7 +60,7 @@ internal class StoreMessageTest {
         val noStorageSpace = StorageUsage(StorageSize.ZERO, StorageSize.ZERO)
         whenever(getStorageUsage.get()).thenReturn(noStorageSpace)
 
-        assertNull(subject.storeCargo(buildMessageData()))
+        assertNull(subject.storeCargo(buildMessageStream()))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
@@ -71,7 +71,7 @@ internal class StoreMessageTest {
             throw RAMFMessageMalformedException()
         }
 
-        assertNull(subject.storeCargo(buildMessageData()))
+        assertNull(subject.storeCargo(buildMessageStream()))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
@@ -83,7 +83,7 @@ internal class StoreMessageTest {
         }
         whenever(cargoDeserializer.invoke(any())).thenReturn(cargo)
 
-        assertNull(subject.storeCargo(buildMessageData()))
+        assertNull(subject.storeCargo(buildMessageStream()))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
@@ -111,5 +111,6 @@ internal class StoreMessageTest {
         verify(storedMessageDao, never()).insert(any())
     }
 
-    private fun buildMessageData(size: Int = 1) = ByteArray(size).inputStream()
+    private fun buildMessageData(size: Int = 1) = ByteArray(size)
+    private fun buildMessageStream(size: Int = 1) = buildMessageData(size).inputStream()
 }

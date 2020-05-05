@@ -8,8 +8,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 import org.conscrypt.Conscrypt
 import tech.relaycorp.courier.common.Logging.logger
-import tech.relaycorp.relaynet.cogrpc.CogRPC
+import tech.relaycorp.relaynet.CargoDeliveryRequest
 import java.io.IOException
+import java.io.InputStream
 import java.net.InetSocketAddress
 import java.security.Security
 import java.util.concurrent.TimeUnit
@@ -101,8 +102,8 @@ internal constructor(
     }
 
     interface Service {
-        suspend fun collectCargo(cca: CogRPC.MessageDelivery): Iterable<CogRPC.MessageDelivery>
-        suspend fun processCargoCollectionAck(ack: CogRPC.MessageDeliveryAck)
-        suspend fun deliverCargo(cargo: CogRPC.MessageDelivery): Boolean
+        suspend fun collectCargo(ccaSerialized: ByteArray): Iterable<CargoDeliveryRequest>
+        suspend fun processCargoCollectionAck(localId: String)
+        suspend fun deliverCargo(cargoSerialized: InputStream): Boolean
     }
 }

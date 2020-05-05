@@ -5,7 +5,7 @@ import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
-import tech.relaycorp.relaynet.cogrpc.Authorization
+import tech.relaycorp.relaynet.cogrpc.AuthorizationMetadata
 
 internal object AuthorizationContext {
     // Context values are bound to the current thread
@@ -18,7 +18,7 @@ internal object AuthorizationContext {
                 headers: Metadata,
                 next: ServerCallHandler<ReqT, RespT>
             ): ServerCall.Listener<ReqT> {
-                val auth = Authorization.getClientCCA(headers)
+                val auth = AuthorizationMetadata.getCCASerialized(headers)
                 val context = Context.current().withValue(contextKey, auth)
                 val previousContext = context.attach()
                 return try {
@@ -30,5 +30,5 @@ internal object AuthorizationContext {
         }
     }
 
-    internal fun getCCA(): ByteArray = contextKey.get()
+    internal fun getCCA(): ByteArray? = contextKey.get()
 }

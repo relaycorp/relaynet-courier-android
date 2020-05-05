@@ -10,7 +10,6 @@ import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
-import tech.relaycorp.relaynet.cogrpc.CogRPC
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import java.io.InputStream
 import java.util.logging.Level
@@ -41,10 +40,11 @@ class CargoCollection
 
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
         try {
-            clientBuilder
-                .build(cca.recipientAddress.value)
-                .collectCargo(cca.toCogRPCMessage())
-                .collect { storeCargo(it.data) }
+            val client = clientBuilder.build(cca.recipientAddress.value)
+            client
+                .collectCargo(cca.getSerializedInputStream())
+                .collect { storeCargo(it) }
+            client.close()
         } catch (e: MessageDataNotFoundException) {
             logger.log(Level.WARNING, "CCA data could not found on disk", e)
         }
@@ -57,9 +57,6 @@ class CargoCollection
         deleteMessage.delete(cca)
 
     @Throws(MessageDataNotFoundException::class)
-    private suspend fun StoredMessage.toCogRPCMessage() =
-        CogRPC.MessageDelivery(
-            localId = uniqueMessageId.value,
-            data = diskRepository.readMessage(storagePath)
-        )
+    private suspend fun StoredMessage.getSerializedInputStream() =
+        diskRepository.readMessage(storagePath)
 }

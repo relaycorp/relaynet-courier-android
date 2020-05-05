@@ -8,13 +8,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import tech.relaycorp.relaynet.CargoDeliveryRequest
+import tech.relaycorp.relaynet.cogrpc.CargoDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
-import tech.relaycorp.relaynet.cogrpc.CogRPC
 import tech.relaycorp.relaynet.cogrpc.test.MockCogRPCServerService
+import tech.relaycorp.relaynet.cogrpc.test.NoopStreamObserver
 import tech.relaycorp.relaynet.cogrpc.test.TestCogRPCServer
 import tech.relaycorp.relaynet.cogrpc.test.Wait.waitForNotNull
+import tech.relaycorp.relaynet.cogrpc.toAck
+import tech.relaycorp.relaynet.cogrpc.toCargoDelivery
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -37,20 +42,17 @@ internal class CogRPCClientTest {
         mockServerService.collectCargoReturned = ackRecorder
 
         // Client call
-        val cca = buildMessageDelivery()
+        val cca = buildMessageSerialized()
         val collectFlow = client.collectCargo(cca)
 
         // Server sends cargo
-        val cargo = buildMessageDelivery()
+        val cargo = buildRequest()
         launch(Dispatchers.IO) {
             waitForNotNull { mockServerService.collectCargoReceived }
                 .onNext(cargo.toCargoDelivery())
         }
 
-        assertEquals(
-            cargo.localId,
-            collectFlow.first().localId
-        )
+        assertNotNull(collectFlow.first())
 
         assertEquals(
             cargo.localId,
@@ -59,6 +61,8 @@ internal class CogRPCClientTest {
 
         mockServerService.collectCargoReceived?.onCompleted()
         assertTrue(ackRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
+
+        client.close()
     }
 
     @Test
@@ -66,28 +70,38 @@ internal class CogRPCClientTest {
         val mockServerService = MockCogRPCServerService()
         buildAndStartServer(mockServerService)
         val client = CogRPCClient(ADDRESS, false)
-        val cargo = buildMessageDelivery()
+        val cargo = buildRequest()
 
-        // Server acks as soon as it receives cargo
-        launch(Dispatchers.IO) {
-            val ackObserver = waitForNotNull { mockServerService.deliverCargoReceived }
-            ackObserver.onNext(cargo.toCargoDeliveryAck())
+        // Server acks and completes instantaneously
+        mockServerService.deliverCargoReturned = object : NoopStreamObserver<CargoDelivery>() {
+            override fun onNext(value: CargoDelivery) {
+                mockServerService.deliverCargoReceived?.onNext(cargo.toCargoDelivery().toAck())
+            }
+
+            override fun onCompleted() {
+                mockServerService.deliverCargoReceived?.onCompleted()
+            }
         }
 
         val ackFlow = client.deliverCargo(listOf(cargo))
 
         assertEquals(
             cargo.localId,
-            ackFlow.first().localId
+            ackFlow.first()
         )
+
+        client.close()
     }
 
     private fun buildAndStartServer(service: BindableService) {
         testServer = TestCogRPCServer(HOST, PORT, service).apply { start() }
     }
 
-    private fun buildMessageDelivery() =
-        CogRPC.MessageDelivery(UUID.randomUUID().toString(), "DATA".byteInputStream())
+    private fun buildMessageSerialized() =
+        "DATA".byteInputStream()
+
+    private fun buildRequest() =
+        CargoDeliveryRequest(UUID.randomUUID().toString(), buildMessageSerialized())
 
     companion object {
         private const val HOST = "localhost"

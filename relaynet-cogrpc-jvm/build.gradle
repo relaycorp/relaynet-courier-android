@@ -3,7 +3,7 @@ apply plugin: 'com.google.protobuf'
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufGradleVersion"
@@ -16,6 +16,9 @@ dependencies {
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
+
+    // Relaynet
+    // implementation 'tech.relaycorp:relaynet:1.12.0'
 
     // Protobuf
     implementation "com.google.protobuf:protobuf-gradle-plugin:$protobufGradleVersion"
@@ -41,6 +44,13 @@ dependencies {
 
 sourceCompatibility = "8"
 targetCompatibility = "8"
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions.freeCompilerArgs += [

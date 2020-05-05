@@ -42,10 +42,9 @@ class StoreMessage
         return storeMessage(MessageType.Cargo, cargo, cargoBytes)
     }
 
-    suspend fun storeCCA(ccaInputStream: InputStream): StoredMessage? {
-        val ccaBytes = ccaInputStream.readBytes()
+    suspend fun storeCCA(ccaSerialized: ByteArray): StoredMessage? {
         val cca = try {
-            ccaDeserializer.invoke(ccaBytes)
+            ccaDeserializer.invoke(ccaSerialized)
         } catch (e: RAMFMessageMalformedException) {
             logger.warning("Malformed CCA received")
             return null
@@ -55,7 +54,7 @@ class StoreMessage
             return null
         }
 
-        return storeMessage(MessageType.CCA, cca, ccaBytes)
+        return storeMessage(MessageType.CCA, cca, ccaSerialized)
     }
 
     private suspend fun storeMessage(
