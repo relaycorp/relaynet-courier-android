@@ -34,8 +34,6 @@ internal constructor(
     private var server: Server? = null
 
     private val clientsInterceptor by lazy { ClientsConnectedFilter() }
-    private val certificateInputStream get() = getResource("cert.pem")
-    private val keyInputStream get() = getResource("key.pem")
 
     suspend fun start(
         service: Service,
@@ -46,6 +44,8 @@ internal constructor(
         withContext(Dispatchers.IO) {
             setupTLSProvider()
 
+            val certGenerator = EphemeralTLSCertificateGenerator.generate()
+
             val server = NettyServerBuilder
                 .forAddress(InetSocketAddress(hostname, port))
                 .maxInboundMessageSize(MAX_MESSAGE_SIZE)
@@ -53,7 +53,10 @@ internal constructor(
                 .maxConcurrentCallsPerConnection(MAX_CONCURRENT_CALLS_PER_CONNECTION)
                 .maxConnectionAge(MAX_CONNECTION_AGE.inSeconds.roundToLong(), TimeUnit.SECONDS)
                 .maxConnectionIdle(MAX_CONNECTION_IDLE.inSeconds.roundToLong(), TimeUnit.SECONDS)
-                .useTransportSecurity(certificateInputStream, keyInputStream)
+                .useTransportSecurity(
+                    certGenerator.exportCertificate().inputStream(),
+                    certGenerator.exportPrivateKey().inputStream()
+                )
                 .addService(CogRPCConnectionService(coroutineScope, service))
                 .intercept(AuthorizationContext.interceptor)
                 .addTransportFilter(clientsInterceptor)
@@ -81,9 +84,6 @@ internal constructor(
     }
 
     fun clientsConnected() = clientsInterceptor.clientsCount()
-
-    private fun getResource(path: String) =
-        javaClass.classLoader!!.getResourceAsStream(path)
 
     private fun setupTLSProvider() {
         Security.insertProviderAt(Conscrypt.newProvider(), 1)

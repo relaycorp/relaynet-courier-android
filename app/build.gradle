@@ -110,6 +110,7 @@ dependencies {
     implementation "io.grpc:grpc-netty:${grpcVersion}"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.64")
 
     // Android TLS support for Netty
     implementation "io.netty:netty-handler:$nettyVersion"
