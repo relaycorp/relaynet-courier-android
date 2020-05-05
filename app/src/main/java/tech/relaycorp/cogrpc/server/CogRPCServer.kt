@@ -44,7 +44,7 @@ internal constructor(
         withContext(Dispatchers.IO) {
             setupTLSProvider()
 
-            val certGenerator = EphemeralTLSCertificateGenerator.generate()
+            val certGenerator = TLSCertificateGenerator.generate()
 
             val server = NettyServerBuilder
                 .forAddress(InetSocketAddress(hostname, port))

@@ -3,7 +3,10 @@ package tech.relaycorp.cogrpc.server
 import org.bouncycastle.asn1.x500.X500Name
 import org.bouncycastle.asn1.x500.X500NameBuilder
 import org.bouncycastle.asn1.x500.style.BCStyle
-import org.bouncycastle.asn1.x509.*
+import org.bouncycastle.asn1.x509.Extension
+import org.bouncycastle.asn1.x509.GeneralName
+import org.bouncycastle.asn1.x509.GeneralNamesBuilder
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.cert.X509CertificateHolder
 import org.bouncycastle.cert.X509v3CertificateBuilder
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter
@@ -14,43 +17,41 @@ import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder
 import org.bouncycastle.operator.bc.BcRSAContentSignerBuilder
 import org.bouncycastle.util.encoders.Base64
 import java.math.BigInteger
-import java.security.KeyPair
 import java.security.KeyPairGenerator
-import java.security.MessageDigest.getInstance
 import java.security.PrivateKey
 import java.security.SecureRandom
 import java.security.cert.CertificateException
+import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Date
 
-class EphemeralTLSCertificateGenerator(
-    private val keyPair: KeyPair,
-    private val certificateHolder: X509CertificateHolder
+class TLSCertificateGenerator(
+    val privateKey: PrivateKey,
+    val certificateHolder: X509CertificateHolder
 ) {
-    fun exportPrivateKey() = derToPem(this.keyPair.private.encoded, "PRIVATE KEY")
+    fun exportPrivateKey() = derToPem(this.privateKey.encoded, "PRIVATE KEY")
 
     fun exportCertificate() = derToPem(this.certificateHolder.encoded, "CERTIFICATE")
 
     companion object {
         private const val RSA_KEY_MODULUS = 2048
-        private const val SUBJECT_IP_ADDRESS = "192.168.43.1"
+        const val SUBJECT_IP_ADDRESS = "192.168.43.1"
 
-        fun generate(): EphemeralTLSCertificateGenerator {
+        fun generate(): TLSCertificateGenerator {
             val keyGen = KeyPairGenerator.getInstance("RSA")
             keyGen.initialize(this.RSA_KEY_MODULUS)
             val keyPair = keyGen.generateKeyPair()
 
             val distinguishedName = buildDistinguishedName()
-            val subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(keyPair.public.encoded)
 
-            val now = ZonedDateTime.now()
+            val now = ZonedDateTime.now(UTC)
             val builder = X509v3CertificateBuilder(
                 distinguishedName,
                 generateRandomBigInteger(),
-                Date.from(now.minusHours(1).toInstant()), // Account for clock drift
+                Date.from(now.minusHours(2).toInstant()), // Account for clock drift
                 Date.from(now.plusHours(24).toInstant()),
                 distinguishedName,
-                subjectPublicKeyInfo
+                SubjectPublicKeyInfo.getInstance(keyPair.public.encoded)
             )
 
             val sanExtensionBuilder = GeneralNamesBuilder()
@@ -61,28 +62,16 @@ class EphemeralTLSCertificateGenerator(
                 sanExtensionBuilder.build()
             )
 
-            val subjectPublicKeyDigest = getPublicKeyInfoDigest(subjectPublicKeyInfo)
-            val ski = SubjectKeyIdentifier(subjectPublicKeyDigest)
-            builder.addExtension(Extension.subjectKeyIdentifier, false, ski)
-
-            val aki = AuthorityKeyIdentifier(subjectPublicKeyDigest)
-            builder.addExtension(Extension.authorityKeyIdentifier, false, aki)
-
             val signerBuilder = makeSigner(keyPair.private)
             val certificateHolder = builder.build(signerBuilder)
 
-            return EphemeralTLSCertificateGenerator(keyPair, certificateHolder)
-        }
-
-        private fun getPublicKeyInfoDigest(keyInfo: SubjectPublicKeyInfo): ByteArray {
-            val digest = getInstance("SHA-256")
-            return digest.digest(keyInfo.parsePublicKey().encoded)
+            return TLSCertificateGenerator(keyPair.private, certificateHolder)
         }
 
         @Throws(CertificateException::class)
         private fun buildDistinguishedName(): X500Name {
             val builder = X500NameBuilder(BCStyle.INSTANCE)
-            builder.addRDN(BCStyle.C, this.SUBJECT_IP_ADDRESS)
+            builder.addRDN(BCStyle.CN, this.SUBJECT_IP_ADDRESS)
             return builder.build()
         }
 
@@ -106,6 +95,6 @@ private fun generateRandomBigInteger(): BigInteger {
 
 private fun derToPem(valueDer: ByteArray, pemLabel: String): ByteArray {
     val valueBase64 = Base64.toBase64String(valueDer)
-    val valuePem = "-----BEGIN ${pemLabel}-----\n${valueBase64}\n-----END ${pemLabel}-----"
+    val valuePem = "-----BEGIN $pemLabel-----\n${valueBase64}\n-----END $pemLabel-----"
     return valuePem.toByteArray()
 }
