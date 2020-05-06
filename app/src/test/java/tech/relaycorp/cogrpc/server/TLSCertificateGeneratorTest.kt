@@ -5,6 +5,7 @@ import org.bouncycastle.asn1.x500.style.BCStyle
 import org.bouncycastle.asn1.x509.Extension
 import org.bouncycastle.asn1.x509.GeneralName
 import org.bouncycastle.asn1.x509.GeneralNames
+import org.bouncycastle.util.encoders.Base64
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
@@ -15,6 +16,28 @@ import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 
 class TLSCertificateGeneratorTest {
+    @Test
+    fun `exportPrivateKey should output private key PEM-encoded`() {
+        val generator = TLSCertificateGenerator.generate()
+
+        val keyPem = String(generator.exportPrivateKey())
+
+        assertTrue(keyPem.startsWith("-----BEGIN PRIVATE KEY-----"))
+        assertTrue(keyPem.contains(Base64.toBase64String(generator.privateKey.encoded)))
+        assertTrue(keyPem.endsWith("-----END PRIVATE KEY-----"))
+    }
+
+    @Test
+    fun `exportCertificate should output private key PEM-encoded`() {
+        val generator = TLSCertificateGenerator.generate()
+
+        val certPem = String(generator.exportCertificate())
+
+        assertTrue(certPem.startsWith("-----BEGIN CERTIFICATE-----"))
+        assertTrue(certPem.contains(Base64.toBase64String(generator.certificateHolder.encoded)))
+        assertTrue(certPem.endsWith("-----END CERTIFICATE-----"))
+    }
+
     @Nested
     inner class Generate {
         @Test
