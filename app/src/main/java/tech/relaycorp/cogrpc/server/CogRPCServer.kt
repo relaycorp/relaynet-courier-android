@@ -35,6 +35,9 @@ internal constructor(
 
     private val clientsInterceptor by lazy { ClientsConnectedFilter() }
 
+    internal var tlsCertificateGeneratorProvider: ((ipAddress: String) -> TLSCertificateGenerator) =
+        TLSCertificateGenerator.Companion::generate
+
     suspend fun start(
         service: Service,
         onForcedStop: (Throwable) -> Unit = {}
@@ -44,7 +47,7 @@ internal constructor(
         withContext(Dispatchers.IO) {
             setupTLSProvider()
 
-            val certGenerator = TLSCertificateGenerator.generate(Networking.getGatewayIpAddress())
+            val certGenerator = tlsCertificateGeneratorProvider(Networking.getGatewayIpAddress())
 
             val server = NettyServerBuilder
                 .forAddress(InetSocketAddress(hostname, port))
