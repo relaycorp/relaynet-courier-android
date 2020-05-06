@@ -41,14 +41,13 @@ class TLSCertificateGenerator(
 
     companion object {
         private const val RSA_KEY_MODULUS = 2048
-        const val SUBJECT_IP_ADDRESS = "192.168.43.1"
 
-        fun generate(): TLSCertificateGenerator {
+        fun generate(ipAddress: String): TLSCertificateGenerator {
             val keyGen = KeyPairGenerator.getInstance("RSA")
             keyGen.initialize(this.RSA_KEY_MODULUS)
             val keyPair = keyGen.generateKeyPair()
 
-            val distinguishedName = buildDistinguishedName()
+            val distinguishedName = buildDistinguishedName(ipAddress)
 
             val now = ZonedDateTime.now(UTC)
             val builder = X509v3CertificateBuilder(
@@ -61,7 +60,7 @@ class TLSCertificateGenerator(
             )
 
             val sanExtensionBuilder = GeneralNamesBuilder()
-            sanExtensionBuilder.addName(GeneralName(GeneralName.iPAddress, this.SUBJECT_IP_ADDRESS))
+            sanExtensionBuilder.addName(GeneralName(GeneralName.iPAddress, ipAddress))
             builder.addExtension(
                 Extension.subjectAlternativeName,
                 true,
@@ -75,9 +74,9 @@ class TLSCertificateGenerator(
         }
 
         @Throws(CertificateException::class)
-        private fun buildDistinguishedName(): X500Name {
+        private fun buildDistinguishedName(ipAddress: String): X500Name {
             val builder = X500NameBuilder(BCStyle.INSTANCE)
-            builder.addRDN(BCStyle.CN, this.SUBJECT_IP_ADDRESS)
+            builder.addRDN(BCStyle.CN, ipAddress)
             return builder.build()
         }
 
