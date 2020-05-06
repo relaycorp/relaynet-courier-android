@@ -65,7 +65,7 @@ private constructor(
 
             override fun onError(t: Throwable) {
                 logger.log(Level.WARNING, "deliverCargo ack error", t)
-                ackChannel.close(ServerException(t))
+                ackChannel.close(CogRPCException(t))
             }
 
             override fun onCompleted() {
@@ -91,7 +91,6 @@ private constructor(
         return ackChannel.asFlow()
     }
 
-    @Throws(CCARefusedError::class)
     fun collectCargo(cca: InputStream): Flow<InputStream> {
         val ackChannel = BroadcastChannel<String>(1)
         return channelFlow {
@@ -106,9 +105,9 @@ private constructor(
                     logger.log(Level.WARNING, "collectCargo error", t)
                     this@channelFlow.close(
                         if (t is StatusException && t.status == Status.PERMISSION_DENIED) {
-                            CCARefusedError()
+                            CCARefusedException()
                         } else {
-                            ServerException(t)
+                            CogRPCException(t)
                         }
                     )
                 }
@@ -144,8 +143,8 @@ private constructor(
             AuthorizationMetadata.makeMetadata(cca)
         )
 
-    class ServerException(throwable: Throwable) : Exception(throwable)
-    class CCARefusedError : Exception()
+    open class CogRPCException(throwable: Throwable? = null) : Exception(throwable)
+    class CCARefusedException : CogRPCException()
 
     object Builder {
         fun build(serverAddress: String, useTls: Boolean = true) =

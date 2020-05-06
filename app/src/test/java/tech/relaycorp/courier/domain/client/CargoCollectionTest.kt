@@ -3,11 +3,15 @@ package tech.relaycorp.courier.domain.client
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.MessageType
@@ -37,14 +41,47 @@ internal class CargoCollectionTest {
     }
 
     @Test
+    internal fun `collect with CCA successfully`() = runBlockingTest {
+        val cca = StoredMessageFactory.build()
+        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
+            .thenReturn(listOf(cca))
+        val serializedCargo = buildSerializedCargo()
+        whenever(client.collectCargo(any())).thenReturn(flowOf(serializedCargo))
+
+        subject.collect()
+
+        verify(storeMessage).storeCargo(eq(serializedCargo))
+        verify(deleteMessage).delete(eq(cca))
+    }
+
+    @Test
     internal fun `collect with CCA refused deletes CCA`() = runBlockingTest {
         val cca = StoredMessageFactory.build()
         whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
             .thenReturn(listOf(cca))
-        whenever(client.collectCargo(any())).thenThrow(CogRPCClient.CCARefusedError())
+        whenever(client.collectCargo(any())).thenReturn(flow { throw CogRPCClient.CCARefusedException() })
 
         subject.collect()
 
         verify(deleteMessage).delete(eq(cca))
     }
+
+    @Test
+    internal fun `collect with unhandled exception`() = runBlockingTest {
+        val cca = StoredMessageFactory.build()
+        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
+            .thenReturn(listOf(cca))
+        whenever(client.collectCargo(any())).thenReturn(flow { throw CogRPCClient.CogRPCException() })
+
+        assertThrows<CogRPCClient.CogRPCException> {
+            runBlockingTest {
+                subject.collect()
+            }
+        }
+
+        verify(storeMessage, never()).storeCargo(any())
+        verify(deleteMessage, never()).delete(any())
+    }
+
+    private fun buildSerializedCargo() = "".byteInputStream()
 }

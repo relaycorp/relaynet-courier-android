@@ -46,7 +46,7 @@ class CargoCollection
                 .collect { storeCargo(it) }
         } catch (e: MessageDataNotFoundException) {
             logger.log(Level.WARNING, "CCA data could not found on disk", e)
-        } catch (e: CogRPCClient.CCARefusedError) {
+        } catch (e: CogRPCClient.CCARefusedException) {
             logger.log(Level.WARNING, "CCA refused")
         } finally {
             client.close()
