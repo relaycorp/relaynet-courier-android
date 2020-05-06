@@ -42,17 +42,21 @@ class CargoDelivery
         recipientAddress: MessageAddress,
         cargoes: List<StoredMessage>
     ) {
-        val cargoesWithId = cargoes.map { StoredMessage.generateLocalId() to it }.toMap()
+        val cargoesWithId =
+            cargoes.map { StoredMessage.generateLocalId() to it }.toMap().toMutableMap()
         val requests = cargoesWithId.toRequests()
         val client = clientBuilder.build(recipientAddress.value)
         client
             .deliverCargo(requests)
             .collect { localId ->
-                cargoesWithId[localId]
+                cargoesWithId.remove(localId)
                     ?.let { message -> deleteMessage.delete(message) }
                     ?: logger.warning("Ack with unknown id '$localId'")
             }
         client.close()
+        if (cargoesWithId.any()) {
+            throw IncompleteDeliveryException()
+        }
     }
 
     private suspend fun Map<String, StoredMessage>.toRequests() =
@@ -72,4 +76,7 @@ class CargoDelivery
         } catch (e: MessageDataNotFoundException) {
             null
         }
+
+    class IncompleteDeliveryException :
+        Exception("Some delivered cargo was now acknowledge by the server")
 }

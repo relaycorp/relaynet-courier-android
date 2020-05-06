@@ -1,5 +1,7 @@
 package tech.relaycorp.relaynet.cogrpc.client
 
+import io.grpc.Status
+import io.grpc.StatusException
 import io.grpc.netty.NettyChannelBuilder
 import io.grpc.stub.MetadataUtils
 import io.grpc.stub.StreamObserver
@@ -27,18 +29,22 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.seconds
 
-class CogRPCClient(
+class CogRPCClient
+private constructor(
     serverAddress: String,
-    useTls: Boolean = true
+    val useTls: Boolean = true
 ) {
 
-    internal val channel by lazy {
+    internal val address by lazy {
         val url = URL(serverAddress)
         val fallbackPort = if (url.protocol == "https") 443 else 80
-        val address = InetSocketAddress(
+        InetSocketAddress(
             url.host,
             url.port.let { if (it != -1) it else fallbackPort }
         )
+    }
+
+    internal val channel by lazy {
         NettyChannelBuilder
             .forAddress(address)
             .run { if (useTls) useTransportSecurity() else usePlaintext() }
@@ -59,7 +65,7 @@ class CogRPCClient(
 
             override fun onError(t: Throwable) {
                 logger.log(Level.WARNING, "deliverCargo ack error", t)
-                ackChannel.close(Exception(t))
+                ackChannel.close(ServerException(t))
             }
 
             override fun onCompleted() {
@@ -85,6 +91,7 @@ class CogRPCClient(
         return ackChannel.asFlow()
     }
 
+    @Throws(CCARefusedError::class)
     fun collectCargo(cca: InputStream): Flow<InputStream> {
         val ackChannel = BroadcastChannel<String>(1)
         return channelFlow {
@@ -97,7 +104,13 @@ class CogRPCClient(
 
                 override fun onError(t: Throwable) {
                     logger.log(Level.WARNING, "collectCargo error", t)
-                    this@channelFlow.close(t)
+                    this@channelFlow.close(
+                        if (t is StatusException && t.status == Status.PERMISSION_DENIED) {
+                            CCARefusedError()
+                        } else {
+                            ServerException(t)
+                        }
+                    )
                 }
 
                 override fun onCompleted() {
@@ -131,7 +144,8 @@ class CogRPCClient(
             AuthorizationMetadata.makeMetadata(cca)
         )
 
-    class Exception(throwable: Throwable) : kotlin.Exception(throwable)
+    class ServerException(throwable: Throwable) : Exception(throwable)
+    class CCARefusedError : Exception()
 
     object Builder {
         fun build(serverAddress: String, useTls: Boolean = true) =

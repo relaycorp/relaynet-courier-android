@@ -35,18 +35,21 @@ class CargoCollection
     private suspend fun getCCAs() =
         storedMessageDao.getByRecipientTypeAndMessageType(
             MessageAddress.Type.Public,
-            MessageType.Cargo
+            MessageType.CCA
         )
 
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
+        val client = clientBuilder.build(cca.recipientAddress.value)
         try {
-            val client = clientBuilder.build(cca.recipientAddress.value)
             client
                 .collectCargo(cca.getSerializedInputStream())
                 .collect { storeCargo(it) }
-            client.close()
         } catch (e: MessageDataNotFoundException) {
             logger.log(Level.WARNING, "CCA data could not found on disk", e)
+        } catch (e: CogRPCClient.CCARefusedError) {
+            logger.log(Level.WARNING, "CCA refused")
+        } finally {
+            client.close()
         }
     }
 
