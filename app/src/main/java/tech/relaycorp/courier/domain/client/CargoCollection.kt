@@ -27,8 +27,12 @@ class CargoCollection
     suspend fun collect() {
         getCCAs()
             .forEach { cca ->
-                collectAndStoreCargoForCCA(cca)
-                deleteCCA(cca)
+                try {
+                    collectAndStoreCargoForCCA(cca)
+                    deleteCCA(cca)
+                } catch (e: CogRPCClient.CogRPCException) {
+                    logger.log(Level.WARNING, "Cargo collection error", e)
+                }
             }
     }
 
@@ -38,6 +42,7 @@ class CargoCollection
             MessageType.CCA
         )
 
+    @Throws(CogRPCClient.CogRPCException::class)
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
         val client = clientBuilder.build(cca.recipientAddress.value)
         try {
