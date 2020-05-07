@@ -28,15 +28,14 @@ internal object Networking {
         return gatewayAddresses.first()
     }
 
-    fun getAllLocalIpAddresses(): Array<String> {
-        val localAddresses = mutableListOf<String>()
-        for (networkInterface in NetworkInterface.getNetworkInterfaces().iterator()) {
-            val localInetAddresses = networkInterface.inetAddresses.toList().filter {
-                it.isSiteLocalAddress
-            }
-            localAddresses.addAll(localInetAddresses.map { it.hostAddress })
+    fun getAllLocalIpAddresses(): List<String> {
+        val networkInterfaces = NetworkInterface.getNetworkInterfaces().iterator().asSequence()
+        val localAddresses = networkInterfaces.flatMap {
+            it.inetAddresses.asSequence()
+                .filter { inetAddress -> inetAddress.isSiteLocalAddress }
+                .map { inetAddress -> inetAddress.hostAddress }
         }
-        return localAddresses.toTypedArray()
+        return localAddresses.toList()
     }
 }
 

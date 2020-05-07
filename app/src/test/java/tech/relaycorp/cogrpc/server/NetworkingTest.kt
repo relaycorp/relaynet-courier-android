@@ -15,7 +15,7 @@ class NetworkingTest {
 
         @Test
         fun `An exception should be thrown if no IP address could be found`() {
-            whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(emptyArray())
+            whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(emptyList())
 
             val exception =
                 assertThrows<GatewayIPAddressException> { spiedNetworking.getGatewayIpAddress() }
@@ -29,7 +29,7 @@ class NetworkingTest {
         @Test
         fun `An exception should be thrown if multiple IP addresses are found`() {
             whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(
-                arrayOf(localIPAddress, "192.168.43.200")
+                listOf(localIPAddress, "192.168.43.200")
             )
 
             val exception =
@@ -44,7 +44,7 @@ class NetworkingTest {
         @Test
         fun `Addresses that do not start with the Android gateway prefix should be ignored`() {
             whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(
-                arrayOf("10.0.0.1", localIPAddress)
+                listOf("10.0.0.1", localIPAddress)
             )
 
             assertEquals(spiedNetworking.getGatewayIpAddress(), localIPAddress)
@@ -52,7 +52,7 @@ class NetworkingTest {
 
         @Test
         fun `The IP address should be returned if there is only one address`() {
-            whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(arrayOf(localIPAddress))
+            whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(listOf(localIPAddress))
 
             assertEquals(spiedNetworking.getGatewayIpAddress(), localIPAddress)
         }
