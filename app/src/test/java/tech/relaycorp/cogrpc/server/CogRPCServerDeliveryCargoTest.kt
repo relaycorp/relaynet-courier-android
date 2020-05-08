@@ -5,10 +5,10 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import tech.relaycorp.cogrpc.server.CogRPCFactory.buildDelivery
+import tech.relaycorp.cogrpc.server.DataFactory.buildDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
 import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
-import tech.relaycorp.relaynet.cogrpc.CogRPC
+import java.io.InputStream
 import java.nio.charset.Charset
 
 internal class CogRPCServerDeliveryCargoTest {
@@ -28,7 +28,7 @@ internal class CogRPCServerDeliveryCargoTest {
 
         assertEquals(
             delivery.cargo.toString(Charset.defaultCharset()),
-            mockService.deliverCargoCalls.last().data.readBytes().toString(Charset.defaultCharset())
+            mockService.deliverCargoCalls.last().readBytes().toString(Charset.defaultCharset())
         )
         assertEquals(
             delivery.id,
@@ -41,8 +41,8 @@ internal class CogRPCServerDeliveryCargoTest {
     @Test
     internal fun `deliverCargo without ack when unsuccessful`() = runBlockingTest {
         val mockService = object : MockCogRPCServerService() {
-            override suspend fun deliverCargo(cargo: CogRPC.MessageReceived): Boolean {
-                super.deliverCargo(cargo)
+            override suspend fun deliverCargo(cargoSerialized: InputStream): Boolean {
+                super.deliverCargo(cargoSerialized)
                 return false
             }
         }
@@ -58,7 +58,7 @@ internal class CogRPCServerDeliveryCargoTest {
 
         assertEquals(
             delivery.cargo.toString(Charset.defaultCharset()),
-            mockService.deliverCargoCalls.last().data.readBytes().toString(Charset.defaultCharset())
+            mockService.deliverCargoCalls.last().readBytes().toString(Charset.defaultCharset())
         )
         assertTrue(ackRecorder.values.isEmpty())
 

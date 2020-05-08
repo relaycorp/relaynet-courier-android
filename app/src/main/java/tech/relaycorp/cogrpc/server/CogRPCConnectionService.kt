@@ -1,14 +1,15 @@
 package tech.relaycorp.cogrpc.server
 
-import com.google.protobuf.ByteString
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tech.relaycorp.courier.common.Logging.logger
+import tech.relaycorp.relaynet.CargoDeliveryRequest
 import tech.relaycorp.relaynet.cogrpc.CargoDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
 import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
-import tech.relaycorp.relaynet.cogrpc.CogRPC
+import tech.relaycorp.relaynet.cogrpc.toAck
+import tech.relaycorp.relaynet.cogrpc.toCargoDelivery
 import java.util.logging.Level
 
 class CogRPCConnectionService(
@@ -20,10 +21,10 @@ class CogRPCConnectionService(
         object : StreamObserver<CargoDelivery> {
             override fun onNext(cargoDelivery: CargoDelivery) {
                 coroutineScope.launch {
-                    logger.info("deliverCargo next")
-                    val result = serverService.deliverCargo(cargoDelivery.toMessageReceived())
+                    logger.info("deliverCargo next ${cargoDelivery.id}")
+                    val result = serverService.deliverCargo(cargoDelivery.cargo.newInput())
                     if (result) {
-                        logger.info("deliverCargo next ack")
+                        logger.info("deliverCargo next ack ${cargoDelivery.id}")
                         responseObserver.onNext(cargoDelivery.toAck())
                     }
                 }
@@ -42,7 +43,7 @@ class CogRPCConnectionService(
         }
 
     override fun collectCargo(responseObserver: StreamObserver<CargoDelivery>): StreamObserver<CargoDeliveryAck> {
-        val cca = Authorization.getCCA()
+        val cca = AuthorizationContext.getCCA()
         if (cca == null) {
             logger.info("collectCargo completed due to missing CCA")
             responseObserver.onCompleted()
@@ -71,10 +72,10 @@ class CogRPCConnectionService(
 
         return object : StreamObserver<CargoDeliveryAck> {
             override fun onNext(ack: CargoDeliveryAck) {
-                logger.info("collectCargo ack next")
+                logger.info("collectCargo ack next ${ack.id}")
                 coroutineScope.launch {
                     try {
-                        serverService.processCargoCollectionAck(ack.toMessageDeliveryAck())
+                        serverService.processCargoCollectionAck(ack.id)
                         deliveriesToAck.remove(ack.id)
                         if (deliveriesToAck.isEmpty()) {
                             logger.info("collectCargo completed")
@@ -91,30 +92,11 @@ class CogRPCConnectionService(
             }
 
             override fun onCompleted() {
-                logger.info("collectCargo ack complete")
+                logger.info("collectCargo ack closed")
             }
         }
     }
 
-    private suspend fun getDeliveriesForCCA(cca: ByteArray): Iterable<CogRPC.MessageDelivery> {
-        val messageReceived = CogRPC.MessageReceived(cca.inputStream())
-        return serverService.collectCargo(messageReceived)
-    }
-
-    internal fun CargoDelivery.toMessageReceived() =
-        CogRPC.MessageReceived(data = cargo.newInput())
-
-    private fun CogRPC.MessageDelivery.toCargoDelivery() =
-        CargoDelivery.newBuilder()
-            .setId(localId)
-            .setCargo(ByteString.copyFrom(data.readBytes()))
-            .build()
-
-    internal fun CargoDelivery.toAck(): CargoDeliveryAck =
-        CargoDeliveryAck.newBuilder()
-            .setId(id)
-            .build()
-
-    internal fun CargoDeliveryAck.toMessageDeliveryAck() =
-        CogRPC.MessageDeliveryAck(id)
+    private suspend fun getDeliveriesForCCA(cca: ByteArray): Iterable<CargoDeliveryRequest> =
+        serverService.collectCargo(cca)
 }

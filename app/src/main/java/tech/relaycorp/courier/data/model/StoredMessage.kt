@@ -2,8 +2,8 @@ package tech.relaycorp.courier.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import tech.relaycorp.courier.domain.client.UniqueMessageId
 import java.util.Date
+import java.util.UUID
 
 @Entity(
     tableName = "Message",
@@ -24,6 +24,7 @@ data class StoredMessage(
     val storagePath: String,
     val size: StorageSize
 ) {
-
-    val uniqueMessageId get() = UniqueMessageId(senderAddress, messageId)
+    companion object {
+        fun generateLocalId() = UUID.randomUUID().toString()
+    }
 }

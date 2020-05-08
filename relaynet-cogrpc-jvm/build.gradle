@@ -3,7 +3,7 @@ apply plugin: 'com.google.protobuf'
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath "com.google.protobuf:protobuf-gradle-plugin:$protobufGradleVersion"
@@ -17,16 +17,16 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
 
+    // Relaynet
+    implementation 'tech.relaycorp:relaynet:1.12.4'
+
     // Protobuf
     implementation "com.google.protobuf:protobuf-gradle-plugin:$protobufGradleVersion"
     implementation "com.google.protobuf:protobuf-java:$protobufVersion"
     implementation "com.google.protobuf:protobuf-java-util:$protobufVersion"
 
     // gRPC
-    implementation("io.grpc:grpc-netty:${grpcVersion}") {
-        // TODO: remove exclude when there's a new netty release
-        exclude module: 'netty-handler'
-    }
+    implementation "io.grpc:grpc-netty:${grpcVersion}"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
 
@@ -34,15 +34,29 @@ dependencies {
     // Android comes bundled with 1.3 (but hidden), so we're stuck with this version
     //noinspection GradleDependency
     api 'commons-codec:commons-codec:1.3'
+
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
+    testImplementation "io.grpc:grpc-testing:${grpcVersion}"
+    testImplementation 'io.netty:netty-tcnative-boringssl-static:2.0.30.Final'
 }
 
 sourceCompatibility = "8"
 targetCompatibility = "8"
 
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions.freeCompilerArgs += [
             '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
-            '-Xuse-experimental=kotlinx.coroutines.FlowPreview'
+            '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
+            '-Xuse-experimental=kotlin.time.ExperimentalTime'
     ]
 }
 

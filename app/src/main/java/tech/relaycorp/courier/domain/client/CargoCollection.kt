@@ -10,7 +10,6 @@ import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
-import tech.relaycorp.relaynet.cogrpc.CogRPC
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import java.io.InputStream
 import java.util.logging.Level
@@ -28,25 +27,34 @@ class CargoCollection
     suspend fun collect() {
         getCCAs()
             .forEach { cca ->
-                collectAndStoreCargoForCCA(cca)
-                deleteCCA(cca)
+                try {
+                    collectAndStoreCargoForCCA(cca)
+                    deleteCCA(cca)
+                } catch (e: CogRPCClient.CogRPCException) {
+                    logger.log(Level.WARNING, "Cargo collection error", e)
+                }
             }
     }
 
     private suspend fun getCCAs() =
         storedMessageDao.getByRecipientTypeAndMessageType(
             MessageAddress.Type.Public,
-            MessageType.Cargo
+            MessageType.CCA
         )
 
+    @Throws(CogRPCClient.CogRPCException::class)
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
+        val client = clientBuilder.build(cca.recipientAddress.value)
         try {
-            clientBuilder
-                .build(cca.recipientAddress.value)
-                .collectCargo(cca.toCogRPCMessage())
-                .collect { storeCargo(it.data) }
+            client
+                .collectCargo(cca.getSerializedInputStream())
+                .collect { storeCargo(it) }
         } catch (e: MessageDataNotFoundException) {
             logger.log(Level.WARNING, "CCA data could not found on disk", e)
+        } catch (e: CogRPCClient.CCARefusedException) {
+            logger.log(Level.WARNING, "CCA refused")
+        } finally {
+            client.close()
         }
     }
 
@@ -57,9 +65,6 @@ class CargoCollection
         deleteMessage.delete(cca)
 
     @Throws(MessageDataNotFoundException::class)
-    private suspend fun StoredMessage.toCogRPCMessage() =
-        CogRPC.MessageDelivery(
-            localId = uniqueMessageId.value,
-            data = diskRepository.readMessage(storagePath)
-        )
+    private suspend fun StoredMessage.getSerializedInputStream() =
+        diskRepository.readMessage(storagePath)
 }

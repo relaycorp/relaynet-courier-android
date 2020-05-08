@@ -2,12 +2,12 @@ package tech.relaycorp.courier.ui.main
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -37,22 +37,23 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun syncMode() = runBlockingTest {
-        val states = ConflatedBroadcastChannel<InternetConnection>()
-        whenever(connectionObserver.observe()).thenReturn(states.asFlow())
+    internal fun syncMode() = runBlocking {
+        whenever(connectionObserver.observe()).thenReturn(flow {
+            delay(10)
+            emit(InternetConnection.Offline)
+            emit(InternetConnection.Online)
+        })
         val viewModel = buildViewModel()
         val syncMode = viewModel.syncMode().test(this)
 
-        states.send(InternetConnection.Offline)
-        states.send(InternetConnection.Online)
-
+        delay(20)
         syncMode
             .assertValues(MainViewModel.SyncMode.People, MainViewModel.SyncMode.Internet)
             .finish()
     }
 
     @Test
-    internal fun storageUsage() = runBlockingTest {
+    internal fun storageUsage() = runBlocking {
         val storageUsage = StorageUsageFactory.build()
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
@@ -61,7 +62,7 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun `deletes expired messages and show notice with size deleted`() = runBlockingTest {
+    internal fun `deletes expired messages and show notice with size deleted`() = runBlocking {
         val messagesToDelete = listOf(StoredMessageFactory.build())
         whenever(deleteExpiredMessages.delete()).thenReturn(messagesToDelete)
         val viewModel = buildViewModel()
@@ -72,7 +73,7 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun `low storage message is visible`() = runBlockingTest {
+    internal fun `low storage message is visible`() = runBlocking {
         val storageUsage = StorageUsage(StorageSize(1), StorageSize(1))
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 

@@ -42,11 +42,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = "1.8"
-        targetCompatibility = "1.8"
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_1_8
     }
     packagingOptions {
         exclude 'META-INF/*'
@@ -73,6 +74,9 @@ dependencies {
     implementation project(':relaynet-jvm') // TODO: remove when real version is finished
     implementation project(':relaynet-cogrpc-jvm')
 
+    // Java 8
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
+
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
@@ -89,7 +93,7 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.27'
 
     // Relaynet
-    implementation 'tech.relaycorp:relaynet:1.11.2'
+    implementation 'tech.relaycorp:relaynet:1.12.4'
     implementation 'tech.relaycorp:relaynet-cogrpc:1.0.1'
 
     // ORM
@@ -103,23 +107,12 @@ dependencies {
     implementation 'com.github.tfcporciuncula:flow-preferences:1.1.0'
 
     // gRPC
-    implementation("io.grpc:grpc-netty:${grpcVersion}") {
-        // TODO: remove exclude when there's a new netty release
-        exclude module: 'netty-handler'
-    }
+    implementation "io.grpc:grpc-netty:${grpcVersion}"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
 
     // Android TLS support for Netty
-    // TODO: remove netty-handler when there's a new netty release
-    implementation('com.github.netty.netty:netty-handler:79ef0c4706') {
-        exclude module: 'netty-common'
-        exclude module: 'netty-resolver'
-        exclude module: 'netty-buffer'
-        exclude module: 'netty-transport'
-        exclude module: 'netty-codec'
-    }
-    // implementation 'io.netty:netty-handler:4.1.48.Final'
+    implementation "io.netty:netty-handler:$nettyVersion"
     implementation 'org.conscrypt:conscrypt-android:2.4.0'
 
     // Base64 encoding
