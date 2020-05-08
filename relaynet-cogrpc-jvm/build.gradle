@@ -30,10 +30,10 @@ dependencies {
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
 
-    // Base64 encoding
-    // Android comes bundled with 1.3 (but hidden), so we're stuck with this version
-    //noinspection GradleDependency
-    api 'commons-codec:commons-codec:1.3'
+    // Get Bouncy Castle just so we can do Base64 encoding. This is a massive overkill, but we can't
+    // use java.util.Base64 on Android's API 21 and we can't use Apache Commons Codec because it'd
+    // break on Android (https://blog.osom.info/2015/04/commons-codec-on-android.html).
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.65")
 
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'

@@ -1,8 +1,7 @@
 package tech.relaycorp.relaynet.cogrpc
 
 import io.grpc.Metadata
-import org.apache.commons.codec.binary.Base64
-import java.nio.charset.Charset
+import org.bouncycastle.util.encoders.Base64
 
 object AuthorizationMetadata {
 
@@ -18,13 +17,12 @@ object AuthorizationMetadata {
     fun getCCASerialized(metadata: Metadata) =
         decodeAuthValue(metadata[MetadataKey])
 
-    private fun encodeAuthValue(cca: ByteArray) =
-        AUTHORIZATION_TYPE + Base64().encode(cca).toString(Charset.defaultCharset())
+    private fun encodeAuthValue(cca: ByteArray) = AUTHORIZATION_TYPE + Base64.toBase64String(cca)
 
     private fun decodeAuthValue(authMetadata: String?): ByteArray? {
         if (authMetadata?.startsWith(AUTHORIZATION_TYPE) != true) return null
 
         val ccaBase64 = authMetadata.substring(AUTHORIZATION_TYPE.length)
-        return Base64().decode(ccaBase64.toByteArray())
+        return Base64.decode(ccaBase64.toByteArray())
     }
 }
