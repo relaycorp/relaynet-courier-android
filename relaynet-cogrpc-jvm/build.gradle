@@ -30,6 +30,11 @@ dependencies {
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
 
+    // Get Bouncy Castle just so we can do Base64 encoding. This is a massive overkill, but we can't
+    // use java.util.Base64 on Android's API 21 and we can't use Apache Commons Codec because it'd
+    // break on Android (https://blog.osom.info/2015/04/commons-codec-on-android.html).
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.65")
+
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
