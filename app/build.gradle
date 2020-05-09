@@ -94,7 +94,7 @@ dependencies {
 
     // Relaynet
     implementation 'tech.relaycorp:relaynet:1.14.0'
-    implementation 'tech.relaycorp:relaynet-cogrpc:1.0.1'
+    implementation 'tech.relaycorp:relaynet-cogrpc:1.0.2'
 
     // ORM
     def room_version = "2.2.5"
