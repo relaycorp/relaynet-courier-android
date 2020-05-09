@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <lint>
+    <issue id="NewerVersionAvailable" severity="ignore">
+        <!-- We're using dependabot to keep dependencies up-to-date -->
+    </issue>
     <issue id="InvalidPackage">
         <!-- Ignore errors about BC importing javax.naming because we don't use those modules -->
         <ignore path="**/bcpkix-*.jar"/>
