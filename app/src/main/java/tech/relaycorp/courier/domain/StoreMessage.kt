@@ -28,8 +28,8 @@ class StoreMessage
         val cargoBytes = cargoInputStream.readBytes()
         val cargo = try {
             Cargo.deserialize(cargoBytes)
-        } catch (e: RAMFException) {
-            logger.warning("Malformed Cargo received")
+        } catch (exc: RAMFException) {
+            logger.warning("Malformed Cargo received: ${exc.message}")
             return null
         }
 
