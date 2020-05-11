@@ -86,8 +86,8 @@ class StoreMessage
             senderAddress = PrivateMessageAddress(senderPrivateAddress),
             messageId = MessageId(messageId),
             messageType = type,
-            creationTimeUtc = creationTime,
-            expirationTimeUtc = Date(creationTime.time + ttl.toLong() * 1000),
+            creationTimeUtc = creationDate,
+            expirationTimeUtc = Date(creationDate.time + ttl.toLong() * 1000),
             size = dataSize,
             storagePath = storagePath
         )

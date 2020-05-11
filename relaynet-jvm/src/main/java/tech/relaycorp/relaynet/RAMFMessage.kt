@@ -9,7 +9,7 @@ open class RAMFMessage protected constructor(
     val recipientAddress: String = UUID.randomUUID().toString(),
     val senderPrivateAddress: String = UUID.randomUUID().toString(),
     val messageId: String = UUID.randomUUID().toString(),
-    val creationTime: Date = Date(),
+    val creationDate: Date = Date(),
     val ttl: Int = 60 * 60 * 24 * 10
 ) {
     fun isValid(): Boolean = true
