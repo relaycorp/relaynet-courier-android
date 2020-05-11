@@ -20,8 +20,11 @@ class ClientsConnectedFilter : ServerTransportFilter() {
         return super.transportReady(transportAttrs)
     }
 
-    override fun transportTerminated(transportAttrs: Attributes) {
-        transportAttrs.calledIpAddress?.let {
+    override fun transportTerminated(transportAttrs: Attributes?) {
+        // transportAttrs == null when the incoming TLS connection is not HTTP2. This can be the
+        // case with JS gRPC clients employing this workaround:
+        // https://github.com/grpc/grpc-node/issues/663#issuecomment-624000152
+        transportAttrs?.calledIpAddress?.let {
             clients.sendBlocking(clients.value - it)
         }
         super.transportTerminated(transportAttrs)
