@@ -1,7 +1,7 @@
 package tech.relaycorp.courier.test.factory
 
-import tech.relaycorp.relaynet.Cargo
 import tech.relaycorp.relaynet.issueGatewayCertificate
+import tech.relaycorp.relaynet.messages.Cargo
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
 import tech.relaycorp.relaynet.wrappers.generateRSAKeyPair
 import java.time.ZonedDateTime
@@ -16,11 +16,10 @@ object RAMFMessageFactory {
         validityStartDate = ZonedDateTime.now().minusSeconds(5)
     )
 
-    fun buildCargo(size: Int = 0) = Cargo.deserialize(ByteArray(size))
+    fun buildCargoSerialized() = Cargo(recipientAddress, "".toByteArray(), senderCertificate)
+        .serialize(senderKeyPair.private)
+
     fun buildCCASerialized() =
-        CargoCollectionAuthorization(
-            recipientAddress,
-            "".toByteArray(),
-            senderCertificate
-        ).serialize(senderKeyPair.private)
+        CargoCollectionAuthorization(recipientAddress, "".toByteArray(), senderCertificate)
+            .serialize(senderKeyPair.private)
 }

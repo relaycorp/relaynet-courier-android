@@ -71,7 +71,6 @@ android {
 }
 
 dependencies {
-    implementation project(':relaynet-jvm') // TODO: remove when real version is finished
     implementation project(':relaynet-cogrpc-jvm')
 
     // Java 8

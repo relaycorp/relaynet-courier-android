@@ -16,8 +16,7 @@ import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.test.factory.RAMFMessageFactory
-import tech.relaycorp.relaynet.Cargo
-import tech.relaycorp.relaynet.RAMFMessageMalformedException
+import tech.relaycorp.relaynet.messages.Cargo
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
 import java.time.ZonedDateTime
 
@@ -26,19 +25,12 @@ internal class StoreMessageTest {
     private val storedMessageDao = mock<StoredMessageDao>()
     private val diskRepository = mock<DiskRepository>()
     private val getStorageUsage = mock<GetStorageUsage>()
-    private val cargoDeserializer = mock<((ByteArray) -> Cargo)>()
 
-    private val subject = StoreMessage(
-        storedMessageDao,
-        diskRepository,
-        getStorageUsage,
-        cargoDeserializer
-    )
+    private val subject = StoreMessage(storedMessageDao, diskRepository, getStorageUsage)
 
     @BeforeEach
     internal fun setUp() {
         runBlocking {
-            whenever(cargoDeserializer.invoke(any())).thenReturn(RAMFMessageFactory.buildCargo())
             whenever(getStorageUsage.get())
                 .thenReturn(StorageUsage(StorageSize(0), StorageSize(Long.MAX_VALUE)))
             whenever(diskRepository.writeMessage(any())).thenReturn("")
@@ -47,13 +39,12 @@ internal class StoreMessageTest {
 
     @Test
     internal fun `store message with just enough space`() = runBlockingTest {
-        val messageSize = 10
-        val message = buildMessageStream(messageSize)
+        val message = RAMFMessageFactory.buildCargoSerialized()
 
-        val storage = StorageUsage(StorageSize.ZERO, StorageSize(messageSize.toLong()))
+        val storage = StorageUsage(StorageSize.ZERO, StorageSize(message.size.toLong()))
         whenever(getStorageUsage.get()).thenReturn(storage)
 
-        assertNotNull(subject.storeCargo(message))
+        assertNotNull(subject.storeCargo(message.inputStream()))
         verify(diskRepository).writeMessage(any())
         verify(storedMessageDao).insert(any())
     }
@@ -63,30 +54,32 @@ internal class StoreMessageTest {
         val noStorageSpace = StorageUsage(StorageSize.ZERO, StorageSize.ZERO)
         whenever(getStorageUsage.get()).thenReturn(noStorageSpace)
 
-        assertNull(subject.storeCargo(buildMessageStream()))
+        assertNull(subject.storeCargo(RAMFMessageFactory.buildCargoSerialized().inputStream()))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
 
     @Test
-    internal fun `store cargo with malformed message`() = runBlockingTest {
-        whenever(cargoDeserializer.invoke(any())).then {
-            throw RAMFMessageMalformedException()
-        }
-
-        assertNull(subject.storeCargo(buildMessageStream()))
+    internal fun `do not store malformed cargo`() = runBlockingTest {
+        assertNull(subject.storeCargo("Not really a cargo".byteInputStream()))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
 
     @Test
-    internal fun `store cargo with invalid message`() = runBlockingTest {
-        val cargo = mock<Cargo> {
-            on { isValid() }.thenReturn(false)
-        }
-        whenever(cargoDeserializer.invoke(any())).thenReturn(cargo)
+    internal fun `do not store well-formed yet invalid cargo`() = runBlockingTest {
+        // Use a cargo that expired the day before
+        val invalidCargo = Cargo(
+            RAMFMessageFactory.recipientAddress,
+            "payload".toByteArray(),
+            RAMFMessageFactory.senderCertificate,
+            creationDate = ZonedDateTime.now().minusDays(1),
+            ttl = 1
+        )
 
-        assertNull(subject.storeCargo(buildMessageStream()))
+        val invalidCargoSerialized =
+            invalidCargo.serialize(RAMFMessageFactory.senderKeyPair.private)
+        assertNull(subject.storeCargo(invalidCargoSerialized.inputStream()))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
@@ -120,7 +113,4 @@ internal class StoreMessageTest {
         verify(diskRepository).writeMessage(any())
         verify(storedMessageDao).insert(any())
     }
-
-    private fun buildMessageData(size: Int = 1) = ByteArray(size)
-    private fun buildMessageStream(size: Int = 1) = buildMessageData(size).inputStream()
 }
