@@ -15,31 +15,41 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/main_storage_usage" />
+            android:background="?android:colorBackground"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:theme="@style/Theme.Courier.Sync">
 
-        <ProgressBar
-            android:id="@+id/storageProgress"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_storage_usage" />
 
-        <TextView
-            android:id="@+id/storageValues"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/main_storage_usage_values" />
+            <ProgressBar
+                android:id="@+id/storageProgress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100" />
 
-        <TextView
-            android:id="@+id/lowStorageMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/main_low_storage"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/storageValues"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_storage_usage_values" />
+
+            <TextView
+                android:id="@+id/lowStorageMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_low_storage"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/syncPeopleLayout"
@@ -53,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/sync_people"
-                android:textAppearance="?textAppearanceHeadline3" />
+                android:textAppearance="@style/TextAppearance.Courier.Title" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/syncWithPeople"
@@ -66,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/sync_internet_instructions"
-                android:textAppearance="?textAppearanceCaption" />
+                android:textAppearance="@style/TextAppearance.Courier.Caption" />
         </LinearLayout>
 
         <LinearLayout
@@ -81,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/sync_internet"
-                android:textAppearance="?textAppearanceHeadline3" />
+                android:textAppearance="@style/TextAppearance.Courier.Title" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/syncWithInternet"
@@ -94,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/sync_people_instructions"
-                android:textAppearance="?textAppearanceCaption" />
+                android:textAppearance="@style/TextAppearance.Courier.Caption" />
         </LinearLayout>
     </LinearLayout>
 

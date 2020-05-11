@@ -29,9 +29,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/stop"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sync_stop" />
+            android:text="@string/stop" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close"
@@ -39,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="@string/close"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="visible" />
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
