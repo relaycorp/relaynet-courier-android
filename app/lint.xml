@@ -5,9 +5,11 @@
     </issue>
     <issue id="InvalidPackage">
         <!-- Ignore errors about BC importing javax.naming because we don't use those modules -->
-        <ignore path="**/bcpkix-*.jar"/>
+        <ignore path="**/bcpkix-*.jar" />
+        <!-- Temporary until https://github.com/Kotlin/kotlinx.coroutines/issues/2004 is resolved. -->
+        <ignore path="**/kotlinx-coroutines-core-*.jar" />
     </issue>
     <issue id="TrustAllX509TrustManager">
-        <ignore path="org/bouncycastle/est/jcajce/*.class"/>
+        <ignore path="org/bouncycastle/est/jcajce/*.class" />
     </issue>
 </lint>
