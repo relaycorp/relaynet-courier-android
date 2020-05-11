@@ -18,9 +18,7 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.test.factory.RAMFMessageFactory
 import tech.relaycorp.relaynet.Cargo
 import tech.relaycorp.relaynet.RAMFMessageMalformedException
-import tech.relaycorp.relaynet.issueGatewayCertificate
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
-import tech.relaycorp.relaynet.wrappers.generateRSAKeyPair
 import java.time.ZonedDateTime
 
 internal class StoreMessageTest {
@@ -35,13 +33,6 @@ internal class StoreMessageTest {
         diskRepository,
         getStorageUsage,
         cargoDeserializer
-    )
-
-    private val senderKeyPair = generateRSAKeyPair()
-    private val senderCertificate = issueGatewayCertificate(
-        senderKeyPair.public,
-        senderKeyPair.private,
-        ZonedDateTime.now().plusSeconds(10)
     )
 
     @BeforeEach
@@ -101,26 +92,33 @@ internal class StoreMessageTest {
     }
 
     @Test
-    internal fun `store CCA with malformed message`() = runBlockingTest {
+    internal fun `do not store malformed CCA`() = runBlockingTest {
         assertNull(subject.storeCCA("Not a RAMF message".toByteArray()))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
 
     @Test
-    internal fun `store well-formed yet invalid CCA`() = runBlockingTest {
+    internal fun `do not store well-formed yet invalid CCA`() = runBlockingTest {
         // Use a CCA that expired the day before
         val invalidCCA = CargoCollectionAuthorization(
-            "https://example.com",
+            RAMFMessageFactory.recipientAddress,
             "payload".toByteArray(),
-            senderCertificate,
+            RAMFMessageFactory.senderCertificate,
             creationDate = ZonedDateTime.now().minusDays(1),
             ttl = 1
         )
 
-        assertNull(subject.storeCCA(invalidCCA.serialize(senderKeyPair.private)))
+        assertNull(subject.storeCCA(invalidCCA.serialize(RAMFMessageFactory.senderKeyPair.private)))
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
+    }
+
+    @Test
+    internal fun `store valid CCA`() = runBlockingTest {
+        assertNotNull(subject.storeCCA(RAMFMessageFactory.buildCCASerialized()))
+        verify(diskRepository).writeMessage(any())
+        verify(storedMessageDao).insert(any())
     }
 
     private fun buildMessageData(size: Int = 1) = ByteArray(size)

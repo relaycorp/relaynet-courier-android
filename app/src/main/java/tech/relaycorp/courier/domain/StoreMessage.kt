@@ -52,8 +52,8 @@ class StoreMessage
 
         try {
             cca.validate()
-        } catch (_: RAMFException) {
-            logger.warning("Invalid CCA received")
+        } catch (exc: RAMFException) {
+            logger.warning("Invalid CCA received: ${exc.message}")
             return null
         }
 
