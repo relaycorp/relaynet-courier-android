@@ -10,7 +10,6 @@ import tech.relaycorp.cogrpc.server.CogRPCServer
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.data.database.AppDatabase
 import tech.relaycorp.relaynet.Cargo
-import tech.relaycorp.relaynet.CargoCollectionAuthorization
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import javax.inject.Named
 import javax.inject.Singleton
@@ -62,8 +61,4 @@ class DataModule {
     @Provides
     fun cargoDeserializer(): ((@JvmSuppressWildcards ByteArray) -> Cargo) =
         Cargo.Companion::deserialize
-
-    @Provides
-    fun ccaDeserializer(): ((@JvmSuppressWildcards ByteArray) -> CargoCollectionAuthorization) =
-        CargoCollectionAuthorization.Companion::deserialize
 }

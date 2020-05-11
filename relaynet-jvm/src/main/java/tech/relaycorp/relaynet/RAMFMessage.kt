@@ -22,11 +22,4 @@ class Cargo private constructor() : RAMFMessage() {
     }
 }
 
-class CargoCollectionAuthorization private constructor() : RAMFMessage() {
-    companion object {
-        @Throws(RAMFMessageMalformedException::class)
-        fun deserialize(data: ByteArray) = CargoCollectionAuthorization()
-    }
-}
-
 class RAMFMessageMalformedException(message: String? = null) : Exception(message)
