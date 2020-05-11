@@ -98,7 +98,7 @@ internal constructor(
 
     companion object {
         private const val MAX_MESSAGE_SIZE = 8_397_056
-        private const val MAX_METADATA_SIZE = 2_048 // CCAs
+        private const val MAX_METADATA_SIZE = 2_500 // ~1.7kib for a base64-encoded CCA + overhead
         private const val MAX_CONCURRENT_CALLS_PER_CONNECTION = 3
         private val MAX_CONNECTION_AGE = 15.minutes
         private val MAX_CONNECTION_IDLE = 10.seconds
