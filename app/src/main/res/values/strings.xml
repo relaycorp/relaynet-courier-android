@@ -5,6 +5,7 @@
     <string name="close">Close</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="stop">Stop</string>
 
     <!-- Main -->
     <string name="main_storage_usage">Storage Usage</string>
@@ -25,7 +26,6 @@
     <string name="sync_internet_instructions">
       Connect to the Internet to sync data online.
     </string>
-    <string name="sync_stop">Stop Sync</string>
 
     <!-- Hotspot Instructions -->
     <string name="hotspot_instructions">Sync Instructions</string>

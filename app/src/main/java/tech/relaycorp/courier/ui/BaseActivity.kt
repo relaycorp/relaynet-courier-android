@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.common_app_bar.appBar
 import kotlinx.android.synthetic.main.common_app_bar.toolbar
+import kotlinx.android.synthetic.main.common_app_bar.toolbarTitle
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
@@ -30,7 +31,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
-        toolbar?.title = title
+        toolbarTitle?.text = title
         appBar?.addSystemWindowInsetToPadding(top = true)
     }
 

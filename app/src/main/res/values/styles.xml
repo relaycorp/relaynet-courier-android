@@ -1,6 +1,25 @@
 <resources>
-    
-    <style name="Widget.Courier.AppBar" parent="Widget.MaterialComponents.AppBarLayout.Surface"/>
-    <style name="Widget.Courier.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface"/>
+
+    <style name="Widget.Courier.AppBar" parent="Widget.MaterialComponents.AppBarLayout.Surface">
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.Courier.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
+        <item name="android:minHeight">96dp</item>
+    </style>
+
+    <style name="Widget.Courier.ToolbarNavigationButton" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="tint">?colorOnSurface</item>
+    </style>
+
+    <style name="Widget.Courier.TextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Courier.Body</item>
+    </style>
+
+    <style name="Widget.Courier.ToolbarTitle" parent="">
+        <item name="android:textAppearance">?titleTextAppearance</item>
+        <item name="android:textColor">?colorOnSurface</item>
+    </style>
+
 
 </resources>

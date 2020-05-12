@@ -1,26 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Courier" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Base.Theme.Courier" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="Theme.Courier" parent="Base.Theme.Courier">
         <item name="colorPrimary">@color/relaynet_primary</item>
-        <item name="colorPrimaryVariant">@color/relaynet_primary_variant</item>
         <item name="colorSecondary">@color/relaynet_secondary</item>
-        <item name="colorSecondaryVariant">@color/relaynet_secondary_variant</item>
 
         <item name="android:colorBackground">@color/white</item>
         <item name="colorSurface">@color/white</item>
         <item name="colorError">@color/red</item>
-
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="colorOnBackground">@color/black</item>
-        <item name="colorOnSurface">@color/black</item>
+        <item name="colorOnSurface">@color/relaynet_primary</item>
         <item name="colorOnError">@color/white</item>
 
+        <item name="android:textColor">@color/black</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:textColorSecondary">@color/gray_dark</item>
+        <item name="android:fontFamily">@font/inria_sans</item>
+
+        <item name="iconTint">?colorOnSurface</item>
 
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@color/system_ui_scrim_dark</item>
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
 
@@ -28,9 +32,31 @@
         <item name="appBarLayoutStyle">@style/Widget.Courier.AppBar</item>
         <item name="toolbarStyle">@style/Widget.Courier.Toolbar</item>
         <item name="android:toolbarStyle">@style/Widget.Courier.Toolbar</item>
+        <item name="toolbarNavigationButtonStyle">@style/Widget.Courier.ToolbarNavigationButton
+        </item>
+        <item name="android:textViewStyle">@style/Widget.Courier.TextView</item>
+
+        <!-- Custom text appearances -->
+        <item name="titleTextAppearance">@style/TextAppearance.Courier.ToolbarTitle</item>
     </style>
 
     <style name="Theme.Courier.Splash">
         <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+    <style name="Theme.Courier.Sync">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorSecondary">@color/white</item>
+
+        <item name="android:colorBackground">@color/relaynet_primary</item>
+        <item name="colorSurface">@color/relaynet_primary</item>
+        <item name="colorOnPrimary">@color/relaynet_primary</item>
+        <item name="colorOnSecondary">@color/relaynet_primary</item>
+        <item name="colorOnBackground">@color/white</item>
+        <item name="colorOnSurface">@color/white</item>
+
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/gray_light</item>
     </style>
 </resources>
