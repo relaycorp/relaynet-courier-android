@@ -15,11 +15,27 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:id="@+id/stateMessage"
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true" />
+            android:layout_marginBottom="32dp">
+
+            <ImageView
+                android:id="@+id/animation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:tint="?colorOnBackground"
+                app:srcCompat="@drawable/ic_sync_animation" />
+
+            <TextView
+                android:id="@+id/stateMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textIsSelectable="true"
+                tools:text="Syncing" />
+        </FrameLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/stop"

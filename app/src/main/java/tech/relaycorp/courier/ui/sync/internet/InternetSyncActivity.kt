@@ -10,11 +10,14 @@ import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_internet_sync.close
 import kotlinx.android.synthetic.main.activity_internet_sync.stateMessage
 import kotlinx.android.synthetic.main.activity_internet_sync.stop
+import kotlinx.android.synthetic.main.activity_internet_sync.animation
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.domain.PublicSync
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.common.startLoopingAvd
+import tech.relaycorp.courier.ui.common.stopLoopingAvd
 import javax.inject.Inject
 
 class InternetSyncActivity : BaseActivity() {
@@ -41,6 +44,11 @@ class InternetSyncActivity : BaseActivity() {
                 val isDone = it == PublicSync.State.Finished || it == PublicSync.State.Error
                 stop.isVisible = !isDone
                 close.isVisible = isDone
+                if (it != PublicSync.State.Finished && it != PublicSync.State.Error) {
+                    animation.startLoopingAvd(R.drawable.ic_sync_animation)
+                } else {
+                    animation.stopLoopingAvd()
+                }
             }
             .launchIn(lifecycleScope)
 

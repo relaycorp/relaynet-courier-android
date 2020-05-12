@@ -2,11 +2,17 @@ package tech.relaycorp.courier.ui.sync.people
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
+import kotlinx.android.synthetic.main.activity_people_sync.animation
 import kotlinx.android.synthetic.main.activity_people_sync.clientsConnected
 import kotlinx.android.synthetic.main.activity_people_sync.close
 import kotlinx.android.synthetic.main.activity_people_sync.stateMessage
@@ -16,6 +22,8 @@ import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.domain.PrivateSync
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.common.startLoopingAvd
+import tech.relaycorp.courier.ui.common.stopLoopingAvd
 import javax.inject.Inject
 
 class PeopleSyncActivity : BaseActivity() {
@@ -42,6 +50,11 @@ class PeopleSyncActivity : BaseActivity() {
                 val isDone = it == PrivateSync.State.Stopped
                 stop.isVisible = !isDone
                 close.isVisible = isDone
+                if (it == PrivateSync.State.Syncing) {
+                    animation.startLoopingAvd(R.drawable.ic_sync_animation)
+                } else {
+                    animation.stopLoopingAvd()
+                }
             }
             .launchIn(lifecycleScope)
 
