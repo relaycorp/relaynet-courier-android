@@ -38,6 +38,7 @@
 
         <!-- Custom text appearances -->
         <item name="titleTextAppearance">@style/TextAppearance.Courier.ToolbarTitle</item>
+        <item name="materialButtonStyle">@style/Widget.Courier.Button</item>
     </style>
 
     <style name="Theme.Courier.Splash">

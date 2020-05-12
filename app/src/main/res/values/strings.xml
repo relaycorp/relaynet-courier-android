@@ -28,18 +28,18 @@
     </string>
 
     <!-- Hotspot Instructions -->
-    <string name="hotspot_instructions">Sync Instructions</string>
-    <string name="hotspot_instructions_disabled">WiFi Hotspot disabled</string>
+    <string name="hotspot_instructions">Wi-Fi hotspot</string>
+    <string name="hotspot_instructions_disabled">Wi-Fi hotspot is disabled</string>
     <string name="hotspot_instructions_disabled_text">
-      Your WiFi Hotspot is disabled at the moment.
+      Your Wi-Fi hotspot is disabled at the moment.
       You need to enable it in your device settings to be able to Sync with People.
     </string>
-    <string name="hotspot_instructions_open_settings">Open WiFi Hotspot Settings</string>
-    <string name="hotspot_instructions_enabled">WiFi Hotspot enabled</string>
+    <string name="hotspot_instructions_open_settings">Open Wi-Fi hotspot Settings</string>
+    <string name="hotspot_instructions_enabled">Wi-Fi hotspot is enabled</string>
     <string name="hotspot_instructions_enabled_text">
-      Your WiFi Hotspot is now enabled. You can start the Sync with People.
+      Your Wi-Fi hotspot is now enabled.\nYou can start the Sync with People.
     </string>
-    <string name="hotspot_instructions_start_sync">Start Sync with People</string>
+    <string name="hotspot_instructions_start_sync">Start to Sync</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
