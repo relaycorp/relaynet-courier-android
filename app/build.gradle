@@ -92,7 +92,7 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.27'
 
     // Relaynet
-    implementation 'tech.relaycorp:relaynet:1.15.1'
+    implementation 'tech.relaycorp:relaynet:1.15.2'
     implementation 'tech.relaycorp:relaynet-cogrpc:1.0.2'
 
     // ORM
