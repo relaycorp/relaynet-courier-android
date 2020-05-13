@@ -46,8 +46,8 @@ class StoreMessage
     suspend fun storeCCA(ccaSerialized: ByteArray): StoredMessage? {
         val cca = try {
             CargoCollectionAuthorization.deserialize(ccaSerialized)
-        } catch (e: RAMFException) {
-            logger.warning("Malformed CCA received")
+        } catch (exc: RAMFException) {
+            logger.warning("Malformed CCA received: ${exc.message}")
             return null
         }
 
