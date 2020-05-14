@@ -2,20 +2,39 @@ android-pixel-4:
   type: robo
   app: app/build/outputs/apk/debug/app-debug.apk
   device:
-    # Huawei P8 lite (physical)
+    # Huawei P8 lite (physical). The oldest device we're testing and it's important not to use
+    # a Google phone just so we also make sure the manufacturer's ROM doesn't break the app.
     - model: hwALE-H
-      version: 21
+      version: 21   # Android 5.0
       locale: en
       orientation: portrait
 
     # Nexus 5 (virtual)
     - model: Nexus5
-      version: 23
+      version: 23   # Android 6.0
       locale: en
       orientation: portrait
 
-    # Pixel 4 (physical)
-    - model: flame
-      version: 29
+    # Nexus 5X (virtual)
+    - model: Nexus5X
+      version: 24   # Android 7.0
+      locale: en
+      orientation: portrait
+
+    # Nexus 5X (virtual)
+    - model: Nexus5X
+      version: 26   # Android 8.0
+      locale: en
+      orientation: portrait
+
+    # Pixel 2 (physical)
+    - model: walleye
+      version: 29   # Android 9.0
+      locale: en
+      orientation: portrait
+
+    # Pixel 2 (virtual)
+    - model: Pixel2
+      version: 29   # Android 10.0
       locale: en
       orientation: portrait
