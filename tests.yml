@@ -1,0 +1,8 @@
+android-pixel-4:
+  type: robo
+  app: app-debug.apk
+  device:
+    - model: flame
+      version: 29
+      locale: 'en'
+      orientation: portrait
