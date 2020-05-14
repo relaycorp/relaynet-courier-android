@@ -77,7 +77,7 @@ internal constructor(
     }
 
     fun stop() {
-        // server?.shutdown()
+        server?.shutdown()
         server = null
 
         job.cancel()
