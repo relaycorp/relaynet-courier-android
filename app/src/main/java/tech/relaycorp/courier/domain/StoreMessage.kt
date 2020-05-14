@@ -9,10 +9,10 @@ import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
-import tech.relaycorp.relaynet.Cargo
-import tech.relaycorp.relaynet.CargoCollectionAuthorization
-import tech.relaycorp.relaynet.RAMFMessage
-import tech.relaycorp.relaynet.RAMFMessageMalformedException
+import tech.relaycorp.relaynet.messages.Cargo
+import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
+import tech.relaycorp.relaynet.ramf.RAMFException
+import tech.relaycorp.relaynet.ramf.RAMFMessage
 import java.io.InputStream
 import java.util.Date
 import javax.inject.Inject
@@ -21,21 +21,22 @@ class StoreMessage
 @Inject constructor(
     private val storedMessageDao: StoredMessageDao,
     private val diskRepository: DiskRepository,
-    private val getStorageUsage: GetStorageUsage,
-    private val cargoDeserializer: ((@JvmSuppressWildcards ByteArray) -> Cargo),
-    private val ccaDeserializer: ((@JvmSuppressWildcards ByteArray) -> CargoCollectionAuthorization)
+    private val getStorageUsage: GetStorageUsage
 ) {
 
     suspend fun storeCargo(cargoInputStream: InputStream): StoredMessage? {
         val cargoBytes = cargoInputStream.readBytes()
         val cargo = try {
-            cargoDeserializer(cargoBytes)
-        } catch (e: RAMFMessageMalformedException) {
-            logger.warning("Malformed Cargo received")
+            Cargo.deserialize(cargoBytes)
+        } catch (exc: RAMFException) {
+            logger.warning("Malformed Cargo received: ${exc.message}")
             return null
         }
-        if (!cargo.isValid()) {
-            logger.warning("Invalid Cargo received")
+
+        try {
+            cargo.validate()
+        } catch (exc: RAMFException) {
+            logger.warning("Invalid cargo received: ${exc.message}")
             return null
         }
 
@@ -44,13 +45,16 @@ class StoreMessage
 
     suspend fun storeCCA(ccaSerialized: ByteArray): StoredMessage? {
         val cca = try {
-            ccaDeserializer.invoke(ccaSerialized)
-        } catch (e: RAMFMessageMalformedException) {
-            logger.warning("Malformed CCA received")
+            CargoCollectionAuthorization.deserialize(ccaSerialized)
+        } catch (exc: RAMFException) {
+            logger.warning("Malformed CCA received: ${exc.message}")
             return null
         }
-        if (!cca.isValid()) {
-            logger.warning("Invalid CCA received")
+
+        try {
+            cca.validate()
+        } catch (exc: RAMFException) {
+            logger.warning("Invalid CCA received: ${exc.message}")
             return null
         }
 
@@ -83,11 +87,11 @@ class StoreMessage
         return StoredMessage(
             recipientAddress = recipientAddress,
             recipientType = recipientAddress.type,
-            senderAddress = PrivateMessageAddress(senderPrivateAddress),
-            messageId = MessageId(messageId),
+            senderAddress = PrivateMessageAddress(senderCertificate.subjectPrivateAddress),
+            messageId = MessageId(id),
             messageType = type,
-            creationTimeUtc = creationTime,
-            expirationTimeUtc = Date(creationTime.time + ttl.toLong() * 1000),
+            creationTimeUtc = Date.from(creationDate.toInstant()),
+            expirationTimeUtc = Date.from(expiryDate.toInstant()),
             size = dataSize,
             storagePath = storagePath
         )
