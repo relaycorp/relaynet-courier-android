@@ -14,9 +14,9 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: build
-      - name: Run tests on Firebase Test Lab
+      - name: Run tests on physical and virtual devices
         uses: asadmansr/Firebase-Test-Lab-Action@v1.0
         with:
-          arg-spec: 'tests.yml:android-pixel-4'
+          arg-spec: 'app/firebase-test-lab.yml:spec'
         env:
           SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}

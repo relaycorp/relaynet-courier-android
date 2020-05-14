@@ -1,4 +1,4 @@
-android-pixel-4:
+spec:
   type: robo
   app: app/build/outputs/apk/debug/app-debug.apk
   device:
