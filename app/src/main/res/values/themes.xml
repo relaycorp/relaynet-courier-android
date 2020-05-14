@@ -22,7 +22,7 @@
         <item name="android:textColorSecondary">@color/gray_dark</item>
         <item name="android:fontFamily">@font/inria_sans</item>
 
-        <item name="iconTint">?colorOnSurface</item>
+        <item name="iconTint">@color/gray_dark</item>
 
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
@@ -35,8 +35,6 @@
         <item name="toolbarNavigationButtonStyle">@style/Widget.Courier.ToolbarNavigationButton
         </item>
         <item name="android:textViewStyle">@style/Widget.Courier.TextView</item>
-
-        <!-- Custom text appearances -->
         <item name="titleTextAppearance">@style/TextAppearance.Courier.ToolbarTitle</item>
         <item name="materialButtonStyle">@style/Widget.Courier.Button</item>
         <item name="materialButtonOutlinedStyle">@style/Widget.Courier.Button.Outline</item>

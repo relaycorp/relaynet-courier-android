@@ -6,6 +6,12 @@
 
     <style name="Widget.Courier.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
         <item name="android:minHeight">96dp</item>
+        <item name="iconTint">?colorOnSurface</item>
+        <item name="android:theme">@style/Theme.Courier.Toolbar</item>
+    </style>
+
+    <style name="Theme.Courier.Toolbar" parent="">
+        <item name="iconTint">?colorOnSurface</item>
     </style>
 
     <style name="Widget.Courier.ToolbarNavigationButton" parent="Widget.AppCompat.Toolbar.Button.Navigation">

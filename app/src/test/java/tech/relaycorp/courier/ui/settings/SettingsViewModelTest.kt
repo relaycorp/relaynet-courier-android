@@ -90,7 +90,7 @@ internal class SettingsViewModelTest {
 
         val vm = buildViewModel()
         assertEquals(
-            Boundary(
+            SizeBoundary(
                 SettingsViewModel.MIN_STORAGE_SIZE,
                 totalStorage,
                 SettingsViewModel.STORAGE_SIZE_STEP

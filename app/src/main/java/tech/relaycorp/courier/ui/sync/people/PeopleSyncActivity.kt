@@ -2,15 +2,10 @@ package tech.relaycorp.courier.ui.sync.people
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.widget.ImageView
-import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.vectordrawable.graphics.drawable.Animatable2Compat
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_people_sync.animation
 import kotlinx.android.synthetic.main.activity_people_sync.clientsConnected

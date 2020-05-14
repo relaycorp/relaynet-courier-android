@@ -12,57 +12,179 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/deleteData"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_delete_data" />
+            android:layout_marginBottom="16dp"
+            android:text="@string/settings_manage_storage"
+            android:textAppearance="@style/TextAppearance.Courier.SubTitle" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_data_usage"
+                android:tint="?iconTint" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginBottom="32dp"
+                android:orientation="vertical"
+                tools:ignore="RtlSymmetry">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_select_max_storage"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/storageMaxSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:stepSize="1"
+                    android:value="50"
+                    android:valueFrom="0"
+                    android:valueTo="100"
+                    app:tickColor="@android:color/transparent"
+                    tools:progress="50" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_max_storage" />
+
+                    <TextView
+                        android:id="@+id/storageMaxValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textIsSelectable="true"
+                        tools:text="1.00 GB" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/settings_used_storage" />
+
+                    <TextView
+                        android:id="@+id/storageUsed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textIsSelectable="true"
+                        tools:text="10 MB" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_available_storage" />
+
+                    <TextView
+                        android:id="@+id/storageAvailable"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textIsSelectable="true"
+                        tools:text="10 MB" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_total_storage" />
+
+                    <TextView
+                        android:id="@+id/storageTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textIsSelectable="true"
+                        tools:text="24 MB" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_delete_data_description" />
+            android:layout_marginBottom="16dp"
+            android:text="@string/settings_clear_data"
+            android:textAppearance="@style/TextAppearance.Courier.SubTitle" />
 
-        <TextView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/settings_max_storage"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
+            android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/storageMaxSeek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_delete"
+                android:tint="?iconTint" />
 
-        <TextView
-            android:id="@+id/storageMaxValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textIsSelectable="true"
-            tools:text="1.00 GB" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="40dp"
+                tools:ignore="RtlSymmetry">
 
-        <TextView
-            android:id="@+id/storageUsed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings_used_storage"
-            android:textIsSelectable="true" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/settings_clear_data_description"
+                    android:textAppearance="@style/TextAppearance.Courier.Body"
+                    android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/storageAvailable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings_available_storage"
-            android:textIsSelectable="true" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteData"
+                    style="@style/Widget.Courier.Button.Outline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_clear" />
 
-        <TextView
-            android:id="@+id/storageTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings_total_storage"
-            android:textIsSelectable="true" />
+            </LinearLayout>
+        </FrameLayout>
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
