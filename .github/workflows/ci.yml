@@ -15,7 +15,7 @@ jobs:
         with:
           arguments: build
       - name: Run tests on Firebase Test Lab
-        uses: asadmansr/Firebase-Test-Lab-Action@v1.0
+        uses: "gnarea/Firebase-Test-Lab-Action"
         with:
           arg-spec: 'tests.yml:android-pixel-4'
         env:
