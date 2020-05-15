@@ -3,7 +3,7 @@ on:
   push:
     branches-ignore: [gh-pages]
 jobs:
-  ci:
+  build:
     name: "Run static checks and tests"
     runs-on: ubuntu-latest
     steps:
@@ -14,3 +14,9 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: build
+      - name: Run tests on physical and virtual devices
+        uses: asadmansr/Firebase-Test-Lab-Action@v1.0
+        with:
+          arg-spec: 'app/firebase-test-lab.yml:spec'
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
