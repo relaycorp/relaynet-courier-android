@@ -1,4 +1,4 @@
-<img src="./courier-icon.png" style="float:right; margin: 0.5em; max-width: 40%"/>
+<img src="./courier-icon.png" align="right"/>
 
 # Relaynet Courier for Android
 
