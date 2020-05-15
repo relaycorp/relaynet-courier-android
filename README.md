@@ -8,7 +8,7 @@ This document is aimed at advanced users and (prospective) contributors. We aim 
 
 ## Multiple IP address in the private subnet are unsupported
 
-If you've rooted your Android device or flashed it with a custom aftermarket ROM, you might be able to create multiple IP address in the subnet `192.168.43.0/24`. If that were the case, the courier app will fail to allow incoming connections from private gateways: We need exactly one IP address in that range so that the app can self-issue TLS certificates for it.
+If you've rooted your Android device or flashed it with a custom aftermarket ROM, you might be able to have multiple IP address in the subnet `192.168.43.0/24`. If that were the case, the courier app will fail to allow incoming connections from private gateways: We need exactly one IP address in that range so that the app can self-issue TLS certificates for it.
 
 ## Architecture
 
