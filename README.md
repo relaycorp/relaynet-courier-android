@@ -40,6 +40,6 @@ Requires an Android device or emulator
 
 ## Contributing
 
-We love contributions! If you're about to contribute to a Relaycorp project for the first time, please refer to [our guidelines](https://github.com/relaycorp/.github/blob/master/CONTRIBUTING.md) first.
+We love contributions! If you haven't contributed to a Relaycorp project before, please take a minute to [read our guidelines](https://github.com/relaycorp/.github/blob/master/CONTRIBUTING.md) first.
 
 Please note that we're not accepting translations just yet as the copy is likely to change frequently and radically until the beta release. We're just trying to be mindful of your time and ours! Once the copy reaches a relatively stable state, we'll want to translate the app into as many languages as possible.
