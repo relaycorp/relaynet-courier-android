@@ -6,9 +6,9 @@ This repository contains the source code for the [Relaynet Courier for Android](
 
 This document is aimed at advanced users and (prospective) contributors. We aim to make the app as simple and intuitive as possible, and we're therefore not planning on publishing end-user documentation at this point.
 
-## Multiple IP address in the private subnet are unsupported
+## Multiple IP addresses in the private subnet are unsupported
 
-If you've rooted your Android device or flashed it with a custom aftermarket ROM, you might be able to have multiple IP address in the subnet `192.168.43.0/24`. If that were the case, the courier app will fail to allow incoming connections from private gateways: We need exactly one IP address in that range so that the app can self-issue TLS certificates for it.
+If you've rooted your Android device or flashed it with a custom ROM, you might be able to have multiple IP address in the subnet `192.168.43.0/24`. If that were the case, the courier app will fail to allow incoming connections from private gateways: We need exactly one IP address in that range so that the app can self-issue TLS certificates for it.
 
 ## Architecture
 
