@@ -12,15 +12,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:padding="32dp"
+        android:layout_marginBottom="48dp"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="64dp"
+            android:background="@drawable/background_icon_large"
+            android:backgroundTint="?colorPrimary"
+            android:contentDescription="@null"
+            android:padding="8dp"
+            android:src="@drawable/ic_hotspot"
+            android:tint="?colorPrimary" />
 
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textAppearance="?textAppearanceHeadline4"
+            android:layout_marginBottom="32dp"
+            android:textAppearance="@style/TextAppearance.Courier.Title"
             android:textIsSelectable="true"
             tools:text="@string/hotspot_instructions_disabled" />
 
@@ -28,6 +43,7 @@
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.Courier.Body2"
             android:textIsSelectable="true"

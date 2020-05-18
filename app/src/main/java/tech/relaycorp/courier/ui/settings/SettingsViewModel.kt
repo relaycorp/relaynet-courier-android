@@ -17,7 +17,6 @@ import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.ui.BaseViewModel
 import tech.relaycorp.courier.ui.common.Click
 import tech.relaycorp.courier.ui.common.EnableState
-import tech.relaycorp.courier.ui.common.toEnableState
 import javax.inject.Inject
 
 class SettingsViewModel
@@ -44,7 +43,7 @@ class SettingsViewModel
     private val maxStorage = BehaviorChannel<StorageSize>()
     fun maxStorage() = maxStorage.asFlow()
 
-    private val maxStorageBoundary = BehaviorChannel<Boundary<StorageSize>>()
+    private val maxStorageBoundary = BehaviorChannel<SizeBoundary>()
     fun maxStorageBoundary() = maxStorageBoundary.asFlow()
 
     private val storageStats = BehaviorChannel<StorageStats>()
@@ -53,7 +52,10 @@ class SettingsViewModel
     init {
         getStorageUsage
             .observe()
-            .onEach { deleteDataEnabled.send((!it.usedByApp.isZero).toEnableState()) }
+            .onEach {
+                // deleteDataEnabled.send((!it.usedByApp.isZero).toEnableState())
+                deleteDataEnabled.send(EnableState.Enabled)
+            }
             .launchIn(ioScope)
 
         combine(
@@ -88,7 +90,7 @@ class SettingsViewModel
         ioScope.launch {
             val totalStorageValue = diskStats.getTotalStorage()
             maxStorageBoundary.send(
-                Boundary(
+                SizeBoundary(
                     MIN_STORAGE_SIZE,
                     totalStorageValue,
                     STORAGE_SIZE_STEP

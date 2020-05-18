@@ -14,6 +14,7 @@ data class StorageSize(
     operator fun times(times: Int) = StorageSize(bytes * times)
     operator fun div(divisor: StorageSize) = StorageSize(bytes / divisor.bytes)
     operator fun div(divisor: Long) = StorageSize(bytes / divisor)
+    operator fun rem(divisor: StorageSize) = StorageSize(bytes % divisor.bytes)
     override fun compareTo(other: StorageSize) = bytes.compareTo(other.bytes)
 
     companion object {

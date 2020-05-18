@@ -6,6 +6,7 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="stop">Stop</string>
+    <string name="value_with_percentage">%1$s (%2$d%%)</string>
 
     <!-- Main -->
     <string name="main_storage_usage">Storage Usage</string>
@@ -28,30 +29,35 @@
     </string>
 
     <!-- Hotspot Instructions -->
-    <string name="hotspot_instructions">Sync Instructions</string>
-    <string name="hotspot_instructions_disabled">WiFi Hotspot disabled</string>
+    <string name="hotspot_instructions">Wi-Fi hotspot</string>
+    <string name="hotspot_instructions_disabled">Wi-Fi hotspot is disabled</string>
     <string name="hotspot_instructions_disabled_text">
-      Your WiFi Hotspot is disabled at the moment.
+      Your Wi-Fi hotspot is disabled at the moment.
       You need to enable it in your device settings to be able to Sync with People.
     </string>
-    <string name="hotspot_instructions_open_settings">Open WiFi Hotspot Settings</string>
-    <string name="hotspot_instructions_enabled">WiFi Hotspot enabled</string>
+    <string name="hotspot_instructions_open_settings">Open Wi-Fi hotspot Settings</string>
+    <string name="hotspot_instructions_enabled">Wi-Fi hotspot is enabled</string>
     <string name="hotspot_instructions_enabled_text">
-      Your WiFi Hotspot is now enabled. You can start the Sync with People.
+      Your Wi-Fi hotspot is now enabled.\nYou can start the Sync with People.
     </string>
-    <string name="hotspot_instructions_start_sync">Start Sync with People</string>
+    <string name="hotspot_instructions_start_sync">Start to Sync</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
-    <string name="settings_delete_data">Delete all stored data</string>
-    <string name="settings_delete_data_description">
+    <string name="settings_manage_storage">Manage data storage</string>
+    <string name="settings_select_max_storage">
+        Select the maximum amount of data the app can use on your device.
+    </string>
+    <string name="settings_max_storage">Maximum app storage</string>
+    <string name="settings_used_storage">Storage currently used by app</string>
+    <string name="settings_available_storage">Available storage on device</string>
+    <string name="settings_total_storage">Total storage on device</string>
+    <string name="settings_clear_data">Clear all stored data</string>
+    <string name="settings_clear_data_description">
         Deleting the data stored on your device will not lose anyone\'s messages.
         Messages will be delivered by the next courier exchange.
     </string>
-    <string name="settings_delete_dialog_title">Are you sure?</string>
-    <string name="settings_max_storage">Maximum storage data used by app</string>
-    <string name="settings_used_storage">Used: %1$s (%2$d%%)</string>
-    <string name="settings_available_storage">Available: %s</string>
-    <string name="settings_total_storage">Total: %s</string>
+    <string name="settings_clear">Clear</string>
+    <string name="settings_clear_dialog_title">Are you sure?</string>
 
 </resources>

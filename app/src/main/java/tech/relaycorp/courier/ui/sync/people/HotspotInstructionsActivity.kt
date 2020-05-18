@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
+import kotlinx.android.synthetic.main.activity_hotspot_instructions.icon
 import kotlinx.android.synthetic.main.activity_hotspot_instructions.openSettings
 import kotlinx.android.synthetic.main.activity_hotspot_instructions.startSync
 import kotlinx.android.synthetic.main.activity_hotspot_instructions.text
@@ -43,6 +44,12 @@ class HotspotInstructionsActivity : BaseActivity() {
     }
 
     private fun updateState(state: HotspotInstructionsViewModel.State) {
+        icon.setImageResource(
+            when (state) {
+                HotspotInstructionsViewModel.State.ReadyToSync -> R.drawable.ic_check
+                HotspotInstructionsViewModel.State.NotReadyToSync -> R.drawable.ic_hotspot
+            }
+        )
         titleText.setText(
             when (state) {
                 HotspotInstructionsViewModel.State.ReadyToSync -> R.string.hotspot_instructions_enabled
