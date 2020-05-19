@@ -24,7 +24,7 @@ jobs:
   release:
     name: "Deploy to Google Play Store"
     needs: ci
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/release-automation'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
