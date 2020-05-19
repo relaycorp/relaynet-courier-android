@@ -14,12 +14,12 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: build
-      - name: Run tests on physical and virtual devices
-        uses: asadmansr/Firebase-Test-Lab-Action@v1.0
-        with:
-          arg-spec: 'app/firebase-test-lab.yml:spec'
-        env:
-          SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+#      - name: Run tests on physical and virtual devices
+#        uses: asadmansr/Firebase-Test-Lab-Action@v1.0
+#        with:
+#          arg-spec: 'app/firebase-test-lab.yml:spec'
+#        env:
+#          SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
   release:
     name: "Deploy to Google Play Store"
@@ -35,6 +35,7 @@ jobs:
         with:
           arguments: build
       - name: Save GCP service account credentials
+        # https://github.com/Triple-T/gradle-play-publisher/issues/546#issuecomment-630978695
         run: "echo ${GCP_SERVICE_ACCOUNT} > /tmp/gpc-service-account.json"
         env:
           GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
