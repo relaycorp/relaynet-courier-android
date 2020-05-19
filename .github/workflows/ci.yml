@@ -19,4 +19,4 @@ jobs:
         with:
           arg-spec: 'app/firebase-test-lab.yml:spec'
         env:
-          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+          SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
