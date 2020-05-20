@@ -170,8 +170,9 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 play {
-    enabled = project.findProperty('enableGpp') == 'true'
+    enabled = project.findProperty("enableGpp") == "true"
     track = "alpha"
+    serviceAccountEmail "ci-and-cd@relaynet-courier.iam.gserviceaccount.com"
     serviceAccountCredentials = file(gcpServiceAccountCredentials)
     defaultToAppBundles = true
     resolutionStrategy = "auto"
