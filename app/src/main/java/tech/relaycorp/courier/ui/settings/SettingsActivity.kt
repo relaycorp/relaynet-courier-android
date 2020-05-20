@@ -62,11 +62,7 @@ class SettingsActivity : BaseActivity() {
 
         viewModel
             .maxStorageBoundary()
-            .onEach { boundary ->
-                storageMaxSlider.valueFrom = boundary.steppedMin.bytes.toFloat()
-                storageMaxSlider.valueTo = boundary.steppedMax.bytes.toFloat()
-                storageMaxSlider.stepSize = boundary.step.bytes.toFloat()
-            }
+            .onEach { storageMaxSlider.sizeBoundary = it }
             .launchIn(lifecycleScope)
 
         storageMaxSlider
@@ -79,9 +75,7 @@ class SettingsActivity : BaseActivity() {
 
         viewModel.maxStorage()
             .take(1)
-            .onEach {
-                storageMaxSlider.value = it.bytes.toFloat()
-            }
+            .onEach { storageMaxSlider.size = it }
             .launchIn(lifecycleScope)
 
         viewModel
