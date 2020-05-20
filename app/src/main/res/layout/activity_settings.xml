@@ -47,7 +47,7 @@
                     android:text="@string/settings_select_max_storage"
                     android:textSize="14sp" />
 
-                <com.google.android.material.slider.Slider
+                <tech.relaycorp.courier.ui.settings.StorageSlider
                     android:id="@+id/storageMaxSlider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                     android:layout_marginBottom="24dp"
                     android:stepSize="1"
                     android:value="50"
-                    android:valueFrom="0"
+                    android:valueFrom="1"
                     android:valueTo="100"
                     app:tickColor="@android:color/transparent"
                     tools:progress="50" />
