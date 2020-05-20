@@ -11,9 +11,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 8
-      - uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: build
       - name: Cache Grade dependencies
         uses: actions/cache@v1
         with:
@@ -21,6 +18,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: build
       - name: Run tests on physical and virtual devices
         uses: asadmansr/Firebase-Test-Lab-Action@v1.0
         with:
