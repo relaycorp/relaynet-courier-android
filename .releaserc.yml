@@ -1,0 +1,8 @@
+branch: master
+extends: "@relaycorp/shared-config"
+plugins:
+  - - "@semantic-release/npm"
+    - npmPublish: false
+  - - "@semantic-release/exec"
+    - prepareCmd: "echo ${nextRelease.notes} > src/main/play/release-notes/en-US/default.txt"
+      publishCmd: "./.github/scripts/publish-to-play-store.sh ${nextRelease.version}"

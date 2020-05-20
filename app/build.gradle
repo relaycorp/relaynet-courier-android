@@ -1,8 +1,20 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.triplet.gradle:play-publisher:2.7.5"
+    }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.diffplug.gradle.spotless'
+apply plugin: "com.github.triplet.play"
 
 apply from: 'jacoco.gradle'
 
@@ -29,6 +41,17 @@ android {
                 arg("room.schemaLocation", "$projectDir/schemas".toString())
                 arg("room.incremental", "true")
             }
+        }
+    }
+
+    signingConfigs {
+        debug {}
+
+        release {
+            storeFile file(signingKeystorePath)
+            storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("ANDROID_KEYSTORE_KEY_ALIAS")
+            keyPassword System.getenv("ANDROID_KEYSTORE_KEY_PASSWORD")
         }
     }
 
@@ -144,4 +167,16 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
             '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
             '-Xuse-experimental=kotlin.time.ExperimentalTime'
     ]
+}
+
+play {
+    enabled = false
+    track = "alpha"
+    serviceAccountCredentials = file(gcpServiceAccountCredentials)
+    defaultToAppBundles = true
+    resolutionStrategy = "auto"
+
+    outputProcessor {
+        versionNameOverride = versionName
+    }
 }
