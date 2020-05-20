@@ -1,4 +1,4 @@
-branch: release-automation
+branch: master
 extends: "@relaycorp/shared-config"
 plugins:
   - - "@semantic-release/npm"
