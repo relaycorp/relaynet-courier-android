@@ -47,11 +47,13 @@ android {
     signingConfigs {
         debug {}
 
-        release {
-            storeFile file(signingKeystorePath)
-            storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
-            keyAlias System.getenv("ANDROID_KEYSTORE_KEY_ALIAS")
-            keyPassword System.getenv("ANDROID_KEYSTORE_KEY_PASSWORD")
+        if (project.hasProperty('signingKeystorePath')) {
+            release {
+                storeFile file(signingKeystorePath)
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_KEYSTORE_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_KEYSTORE_KEY_PASSWORD")
+            }
         }
     }
 
@@ -62,7 +64,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+
+            if (project.hasProperty('signingKeystorePath')) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     compileOptions {
