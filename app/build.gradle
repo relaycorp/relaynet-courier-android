@@ -62,6 +62,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -172,7 +173,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 play {
     enabled = project.findProperty("enableGpp") == "true"
     track = "alpha"
-    serviceAccountEmail "ci-and-cd@relaynet-courier.iam.gserviceaccount.com"
     serviceAccountCredentials = file(gcpServiceAccountCredentials)
     defaultToAppBundles = true
     resolutionStrategy = "auto"

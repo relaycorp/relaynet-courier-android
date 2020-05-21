@@ -7,11 +7,11 @@ set -o pipefail
 
 VERSION_NAME="$1"
 
-# We have to pass some secrets to Gradle and we'll pass as many as we can as environment variables,
-# but some must be passed as file paths. To avoid leaking those files, we'll use process
-# substitution.
-./gradlew publish \
-  -DenableGpp=true \
-  -DversionName="${VERSION_NAME}" \
-  -DsigningKeystorePath=<(echo "${ANDROID_KEYSTORE}") \
-  -DgcpServiceAccountCredentials=<(echo "${GCP_SERVICE_ACCOUNT}")
+set +x  # Disable debug (if enabled) so we won't leak secrets accidentally
+echo "${ANDROID_KEYSTORE}" | base64 -d > /tmp/keystore.jks
+echo "${GCP_SERVICE_ACCOUNT}" > /tmp/gcp-service-account.json
+exec ./gradlew app:publish \
+  -PenableGpp=true \
+  -PversionName="${VERSION_NAME}" \
+  -PsigningKeystorePath=/tmp/keystore.jks \
+  -PgcpServiceAccountCredentials=/tmp/gcp-service-account.json
