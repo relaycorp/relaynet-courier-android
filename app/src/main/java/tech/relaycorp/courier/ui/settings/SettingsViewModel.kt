@@ -17,6 +17,7 @@ import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.ui.BaseViewModel
 import tech.relaycorp.courier.ui.common.Click
 import tech.relaycorp.courier.ui.common.EnableState
+import tech.relaycorp.courier.ui.common.toEnableState
 import javax.inject.Inject
 
 class SettingsViewModel
@@ -53,8 +54,7 @@ class SettingsViewModel
         getStorageUsage
             .observe()
             .onEach {
-                // deleteDataEnabled.send((!it.usedByApp.isZero).toEnableState())
-                deleteDataEnabled.send(EnableState.Enabled)
+                deleteDataEnabled.send((!it.usedByApp.isZero).toEnableState())
             }
             .launchIn(ioScope)
 
