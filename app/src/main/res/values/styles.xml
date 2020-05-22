@@ -6,12 +6,6 @@
 
     <style name="Widget.Courier.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
         <item name="android:minHeight">96dp</item>
-        <item name="iconTint">?colorOnSurface</item>
-        <item name="android:theme">@style/Theme.Courier.Toolbar</item>
-    </style>
-
-    <style name="Theme.Courier.Toolbar" parent="">
-        <item name="iconTint">?colorOnSurface</item>
     </style>
 
     <style name="Widget.Courier.ToolbarNavigationButton" parent="Widget.AppCompat.Toolbar.Button.Navigation">
@@ -28,12 +22,20 @@
         <item name="android:textColor">?colorOnSurface</item>
     </style>
 
-    <style name="Widget.Courier.Button" parent="Widget.MaterialComponents.Button">
+    <style name="Widget.Courier.Button" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="Widget.Courier.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="strokeColor">@color/button_text_color</item>
+        <item name="strokeColor">@color/text_button</item>
+    </style>
+
+    <style name="Widget.Courier.Tooltip" parent="Widget.MaterialComponents.Tooltip">
+        <item name="backgroundTint">?colorOnSurface</item>
+    </style>
+
+    <style name="Widget.Courier.Progress.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal</item>
     </style>
 
 </resources>

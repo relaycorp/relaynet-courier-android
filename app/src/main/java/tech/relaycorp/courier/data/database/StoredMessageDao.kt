@@ -61,4 +61,7 @@ interface StoredMessageDao {
 
     @Query("SELECT * FROM Message WHERE expirationTimeUtc <= :timeUtc")
     suspend fun getExpiredBy(timeUtc: Date): List<StoredMessage>
+
+    @Query("SELECT COUNT(messageId) FROM Message WHERE messageType <= :type")
+    fun observeCountByMessageType(type: MessageType): Flow<Long>
 }
