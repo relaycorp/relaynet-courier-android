@@ -74,11 +74,6 @@ class App : Application() {
                         }
                     }
                     .apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            detectNonSdkApiUsage()
-                        }
-                    }
-                    .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             detectCredentialProtectedWhileLocked()
                         }

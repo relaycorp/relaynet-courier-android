@@ -29,10 +29,30 @@
                 app:srcCompat="@drawable/ic_sync_animation" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/syncMessage"
+                    android:layout_width="224dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textIsSelectable="true"
+                    tools:text="Syncing with" />
+
+                <TextView
+                    android:id="@+id/waitingFirstClient"
+                    android:layout_width="224dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/sync_people_waiting_first_client"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
 
                 <TextView
                     android:id="@+id/clientsConnected"
@@ -41,15 +61,9 @@
                     android:gravity="center_horizontal"
                     android:textIsSelectable="true"
                     android:textSize="64sp"
-                    tools:text="2" />
-
-                <TextView
-                    android:id="@+id/stateMessage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textIsSelectable="true"
-                    tools:text="Syncing" />
+                    android:visibility="gone"
+                    tools:text="2"
+                    tools:visibility="visible" />
             </LinearLayout>
         </FrameLayout>
 

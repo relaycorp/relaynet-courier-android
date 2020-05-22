@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.hotspotLabel
 import kotlinx.android.synthetic.main.activity_main.internetIcon
 import kotlinx.android.synthetic.main.activity_main.internetLabel
 import kotlinx.android.synthetic.main.activity_main.lowStorageMessage
+import kotlinx.android.synthetic.main.activity_main.settings
 import kotlinx.android.synthetic.main.activity_main.storageProgress
 import kotlinx.android.synthetic.main.activity_main.storageValues
 import kotlinx.android.synthetic.main.activity_main.syncInternetButton
@@ -18,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_main.syncInternetMessage
 import kotlinx.android.synthetic.main.activity_main.syncPeopleButton
 import kotlinx.android.synthetic.main.activity_main.syncPeopleLayout
 import kotlinx.android.synthetic.main.activity_main.syncPeopleMessage
-import kotlinx.android.synthetic.main.common_app_bar.toolbar
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
@@ -46,12 +46,7 @@ class MainActivity : BaseActivity() {
         setTitle(R.string.main_title)
         setContentView(R.layout.activity_main)
 
-        toolbar.inflateMenu(R.menu.main)
-        toolbar.menu.findItem(R.id.settings).setOnMenuItemClickListener {
-            openSettings()
-            true
-        }
-
+        settings.setOnClickListener { openSettings() }
         syncPeopleButton.setOnClickListener { openSyncWithPeople() }
         syncInternetButton.setOnClickListener { openSyncWithInternet() }
 
@@ -127,6 +122,7 @@ class MainActivity : BaseActivity() {
         )
 
         internetLabel.isVisible = isEnabled
+        internetIcon.isVisible = isEnabled
         internetIcon.isActivated = isEnabled
     }
 

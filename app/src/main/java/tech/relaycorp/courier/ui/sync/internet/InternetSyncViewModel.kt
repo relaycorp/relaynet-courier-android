@@ -28,9 +28,6 @@ class InternetSyncViewModel
     private val stateChannel = BehaviorChannel<PublicSync.State>()
     val state get() = stateChannel.asFlow()
 
-    private val errorsChannel = PublishChannel<Error>()
-    val errors get() = errorsChannel.asFlow()
-
     private val finishChannel = PublishChannel<Finish>()
     val finish get() = finishChannel.asFlow()
 
@@ -39,21 +36,19 @@ class InternetSyncViewModel
             publicSync.sync()
         }
 
-        publicSync
-            .state()
-            .onEach { stateChannel.send(it) }
-            .launchIn(ioScope)
+        val syncStateJob =
+            publicSync
+                .state()
+                .onEach { stateChannel.send(it) }
+                .launchIn(ioScope)
 
         stopClicks
             .asFlow()
             .onEach {
+                syncStateJob.cancel()
                 syncJob.cancel()
                 finishChannel.send(Finish)
             }
             .launchIn(ioScope)
-    }
-
-    enum class Error {
-        Sync
     }
 }

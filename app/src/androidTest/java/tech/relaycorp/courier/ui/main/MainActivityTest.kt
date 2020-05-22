@@ -12,10 +12,10 @@ import tech.relaycorp.courier.R
 class MainActivityTest {
     @JvmField
     @Rule
-    val activityTestRule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+    val activityTestRule = ActivityTestRule(MainActivity::class.java)
 
     @Test
     fun title() {
-        assertDisplayed(R.string.app_name)
+        assertDisplayed(R.string.main_title)
     }
 }

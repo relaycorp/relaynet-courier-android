@@ -7,7 +7,31 @@
     android:background="?android:colorBackground"
     tools:context=".ui.main.MainActivity">
 
-    <include layout="@layout/common_app_bar" />
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                style="@style/Widget.Courier.ToolbarTitle"
+                tools:ignore="SelectableText"
+                tools:text="@string/main_title" />
+
+            <ImageButton
+                android:id="@+id/settings"
+                style="@style/Widget.Courier.ToolbarIcon"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/settings"
+                android:src="@drawable/ic_settings" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,7 +60,8 @@
                 style="@style/Widget.Courier.Progress.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
                 android:max="100"
                 tools:progress="50" />
 
@@ -48,7 +73,7 @@
                 android:drawablePadding="8dp"
                 android:text="@string/main_storage_usage_values"
                 app:drawableTint="@color/white"
-                tools:text="100 MB used of max 1.2 GB" />
+                tools:text="100 MB used of 1.2 GB max" />
 
             <TextView
                 android:id="@+id/lowStorageMessage"
@@ -57,6 +82,7 @@
                 android:layout_marginTop="4dp"
                 android:text="@string/main_low_storage"
                 android:textAppearance="@style/TextAppearance.Courier.Body2"
+                android:textIsSelectable="true"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -70,7 +96,8 @@
             android:layout_marginTop="-8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            app:contentPadding="16dp">
+            app:contentPadding="16dp"
+            tools:ignore="NegativeMargin">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -125,6 +152,7 @@
                     android:layout_height="wrap_content"
                     android:duplicateParentState="true"
                     android:textAppearance="@style/TextAppearance.Courier.Body2"
+                    android:textIsSelectable="true"
                     tools:text="@string/sync_people_enabled" />
 
                 <com.google.android.material.button.MaterialButton
@@ -174,7 +202,9 @@
                     android:contentDescription="@null"
                     android:padding="6dp"
                     android:src="@drawable/ic_internet"
-                    android:tint="?colorOnPrimary" />
+                    android:tint="?colorOnPrimary"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
             </LinearLayout>
 
             <LinearLayout
@@ -198,6 +228,7 @@
                     android:layout_height="wrap_content"
                     android:duplicateParentState="true"
                     android:textAppearance="@style/TextAppearance.Courier.Body2"
+                    android:textIsSelectable="true"
                     tools:text="@string/sync_internet_enabled" />
 
                 <com.google.android.material.button.MaterialButton

@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import tech.relaycorp.courier.R
-import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.format
 import tech.relaycorp.courier.ui.common.set

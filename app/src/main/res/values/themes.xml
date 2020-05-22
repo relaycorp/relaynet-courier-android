@@ -29,6 +29,8 @@
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
 
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Courier.Dialog</item>
+
         <!-- Custom styles -->
         <item name="appBarLayoutStyle">@style/Widget.Courier.AppBar</item>
         <item name="toolbarStyle">@style/Widget.Courier.Toolbar</item>
@@ -57,5 +59,15 @@
         <item name="colorOnSurface">@color/white</item>
 
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+
+    <style name="ThemeOverlay.Courier.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/relaynet_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/Widget.Courier.DialogTitle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Courier.DialogButton.Positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Courier.DialogButton.Negative</item>
     </style>
 </resources>

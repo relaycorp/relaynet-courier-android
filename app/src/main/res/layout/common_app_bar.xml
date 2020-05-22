@@ -13,10 +13,7 @@
         <TextView
             android:id="@+id/toolbarTitle"
             style="@style/Widget.Courier.ToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             tools:ignore="SelectableText"
-            tools:text="Courier" />
+            tools:text="@string/main_title" />
     </androidx.appcompat.widget.Toolbar>
 </com.google.android.material.appbar.AppBarLayout>

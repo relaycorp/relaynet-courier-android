@@ -32,12 +32,14 @@ class PublicSync
         state.send(State.DeliveringCargo)
         cargoDelivery.deliver()
 
+        delay(WAIT_PERIOD)
         state.send(State.Waiting)
         delay(WAIT_PERIOD)
 
         state.send(State.CollectingCargo)
         cargoCollection.collect()
 
+        delay(WAIT_PERIOD)
         state.send(State.Finished)
     }
 

@@ -6,6 +6,7 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="stop">Stop</string>
+    <string name="continue_">Continue</string>
     <string name="value_with_percentage">%1$s (%2$d%%)</string>
 
     <!-- Main -->
@@ -46,6 +47,21 @@
     <string name="hotspot_on">Hotspot On</string>
     <string name="hotspot_off">Hotspot Off</string>
     <string name="internet_on">Online</string>
+
+    <!-- Public / Internet Sync -->
+    <string name="sync_delivering_cargo">Delivering data</string>
+    <string name="sync_waiting">Waiting while the server processes data</string>
+    <string name="sync_collecting_cargo">Collecting data</string>
+    <string name="sync_finished">Sync complete</string>
+    <string name="sync_error">An error occurred when syncing. Please try again.</string>
+    <string name="sync_stop_confirm_title">Are you want to interrupt the sync?</string>
+    <string name="sync_internet_stop_confirm_message">The sync hasn\'t finished yet.</string>
+
+    <!-- Private / People Sync -->
+    <string name="sync_people_syncing">Syncing</string>
+    <string name="sync_people_waiting_first_client">Waiting for the first person to connect</string>
+    <string name="sync_people_syncing_some">Syncing with</string>
+    <string name="sync_people_stop_confirm_message">Some people are syncing with your device at the moment.</string>
 
     <!-- Hotspot Instructions -->
     <string name="hotspot_instructions">Wi-Fi hotspot</string>

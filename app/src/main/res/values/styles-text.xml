@@ -27,7 +27,7 @@
     <style name="TextAppearance.Courier.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.2</item>
+        <item name="android:letterSpacing">0.15</item>
     </style>
 
 </resources>

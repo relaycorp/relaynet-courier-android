@@ -61,7 +61,6 @@ class MainViewModel
             getStorageUsage.observe(),
             observeCCACount.observe()
         ) { internetConnection, storageUsage, ccaCount ->
-            /*
             when (internetConnection) {
                 InternetConnection.Online ->
                     when {
@@ -71,13 +70,9 @@ class MainViewModel
                     }
                 InternetConnection.Offline -> SyncInternetState.Disabled.Offline
             }
-
-             */
-            SyncInternetState.Enabled
         }
             .onEach(syncInternetState::send)
             .launchIn(ioScope)
-
 
         getStorageUsage
             .observe()
@@ -97,10 +92,6 @@ class MainViewModel
 
     private fun List<StoredMessage>.sumMessageSize() =
         map { it.size }.reduce { acc, messageSize -> acc + messageSize }
-
-    enum class SyncMode {
-        People, Internet
-    }
 
     sealed class SyncPeopleState {
         data class Enabled(val hotspotState: WifiHotspotState) : SyncPeopleState()
