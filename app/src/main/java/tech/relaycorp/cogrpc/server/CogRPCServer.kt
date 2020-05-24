@@ -55,6 +55,10 @@ internal constructor(
                 .maxInboundMetadataSize(MAX_METADATA_SIZE)
                 .maxConcurrentCallsPerConnection(MAX_CONCURRENT_CALLS_PER_CONNECTION)
                 .maxConnectionAge(MAX_CONNECTION_AGE.inSeconds.roundToLong(), TimeUnit.SECONDS)
+                .maxConnectionAgeGrace(
+                    MAX_CONNECTION_AGE_GRACE.inSeconds.roundToLong(),
+                    TimeUnit.SECONDS
+                )
                 .maxConnectionIdle(MAX_CONNECTION_IDLE.inSeconds.roundToLong(), TimeUnit.SECONDS)
                 .useTransportSecurity(
                     certGenerator.exportCertificate().inputStream(),
@@ -101,6 +105,7 @@ internal constructor(
         private const val MAX_METADATA_SIZE = 3_500 // ~2.5kib for a base64-encoded CCA + overhead
         private const val MAX_CONCURRENT_CALLS_PER_CONNECTION = 3
         private val MAX_CONNECTION_AGE = 15.minutes
+        private val MAX_CONNECTION_AGE_GRACE = 30.seconds
         private val MAX_CONNECTION_IDLE = 10.seconds
     }
 
