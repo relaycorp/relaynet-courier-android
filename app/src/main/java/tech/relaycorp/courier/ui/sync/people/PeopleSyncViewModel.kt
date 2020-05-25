@@ -3,12 +3,12 @@ package tech.relaycorp.courier.ui.sync.people
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.launch
 import tech.relaycorp.courier.background.WifiHotspotState
 import tech.relaycorp.courier.background.WifiHotspotStateReceiver
 import tech.relaycorp.courier.common.BehaviorChannel
@@ -50,15 +50,30 @@ class PeopleSyncViewModel
     private var hadFirstClient = false
 
     init {
-        ioScope.launch {
-            when (getHotspotState()) {
-                WifiHotspotState.Enabled -> privateSync.startSync()
-                WifiHotspotState.Disabled -> {
-                    openHotspotInstructions.send(Unit)
-                    finish.send(Finish)
+        wifiHotspotStateReceiver
+            .state()
+            .take(1)
+            .onEach {
+                when (it) {
+                    WifiHotspotState.Enabled -> privateSync.startSync()
+                    WifiHotspotState.Disabled -> {
+                        openHotspotInstructions.send(Unit)
+                        finish.send(Finish)
+                    }
                 }
             }
-        }
+            .launchIn(ioScope)
+
+        wifiHotspotStateReceiver
+            .state()
+            .drop(1)
+            .filter { it == WifiHotspotState.Disabled }
+            .onEach {
+                privateSync.stopSync()
+                openHotspotInstructions.send(Unit)
+                finish.send(Finish)
+            }
+            .launchIn(ioScope)
 
         privateSync
             .clientsConnected()

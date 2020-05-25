@@ -11,10 +11,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="40dp"
         android:gravity="center"
-        android:padding="32dp"
-        android:layout_marginBottom="48dp"
         android:orientation="vertical"
+        android:padding="32dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ImageView
@@ -33,8 +33,8 @@
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginBottom="32dp"
+            android:gravity="center"
             android:textAppearance="@style/TextAppearance.Courier.Title"
             android:textIsSelectable="true"
             tools:text="@string/hotspot_instructions_disabled" />
@@ -43,11 +43,20 @@
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="16dp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.Courier.Body2"
             android:textIsSelectable="true"
             tools:text="@string/hotspot_instructions_disabled_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:text="@string/hotspot_instructions_stay_enabled"
+            android:textAppearance="@style/TextAppearance.Courier.Body2"
+            android:textIsSelectable="true" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/openSettings"

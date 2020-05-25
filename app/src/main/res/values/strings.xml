@@ -76,6 +76,9 @@
       Your Wi-Fi hotspot is now enabled.\nYou can start the Sync with People.
     </string>
     <string name="hotspot_instructions_start_sync">Start to Sync</string>
+    <string name="hotspot_instructions_stay_enabled">
+        The Wi-Fi hotspot should stay enabled throughout the synchronization with people.
+    </string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
