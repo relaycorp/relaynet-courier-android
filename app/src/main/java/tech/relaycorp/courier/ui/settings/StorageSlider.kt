@@ -24,9 +24,9 @@ class StorageSlider
             step = StorageSize(stepSize.toLong() * RESOLUTION)
         )
         set(value) {
-            valueFrom = value.steppedMin.bytes.toFloat() / RESOLUTION
-            valueTo = value.steppedMax.bytes.toFloat() / RESOLUTION
-            stepSize = value.step.bytes.toFloat() / RESOLUTION
+            valueFrom = (value.steppedMin.bytes / RESOLUTION).toFloat()
+            valueTo = (value.steppedMax.bytes / RESOLUTION).toFloat()
+            stepSize = (value.step.bytes / RESOLUTION).toFloat()
             resetSize()
         }
 
@@ -43,6 +43,6 @@ class StorageSlider
     }
 
     companion object {
-        private const val RESOLUTION = 1_000_000
+        private const val RESOLUTION = 1_000_000L
     }
 }
