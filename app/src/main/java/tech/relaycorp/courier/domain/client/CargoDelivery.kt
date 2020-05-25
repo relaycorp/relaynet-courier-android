@@ -1,5 +1,6 @@
 package tech.relaycorp.courier.domain.client
 
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.collect
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
@@ -11,6 +12,7 @@ import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.relaynet.CargoDeliveryRequest
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
+import java.util.logging.Level
 import javax.inject.Inject
 
 class CargoDelivery
@@ -25,7 +27,13 @@ class CargoDelivery
         getCargoesToDeliver()
             .groupByRecipient()
             .forEach { (recipientAddress, cargoes) ->
-                deliverToRecipient(recipientAddress, cargoes)
+                try {
+                    deliverToRecipient(recipientAddress, cargoes)
+                } catch (e: IncompleteDeliveryException) {
+                    logger.log(Level.WARNING, "Cargo delivery error", e)
+                } catch (e: CogRPCClient.CogRPCException) {
+                    logger.log(Level.WARNING, "Cargo delivery error", e)
+                }
             }
     }
 
@@ -38,7 +46,9 @@ class CargoDelivery
     private fun List<StoredMessage>.groupByRecipient() =
         groupBy { it.recipientAddress }.entries
 
-    private suspend fun deliverToRecipient(
+    @Throws(IncompleteDeliveryException::class, CogRPCClient.CogRPCException::class)
+    @VisibleForTesting
+    internal suspend fun deliverToRecipient(
         recipientAddress: MessageAddress,
         cargoes: List<StoredMessage>
     ) {
