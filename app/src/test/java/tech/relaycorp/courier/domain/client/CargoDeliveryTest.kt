@@ -79,11 +79,9 @@ internal class CargoDeliveryTest {
     }
 
     @Test
-    internal fun `deliver throws exception when cargo was not acknowledged`() = runBlockingTest {
+    internal fun `deliverToRecipient throws exception when cargo was not acknowledged`() = runBlockingTest {
         val cargo1 = StoredMessageFactory.build()
         val cargo2 = cargo1.copy(messageId = MessageId("id"))
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
-            .thenReturn(listOf(cargo1, cargo2))
         whenever(client.deliverCargo(any()))
             .thenAnswer { inv ->
                 @Suppress("UNCHECKED_CAST")
@@ -92,8 +90,28 @@ internal class CargoDeliveryTest {
 
         assertThrows<CargoDelivery.IncompleteDeliveryException> {
             runBlockingTest {
-                subject.deliver()
+                subject.deliverToRecipient(cargo1.recipientAddress, listOf(cargo1, cargo2))
             }
         }
+    }
+
+    @Test
+    internal fun `deliver to multiple recipients even if one fails`() = runBlockingTest {
+        val cargo1 = StoredMessageFactory.build()
+        val cargo2 = StoredMessageFactory.build()
+        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
+            .thenReturn(listOf(cargo1, cargo2))
+        whenever(client.deliverCargo(any()))
+            .thenAnswer { inv ->
+                @Suppress("UNCHECKED_CAST")
+                flowOf(
+                    (inv.arguments[0] as Iterable<CargoDeliveryRequest>).first().localId,
+                    "unknown_ack"
+                )
+            }
+
+        subject.deliver()
+
+        verify(client, times(2)).deliverCargo(any())
     }
 }
