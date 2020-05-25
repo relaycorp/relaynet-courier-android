@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import com.google.android.material.slider.Slider
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.ui.common.format
-import kotlin.math.roundToInt
 
 class StorageSlider
 @JvmOverloads constructor(
