@@ -18,6 +18,7 @@
 
         <activity
             android:name=".ui.main.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Courier.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,19 +29,23 @@
         <activity
             android:name=".ui.sync.internet.InternetSyncActivity"
             android:label="@string/sync_internet"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Courier.Sync" />
 
         <activity
             android:name=".ui.sync.people.PeopleSyncActivity"
             android:label="@string/sync_people"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Courier.Sync" />
 
         <activity
             android:name=".ui.sync.people.HotspotInstructionsActivity"
-            android:label="@string/hotspot_instructions" />
+            android:label="@string/hotspot_instructions"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:label="@string/settings" />
+            android:label="@string/settings"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>
