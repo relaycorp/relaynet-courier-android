@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.MessageType
@@ -73,11 +72,7 @@ internal class CargoCollectionTest {
             .thenReturn(listOf(cca))
         whenever(client.collectCargo(any())).thenReturn(flow { throw CogRPCClient.CogRPCException() })
 
-        assertThrows<CogRPCClient.CogRPCException> {
-            runBlockingTest {
-                subject.collect()
-            }
-        }
+        subject.collect()
 
         verify(storeMessage, never()).storeCargo(any())
         verify(deleteMessage, never()).delete(any())

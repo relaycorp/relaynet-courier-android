@@ -6,11 +6,13 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="stop">Stop</string>
+    <string name="continue_">Continue</string>
     <string name="value_with_percentage">%1$s (%2$d%%)</string>
 
     <!-- Main -->
-    <string name="main_storage_usage">Storage Usage</string>
-    <string name="main_storage_usage_values">%1$s of %2$s (%3$d%%)</string>
+    <string name="main_title">Relaynet Courier</string>
+    <string name="main_storage_usage">Data storage usage</string>
+    <string name="main_storage_usage_values">%1$s used of %2$s max</string>
     <string name="main_low_storage">
         Your available storage is running low.
         The app might not be able to store new data to be exchanged.
@@ -21,12 +23,45 @@
     <string name="sync">Sync</string>
     <string name="sync_people">Sync with People</string>
     <string name="sync_internet">Sync with Internet</string>
-    <string name="sync_people_instructions">
-      Disconnect from the Internet to sync with People via WiFi hotspot.
+    <string name="sync_people_disabled">
+      You can only sync with people when you don’t have Internet connection.
     </string>
-    <string name="sync_internet_instructions">
-      Connect to the Internet to sync data online.
+    <string name="sync_people_enabled">
+      Press sync to exchange data with people without Internet connection.
     </string>
+    <string name="sync_internet_enabled">
+      Press sync to exchange data with Internet.
+        You have data to send to the Internet and you may also have data to receive.
+    </string>
+    <string name="sync_internet_disabled_offline">
+      You need a connection to exchange data with the Internet.
+    </string>
+    <string name="sync_internet_disabled_no_data">
+      You don’t have data to exchange with the Internet. You need to sync with people first.
+    </string>
+    <string name="sync_internet_disabled_synced">
+      You’re already synced with the Internet. You need to sync with people next.
+    </string>
+
+    <!-- States -->
+    <string name="hotspot_on">Hotspot On</string>
+    <string name="hotspot_off">Hotspot Off</string>
+    <string name="internet_on">Online</string>
+
+    <!-- Public / Internet Sync -->
+    <string name="sync_delivering_cargo">Delivering data</string>
+    <string name="sync_waiting">Waiting while the server processes data</string>
+    <string name="sync_collecting_cargo">Collecting data</string>
+    <string name="sync_finished">Sync complete</string>
+    <string name="sync_error">An error occurred when syncing. Please try again.</string>
+    <string name="sync_stop_confirm_title">Are you want to interrupt the sync?</string>
+    <string name="sync_internet_stop_confirm_message">The sync hasn\'t finished yet.</string>
+
+    <!-- Private / People Sync -->
+    <string name="sync_people_syncing">Syncing</string>
+    <string name="sync_people_waiting_first_client">Waiting for the first person to connect</string>
+    <string name="sync_people_syncing_some">Syncing with</string>
+    <string name="sync_people_stop_confirm_message">Some people are syncing with your device at the moment.</string>
 
     <!-- Hotspot Instructions -->
     <string name="hotspot_instructions">Wi-Fi hotspot</string>
@@ -54,7 +89,7 @@
     <string name="settings_total_storage">Total storage on device</string>
     <string name="settings_clear_data">Clear all stored data</string>
     <string name="settings_clear_data_description">
-        Deleting the data stored on your device will not lose anyone\'s messages.
+        Deleting the data stored on your device will not lose anyone’s messages.
         Messages will be delivered by the next courier exchange.
     </string>
     <string name="settings_clear">Clear</string>

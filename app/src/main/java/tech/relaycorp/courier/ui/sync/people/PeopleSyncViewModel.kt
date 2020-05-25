@@ -2,9 +2,12 @@ package tech.relaycorp.courier.ui.sync.people
 
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import tech.relaycorp.courier.background.WifiHotspotState
 import tech.relaycorp.courier.background.WifiHotspotStateReceiver
@@ -27,18 +30,24 @@ class PeopleSyncViewModel
     fun stopClicked() = stopClicks.sendBlocking(Click)
     private val stopClicks = PublishChannel<Click>()
 
+    fun confirmStopClicked() = confirmStopClicks.sendBlocking(Click)
+    private val confirmStopClicks = PublishChannel<Click>()
+
     // Outputs
 
-    private val state = BehaviorChannel<PrivateSync.State>()
+    private val state = BehaviorChannel<State>()
     fun state() = state.asFlow()
-
-    fun clientsConnected() = privateSync.clientsConnected()
 
     private val openHotspotInstructions = BehaviorChannel<Unit>()
     fun openHotspotInstructions() = openHotspotInstructions.asFlow()
 
+    private val confirmStop = PublishChannel<Unit>()
+    fun confirmStop() = confirmStop.asFlow()
+
     private val finish = BehaviorChannel<Finish>()
     fun finish() = finish.asFlow()
+
+    private var hadFirstClient = false
 
     init {
         ioScope.launch {
@@ -52,11 +61,46 @@ class PeopleSyncViewModel
         }
 
         privateSync
+            .clientsConnected()
+            .filter { it > 0 }
+            .take(1)
+            .onEach { hadFirstClient = true }
+            .launchIn(ioScope)
+
+        privateSync
             .state()
-            .onEach { state.send(it) }
+            .combine(privateSync.clientsConnected()) { syncState, clientsConnected ->
+                if (syncState == PrivateSync.State.Stopped) {
+                    finish.send(Finish)
+                } else {
+                    state.send(
+                        when (syncState) {
+                            PrivateSync.State.Syncing -> if (hadFirstClient) {
+                                State.Syncing.HadFirstClient(clientsConnected)
+                            } else {
+                                State.Syncing.WaitingFirstClient
+                            }
+                            else -> State.Error
+                        }
+                    )
+                }
+            }
             .launchIn(ioScope)
 
         stopClicks
+            .asFlow()
+            .onEach {
+                val clientsConnected =
+                    (state.value as? State.Syncing.HadFirstClient)?.clientsConnected ?: 0
+                if (clientsConnected > 0) {
+                    confirmStop.send(Unit)
+                } else {
+                    finish.send(Finish)
+                }
+            }
+            .launchIn(ioScope)
+
+        confirmStopClicks
             .asFlow()
             .onEach { finish.send(Finish) }
             .launchIn(ioScope)
@@ -68,4 +112,13 @@ class PeopleSyncViewModel
     }
 
     private suspend fun getHotspotState() = wifiHotspotStateReceiver.state().first()
+
+    sealed class State {
+        sealed class Syncing : State() {
+            object WaitingFirstClient : Syncing()
+            data class HadFirstClient(val clientsConnected: Int) : Syncing()
+        }
+
+        object Error : State()
+    }
 }

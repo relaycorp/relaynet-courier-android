@@ -14,10 +14,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
+import tech.relaycorp.courier.background.WifiHotspotState
+import tech.relaycorp.courier.background.WifiHotspotStateReceiver
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.domain.DeleteExpiredMessages
 import tech.relaycorp.courier.domain.GetStorageUsage
+import tech.relaycorp.courier.domain.ObserveCCACount
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import tech.relaycorp.courier.test.test
@@ -25,7 +28,9 @@ import tech.relaycorp.courier.test.test
 internal class MainViewModelTest {
 
     private val connectionObserver = mock<InternetConnectionObserver>()
+    private val hotspotStateReceiver = mock<WifiHotspotStateReceiver>()
     private val getStorageUsage = mock<GetStorageUsage>()
+    private val observeCCACount = mock<ObserveCCACount>()
     private val deleteExpiredMessages = mock<DeleteExpiredMessages> {
         onBlocking { delete() }.thenReturn(emptyList())
     }
@@ -33,23 +38,54 @@ internal class MainViewModelTest {
     @BeforeEach
     internal fun setUp() {
         whenever(connectionObserver.observe()).thenReturn(emptyFlow())
+        whenever(hotspotStateReceiver.state()).thenReturn(emptyFlow())
         whenever(getStorageUsage.observe()).thenReturn(emptyFlow())
+        whenever(observeCCACount.observe()).thenReturn(emptyFlow())
     }
 
     @Test
-    internal fun syncMode() = runBlocking {
-        whenever(connectionObserver.observe()).thenReturn(flow {
-            delay(10)
-            emit(InternetConnection.Offline)
-            emit(InternetConnection.Online)
-        })
-        val viewModel = buildViewModel()
-        val syncMode = viewModel.syncMode().test(this)
+    internal fun syncPeopleState() {
+        runBlocking {
+            whenever(hotspotStateReceiver.state()).thenReturn(flowOf(WifiHotspotState.Disabled))
+            whenever(connectionObserver.observe()).thenReturn(flow {
+                delay(10)
+                emit(InternetConnection.Offline)
+                emit(InternetConnection.Online)
+            })
+            val viewModel = buildViewModel()
+            val syncMode = viewModel.syncPeopleState().test(this)
 
-        delay(20)
-        syncMode
-            .assertValues(MainViewModel.SyncMode.People, MainViewModel.SyncMode.Internet)
-            .finish()
+            delay(100)
+            syncMode
+                .assertValues(
+                    MainViewModel.SyncPeopleState.Enabled(WifiHotspotState.Disabled),
+                    MainViewModel.SyncPeopleState.Disabled
+                )
+                .finish()
+        }
+    }
+
+    @Test
+    internal fun syncInternetState() {
+        runBlocking {
+            whenever(getStorageUsage.observe()).thenReturn(flowOf(StorageUsageFactory.build()))
+            whenever(observeCCACount.observe()).thenReturn(flowOf(1L))
+            whenever(connectionObserver.observe()).thenReturn(flow {
+                delay(10)
+                emit(InternetConnection.Offline)
+                emit(InternetConnection.Online)
+            })
+            val viewModel = buildViewModel()
+            val syncMode = viewModel.syncInternetState().test(this)
+
+            delay(100)
+            syncMode
+                .assertValues(
+                    MainViewModel.SyncInternetState.Disabled.Offline,
+                    MainViewModel.SyncInternetState.Enabled
+                )
+                .finish()
+        }
     }
 
     @Test
@@ -82,5 +118,8 @@ internal class MainViewModelTest {
     }
 
     private fun buildViewModel() =
-        MainViewModel(connectionObserver, getStorageUsage, deleteExpiredMessages)
+        MainViewModel(
+            connectionObserver, hotspotStateReceiver, getStorageUsage, observeCCACount,
+            deleteExpiredMessages
+        )
 }

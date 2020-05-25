@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.google.android.material.slider.Slider
 import tech.relaycorp.courier.data.model.StorageSize
+import tech.relaycorp.courier.ui.common.format
 
 class StorageSlider
 @JvmOverloads constructor(
@@ -11,6 +12,10 @@ class StorageSlider
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : Slider(context, attrs, defStyleAttr) {
+
+    init {
+        setLabelFormatter { size.format(context) }
+    }
 
     var sizeBoundary: SizeBoundary
         get() = SizeBoundary(
@@ -34,7 +39,7 @@ class StorageSlider
         }
 
     private fun resetSize() {
-        size = StorageSize(value.toLong())
+        size = size
     }
 
     companion object {

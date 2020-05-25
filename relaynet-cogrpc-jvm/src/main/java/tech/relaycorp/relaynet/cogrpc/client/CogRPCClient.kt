@@ -30,7 +30,7 @@ import java.util.logging.Logger
 import kotlin.time.seconds
 
 class CogRPCClient
-private constructor(
+internal constructor(
     serverAddress: String,
     val useTls: Boolean = true
 ) {

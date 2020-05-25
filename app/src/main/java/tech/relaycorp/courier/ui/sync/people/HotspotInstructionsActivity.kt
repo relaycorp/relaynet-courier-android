@@ -44,12 +44,7 @@ class HotspotInstructionsActivity : BaseActivity() {
     }
 
     private fun updateState(state: HotspotInstructionsViewModel.State) {
-        icon.setImageResource(
-            when (state) {
-                HotspotInstructionsViewModel.State.ReadyToSync -> R.drawable.ic_check
-                HotspotInstructionsViewModel.State.NotReadyToSync -> R.drawable.ic_hotspot
-            }
-        )
+        icon.isActivated = state == HotspotInstructionsViewModel.State.ReadyToSync
         titleText.setText(
             when (state) {
                 HotspotInstructionsViewModel.State.ReadyToSync -> R.string.hotspot_instructions_enabled

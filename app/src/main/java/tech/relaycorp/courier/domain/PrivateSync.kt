@@ -23,7 +23,7 @@ class PrivateSync
 
         state.send(State.Syncing)
         cogRPCServer.start(service) {
-            state.sendBlocking(State.Stopped)
+            state.sendBlocking(State.Error)
         }
     }
 
@@ -33,6 +33,6 @@ class PrivateSync
     }
 
     enum class State {
-        Stopped, Syncing
+        Syncing, Stopped, Error
     }
 }
