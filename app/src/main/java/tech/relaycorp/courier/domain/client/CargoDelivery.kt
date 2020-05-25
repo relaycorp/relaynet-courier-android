@@ -56,14 +56,17 @@ class CargoDelivery
             cargoes.map { StoredMessage.generateLocalId() to it }.toMap().toMutableMap()
         val requests = cargoesWithId.toRequests()
         val client = clientBuilder.build(recipientAddress.value)
-        client
-            .deliverCargo(requests)
-            .collect { localId ->
-                cargoesWithId.remove(localId)
-                    ?.let { message -> deleteMessage.delete(message) }
-                    ?: logger.warning("Ack with unknown id '$localId'")
-            }
-        client.close()
+        try {
+            client
+                .deliverCargo(requests)
+                .collect { localId ->
+                    cargoesWithId.remove(localId)
+                        ?.let { message -> deleteMessage.delete(message) }
+                        ?: logger.warning("Ack with unknown id '$localId'")
+                }
+        } finally {
+            client.close()
+        }
         if (cargoesWithId.any()) {
             throw IncompleteDeliveryException()
         }

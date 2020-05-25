@@ -6,7 +6,7 @@ import tech.relaycorp.relaynet.CargoDeliveryRequest
 fun CargoDeliveryRequest.toCargoDelivery() =
     CargoDelivery.newBuilder()
         .setId(localId)
-        .setCargo(ByteString.copyFrom(cargoSerialized.readBytes()))
+        .setCargo(ByteString.copyFrom(cargoSerialized().readBytesAndClose()))
         .build()
 
 fun CargoDelivery.toAck() = id.toCargoDeliveryAck()

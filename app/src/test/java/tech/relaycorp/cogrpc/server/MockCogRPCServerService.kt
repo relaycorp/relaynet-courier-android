@@ -15,7 +15,7 @@ open class MockCogRPCServerService : CogRPCServer.Service {
         return listOf(
             CargoDeliveryRequest(
                 "1234",
-                CARGO_DELIVERED.newInput()
+                CARGO_DELIVERED::newInput
             )
         )
     }

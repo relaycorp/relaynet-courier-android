@@ -36,7 +36,7 @@ internal class CargoCollectionTest {
     @BeforeEach
     internal fun setUp() = runBlockingTest {
         whenever(clientBuilder.build(any(), any())).thenReturn(client)
-        whenever(diskRepository.readMessage(any())).thenReturn("".byteInputStream())
+        whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
     }
 
     @Test
