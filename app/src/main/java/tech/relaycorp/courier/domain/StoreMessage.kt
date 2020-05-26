@@ -9,6 +9,7 @@ import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
+import tech.relaycorp.relaynet.cogrpc.readBytesAndClose
 import tech.relaycorp.relaynet.messages.Cargo
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
 import tech.relaycorp.relaynet.ramf.RAMFException
@@ -25,7 +26,7 @@ class StoreMessage
 ) {
 
     suspend fun storeCargo(cargoInputStream: InputStream): StoredMessage? {
-        val cargoBytes = cargoInputStream.readBytes()
+        val cargoBytes = cargoInputStream.readBytesAndClose()
         val cargo = try {
             Cargo.deserialize(cargoBytes)
         } catch (exc: RAMFException) {

@@ -19,6 +19,7 @@ import tech.relaycorp.relaynet.cogrpc.AuthorizationMetadata
 import tech.relaycorp.relaynet.cogrpc.CargoDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
 import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
+import tech.relaycorp.relaynet.cogrpc.readBytesAndClose
 import tech.relaycorp.relaynet.cogrpc.toCargoDelivery
 import tech.relaycorp.relaynet.cogrpc.toCargoDeliveryAck
 import java.io.InputStream
@@ -91,7 +92,7 @@ internal constructor(
         return ackChannel.asFlow()
     }
 
-    fun collectCargo(cca: InputStream): Flow<InputStream> {
+    fun collectCargo(cca: (() -> InputStream)): Flow<InputStream> {
         val ackChannel = BroadcastChannel<String>(1)
         return channelFlow {
             val collectObserver = object : StreamObserver<CargoDelivery> {
@@ -119,7 +120,7 @@ internal constructor(
                 }
             }
 
-            val client = buildAuthorizedClient(cca.readBytes())
+            val client = buildAuthorizedClient(cca().readBytesAndClose())
             val ackObserver = client.collectCargo(collectObserver)
             ackChannel
                 .asFlow()
@@ -130,7 +131,8 @@ internal constructor(
     }
 
     fun close() {
-        channel.shutdown()
+        logger.info("Closing CogRPCClient")
+        channel.shutdown().awaitTermination(CALL_DEADLINE.inSeconds.toLong(), TimeUnit.SECONDS)
     }
 
     private fun buildClient() =
