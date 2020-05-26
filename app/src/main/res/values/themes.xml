@@ -33,8 +33,8 @@
 
         <!-- Custom styles -->
         <item name="appBarLayoutStyle">@style/Widget.Courier.AppBar</item>
-        <item name="toolbarStyle">@style/Widget.Courier.Toolbar</item>
-        <item name="android:toolbarStyle">@style/Widget.Courier.Toolbar</item>
+        <item name="toolbarStyle">@style/Widget.Courier.Toolbar.Big</item>
+        <item name="android:toolbarStyle">@style/Widget.Courier.Toolbar.Big</item>
         <item name="toolbarNavigationButtonStyle">@style/Widget.Courier.ToolbarNavigationButton
         </item>
         <item name="android:textViewStyle">@style/Widget.Courier.TextView</item>
@@ -59,6 +59,10 @@
         <item name="colorOnSurface">@color/white</item>
 
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+
+    <style name="Theme.Courier.Licences">
+        <item name="toolbarStyle">@style/Widget.Courier.Toolbar</item>
     </style>
 
     <style name="ThemeOverlay.Courier.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">

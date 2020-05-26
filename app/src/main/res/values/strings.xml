@@ -99,4 +99,13 @@
     <string name="settings_clear">Clear</string>
     <string name="settings_clear_dialog_title">Are you sure?</string>
 
+    <!-- About -->
+    <string name="about">About</string>
+    <string name="about_app">
+        Relaynet is a computer network where apps can remain connected
+        when the Internet is completely cut off.
+    </string>
+    <string name="about_open_licenses">See open source licenses</string>
+    <string name="about_licenses">Open Source Licenses</string>
+
 </resources>
