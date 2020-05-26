@@ -2,7 +2,6 @@ package tech.relaycorp.cogrpc.server
 
 import io.grpc.Server
 import io.grpc.netty.NettyServerBuilder
-import io.netty.channel.nio.NioEventLoopGroup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
