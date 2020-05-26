@@ -58,6 +58,7 @@
     <string name="sync_internet_stop_confirm_message">The sync hasn\'t finished yet.</string>
 
     <!-- Private / People Sync -->
+    <string name="sync_people_starting">Setting up</string>
     <string name="sync_people_syncing">Syncing</string>
     <string name="sync_people_waiting_first_client">Waiting for the first person to connect</string>
     <string name="sync_people_syncing_some">Syncing with</string>

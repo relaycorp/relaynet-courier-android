@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -54,8 +55,8 @@ class PeopleSyncActivity : BaseActivity() {
                     state is PeopleSyncViewModel.State.Syncing.HadFirstClient
                 clientsConnected.text = state.clientsConnectedValue.toString()
 
+                stop.isInvisible = state !is PeopleSyncViewModel.State.Syncing
                 val isDone = state == PeopleSyncViewModel.State.Error
-                stop.isVisible = !isDone
                 close.isVisible = isDone
                 if (!isDone) {
                     animation.startLoopingAvd(R.drawable.ic_sync_animation)
@@ -112,6 +113,7 @@ class PeopleSyncActivity : BaseActivity() {
 
     private fun PeopleSyncViewModel.State.toSyncMessageRes() =
         when (this) {
+            PeopleSyncViewModel.State.Starting -> R.string.sync_people_starting
             PeopleSyncViewModel.State.Syncing.WaitingFirstClient -> R.string.sync_people_syncing
             is PeopleSyncViewModel.State.Syncing.HadFirstClient -> R.string.sync_people_syncing_some
             is PeopleSyncViewModel.State.Error -> R.string.sync_error

@@ -2,6 +2,7 @@ package tech.relaycorp.cogrpc.server
 
 import io.grpc.Server
 import io.grpc.netty.NettyServerBuilder
+import io.netty.channel.nio.NioEventLoopGroup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -81,7 +82,9 @@ internal constructor(
     }
 
     fun stop() {
-        server?.shutdown()
+        server
+            ?.shutdown()
+            ?.awaitTermination(TERMINATION_TIMEOUT.inSeconds.toLong(), TimeUnit.SECONDS)
         server = null
 
         job.cancel()
@@ -107,6 +110,7 @@ internal constructor(
         private val MAX_CONNECTION_AGE = 15.minutes
         private val MAX_CONNECTION_AGE_GRACE = 30.seconds
         private val MAX_CONNECTION_IDLE = 10.seconds
+        private val TERMINATION_TIMEOUT = 5.seconds
     }
 
     interface Service {

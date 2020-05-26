@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
@@ -22,7 +21,7 @@ import javax.inject.Inject
 class PeopleSyncViewModel
 @Inject constructor(
     private val privateSync: PrivateSync,
-    private val wifiHotspotStateReceiver: WifiHotspotStateReceiver
+    wifiHotspotStateReceiver: WifiHotspotStateReceiver
 ) : BaseViewModel() {
 
     // Inputs
@@ -82,29 +81,30 @@ class PeopleSyncViewModel
             .onEach { hadFirstClient = true }
             .launchIn(ioScope)
 
-        privateSync
-            .state()
-            .combine(privateSync.clientsConnected()) { syncState, clientsConnected ->
-                if (syncState == PrivateSync.State.Stopped) {
-                    finish.send(Finish)
-                } else {
-                    state.send(
-                        when (syncState) {
-                            PrivateSync.State.Syncing -> if (hadFirstClient) {
-                                State.Syncing.HadFirstClient(clientsConnected)
-                            } else {
-                                State.Syncing.WaitingFirstClient
-                            }
-                            else -> State.Error
-                        }
-                    )
-                }
+        combine(
+            privateSync.state(),
+            privateSync.clientsConnected()
+        ) { syncState, clientsConnected ->
+            when (syncState) {
+                PrivateSync.State.Starting -> state.send(State.Starting)
+                PrivateSync.State.Syncing -> state.send(
+                    if (hadFirstClient) {
+                        State.Syncing.HadFirstClient(clientsConnected)
+                    } else {
+                        State.Syncing.WaitingFirstClient
+                    }
+                )
+                PrivateSync.State.Stopped -> finish.send(Finish)
+                PrivateSync.State.Error -> state.send(State.Error)
             }
+        }
             .launchIn(ioScope)
 
         stopClicks
             .asFlow()
             .onEach {
+                if (state.value == State.Starting) return@onEach
+
                 val clientsConnected =
                     (state.value as? State.Syncing.HadFirstClient)?.clientsConnected ?: 0
                 if (clientsConnected > 0) {
@@ -126,9 +126,8 @@ class PeopleSyncViewModel
         super.onCleared()
     }
 
-    private suspend fun getHotspotState() = wifiHotspotStateReceiver.state().first()
-
     sealed class State {
+        object Starting : State()
         sealed class Syncing : State() {
             object WaitingFirstClient : Syncing()
             data class HadFirstClient(val clientsConnected: Int) : Syncing()
