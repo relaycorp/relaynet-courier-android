@@ -5,13 +5,11 @@
     </style>
 
     <style name="Widget.Courier.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
-        <item name="android:minHeight">96dp</item>
-        <item name="iconTint">?colorOnSurface</item>
-        <item name="android:theme">@style/Theme.Courier.Toolbar</item>
+        <item name="elevation">0dp</item>
     </style>
 
-    <style name="Theme.Courier.Toolbar" parent="">
-        <item name="iconTint">?colorOnSurface</item>
+    <style name="Widget.Courier.Toolbar.Big">
+        <item name="android:minHeight">96dp</item>
     </style>
 
     <style name="Widget.Courier.ToolbarNavigationButton" parent="Widget.AppCompat.Toolbar.Button.Navigation">
@@ -47,6 +45,9 @@
 
     <style name="Widget.Courier.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/text_button</item>
+    </style>
+
+    <style name="Widget.Courier.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
     </style>
 
     <style name="Widget.Courier.Tooltip" parent="Widget.MaterialComponents.Tooltip">

@@ -6,8 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.mikepenz.aboutlibraries.LibsBuilder
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_settings.deleteData
+import kotlinx.android.synthetic.main.activity_settings.innerContainer
+import kotlinx.android.synthetic.main.activity_settings.licenses
 import kotlinx.android.synthetic.main.activity_settings.storageAvailable
 import kotlinx.android.synthetic.main.activity_settings.storageMaxSlider
 import kotlinx.android.synthetic.main.activity_settings.storageMaxValue
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
 import tech.relaycorp.courier.ui.common.format
 import tech.relaycorp.courier.ui.common.set
 import javax.inject.Inject
@@ -38,7 +42,9 @@ class SettingsActivity : BaseActivity() {
         component.inject(this)
         setContentView(R.layout.activity_settings)
         setupNavigation(R.drawable.ic_close)
+        innerContainer.addSystemWindowInsetToPadding(bottom = true)
 
+        licenses.setOnClickListener { openLicenses() }
         deleteData.setOnClickListener { openDeleteDataDialog() }
 
         viewModel
@@ -83,6 +89,16 @@ class SettingsActivity : BaseActivity() {
         super.onDestroy()
         deleteDataDialog?.dismiss()
         deleteDataDialog = null
+    }
+
+    private fun openLicenses() {
+        LibsBuilder()
+            .withActivityTitle(getString(R.string.about_licenses))
+            .withAboutIconShown(false)
+            .withVersionShown(false)
+            .withOwnLibsActivityClass(LicensesActivity::class.java)
+            .withEdgeToEdge(true)
+            .start(this)
     }
 
     private fun openDeleteDataDialog() {
