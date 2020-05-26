@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import tech.relaycorp.relaynet.cogrpc.CargoDeliveryRequest
+import tech.relaycorp.relaynet.CargoDeliveryRequest
 import tech.relaycorp.relaynet.cogrpc.CargoDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
 import tech.relaycorp.relaynet.cogrpc.test.MockCogRPCServerService
@@ -130,7 +130,7 @@ internal class CogRPCClientTest {
 
         // Client call
         val cca = buildMessageSerialized()
-        val collectFlow = client.collectCargo(cca)
+        val collectFlow = client.collectCargo { cca }
 
         // Server sends cargo
         val cargo = buildRequest()
@@ -162,7 +162,7 @@ internal class CogRPCClientTest {
 
         // Client call
         val cca = buildMessageSerialized()
-        val collectFlow = client.collectCargo(cca)
+        val collectFlow = client.collectCargo { cca }
 
         // Server sends cargo
         val cargo = buildRequest()
@@ -196,8 +196,8 @@ internal class CogRPCClientTest {
 
     private fun buildRequest() =
         CargoDeliveryRequest(
-            UUID.randomUUID().toString(), buildMessageSerialized()
-        )
+            UUID.randomUUID().toString()
+        ) { buildMessageSerialized() }
 
     companion object {
         private const val HOST = "localhost"
