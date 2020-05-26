@@ -1,5 +1,7 @@
 package tech.relaycorp.cogrpc.server
 
+import io.grpc.Status
+import io.grpc.StatusRuntimeException
 import io.grpc.internal.testing.StreamRecorder
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -61,6 +63,7 @@ internal class CogRPCServerDeliveryCargoTest {
             mockService.deliverCargoCalls.last().readBytes().toString(Charset.defaultCharset())
         )
         assertTrue(ackRecorder.values.isEmpty())
+        assertEquals(Status.RESOURCE_EXHAUSTED, (ackRecorder.error as StatusRuntimeException).status)
 
         testServer.stop()
     }
