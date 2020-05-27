@@ -4,7 +4,6 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
 import javax.inject.Inject
@@ -25,12 +24,11 @@ class DiskRepository
         }
 
     @Throws(MessageDataNotFoundException::class)
-    suspend fun readMessage(path: String): InputStream =
-        try {
-            File(getOrCreateMessagesDir(), path).inputStream()
-        } catch (e: FileNotFoundException) {
-            throw MessageDataNotFoundException("Message data not found on path '$path'", e)
-        }
+    suspend fun readMessage(path: String): (() -> InputStream) {
+        val file = File(getOrCreateMessagesDir(), path)
+        if (!file.exists()) throw MessageDataNotFoundException("Message data not found on path '$path'")
+        return file::inputStream
+    }
 
     suspend fun deleteMessage(path: String) {
         withContext(Dispatchers.IO) {

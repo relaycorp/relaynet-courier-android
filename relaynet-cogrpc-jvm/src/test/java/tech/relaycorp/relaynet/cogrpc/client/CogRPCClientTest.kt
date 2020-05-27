@@ -130,7 +130,7 @@ internal class CogRPCClientTest {
 
         // Client call
         val cca = buildMessageSerialized()
-        val collectFlow = client.collectCargo(cca)
+        val collectFlow = client.collectCargo { cca }
 
         // Server sends cargo
         val cargo = buildRequest()
@@ -162,7 +162,7 @@ internal class CogRPCClientTest {
 
         // Client call
         val cca = buildMessageSerialized()
-        val collectFlow = client.collectCargo(cca)
+        val collectFlow = client.collectCargo { cca }
 
         // Server sends cargo
         val cargo = buildRequest()
@@ -195,7 +195,9 @@ internal class CogRPCClientTest {
         "DATA".byteInputStream()
 
     private fun buildRequest() =
-        CargoDeliveryRequest(UUID.randomUUID().toString(), buildMessageSerialized())
+        CargoDeliveryRequest(
+            UUID.randomUUID().toString()
+        ) { buildMessageSerialized() }
 
     companion object {
         private const val HOST = "localhost"

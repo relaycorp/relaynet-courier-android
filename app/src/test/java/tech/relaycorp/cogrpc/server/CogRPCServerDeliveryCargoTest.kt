@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import tech.relaycorp.cogrpc.server.DataFactory.buildDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
 import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
+import tech.relaycorp.relaynet.cogrpc.readBytesAndClose
 import java.io.InputStream
 import java.nio.charset.Charset
 
@@ -30,7 +31,8 @@ internal class CogRPCServerDeliveryCargoTest {
 
         assertEquals(
             delivery.cargo.toString(Charset.defaultCharset()),
-            mockService.deliverCargoCalls.last().readBytes().toString(Charset.defaultCharset())
+            mockService.deliverCargoCalls.last().readBytesAndClose()
+                .toString(Charset.defaultCharset())
         )
         assertEquals(
             delivery.id,
@@ -60,7 +62,8 @@ internal class CogRPCServerDeliveryCargoTest {
 
         assertEquals(
             delivery.cargo.toString(Charset.defaultCharset()),
-            mockService.deliverCargoCalls.last().readBytes().toString(Charset.defaultCharset())
+            mockService.deliverCargoCalls.last().readBytesAndClose()
+                .toString(Charset.defaultCharset())
         )
         assertTrue(ackRecorder.values.isEmpty())
         assertEquals(Status.RESOURCE_EXHAUSTED, (ackRecorder.error as StatusRuntimeException).status)
