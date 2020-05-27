@@ -36,11 +36,14 @@
         <item name="android:tint">?colorOnSurface</item>
         <item name="android:background">@drawable/background_icon_small</item>
         <item name="android:backgroundTint">?colorOnSurface</item>
-        <item name="android:foreground">?selectableItemBackgroundBorderless</item>
     </style>
 
     <style name="Widget.Courier.Button" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.Courier.Button.Sync" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="Widget.Courier.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
