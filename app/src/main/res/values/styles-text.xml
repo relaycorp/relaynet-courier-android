@@ -24,6 +24,10 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
+    <style name="TextAppearance.Courier.Body.Settings">
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <style name="TextAppearance.Courier.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">true</item>
