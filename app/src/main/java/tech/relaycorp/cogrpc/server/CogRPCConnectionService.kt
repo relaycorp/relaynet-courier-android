@@ -1,5 +1,7 @@
 package tech.relaycorp.cogrpc.server
 
+import io.grpc.Status
+import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -26,6 +28,10 @@ class CogRPCConnectionService(
                     if (result) {
                         logger.info("deliverCargo next ack ${cargoDelivery.id}")
                         responseObserver.onNext(cargoDelivery.toAck())
+                    } else {
+                        logger.info("deliverCargo no space available for ${cargoDelivery.id}")
+                        logger.info("deliverCargo closing with error")
+                        responseObserver.onError(StatusRuntimeException(Status.RESOURCE_EXHAUSTED))
                     }
                 }
             }

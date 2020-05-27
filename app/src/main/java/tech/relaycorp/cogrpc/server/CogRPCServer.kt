@@ -81,7 +81,9 @@ internal constructor(
     }
 
     fun stop() {
-        server?.shutdown()
+        server
+            ?.shutdown()
+            ?.awaitTermination(TERMINATION_TIMEOUT.inSeconds.toLong(), TimeUnit.SECONDS)
         server = null
 
         job.cancel()
@@ -107,6 +109,7 @@ internal constructor(
         private val MAX_CONNECTION_AGE = 15.minutes
         private val MAX_CONNECTION_AGE_GRACE = 30.seconds
         private val MAX_CONNECTION_IDLE = 10.seconds
+        private val TERMINATION_TIMEOUT = 5.seconds
     }
 
     interface Service {
