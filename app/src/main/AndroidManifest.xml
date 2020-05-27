@@ -53,7 +53,6 @@
         <activity
             android:name=".ui.settings.LicensesActivity"
             android:label="@string/about_licenses"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Courier.Licences" />
+            android:screenOrientation="portrait" />
     </application>
 </manifest>
