@@ -7,7 +7,6 @@
     <string name="cancel">Cancel</string>
     <string name="stop">Stop</string>
     <string name="continue_">Continue</string>
-    <string name="value_with_percentage">%1$s (%2$d%%)</string>
 
     <!-- Main -->
     <string name="main_title">Relaynet Courier</string>
@@ -101,11 +100,9 @@
 
     <!-- About -->
     <string name="about">About</string>
-    <string name="about_app">
-        Relaynet is a computer network where apps can remain connected
-        when the Internet is completely cut off.
-    </string>
-    <string name="about_open_licenses">See open source licenses</string>
-    <string name="about_licenses">Open Source Licenses</string>
+    <string name="about_version">Version %1$s (%2$s)</string>
+    <string name="about_know_more">Know more about Relaynet</string>
+    <string name="about_open_licenses">See open source libraries</string>
+    <string name="about_licenses">Open Source Libraries</string>
 
 </resources>

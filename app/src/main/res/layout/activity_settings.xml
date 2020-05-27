@@ -20,47 +20,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@string/about"
-                android:textAppearance="@style/TextAppearance.Courier.SubTitle" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_info"
-                    android:tint="?appIconTint" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginBottom="32dp"
-                    android:orientation="vertical"
-                    tools:ignore="RtlSymmetry">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/about_app"
-                        android:textSize="14sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/licenses"
-                        style="@style/Widget.Courier.Button.Text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/about_open_licenses" />
-
-                </LinearLayout>
-            </FrameLayout>
+            <!-- Manage Data Storage -->
 
             <TextView
                 android:layout_width="match_parent"
@@ -92,7 +52,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_select_max_storage"
-                        android:textSize="14sp" />
+                        android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
 
                     <tech.relaycorp.courier.ui.settings.StorageSlider
                         android:id="@+id/storageMaxSlider"
@@ -117,14 +77,15 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
-                            android:text="@string/settings_max_storage" />
+                            android:text="@string/settings_max_storage"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
 
                         <TextView
                             android:id="@+id/storageMaxValue"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings"
                             android:textIsSelectable="true"
                             tools:text="1.00 GB" />
                     </LinearLayout>
@@ -138,14 +99,15 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
-                            android:text="@string/settings_used_storage" />
+                            android:text="@string/settings_used_storage"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
 
                         <TextView
                             android:id="@+id/storageUsed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings"
                             android:textIsSelectable="true"
                             tools:text="10 MB" />
                     </LinearLayout>
@@ -159,14 +121,15 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
-                            android:text="@string/settings_available_storage" />
+                            android:text="@string/settings_available_storage"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
 
                         <TextView
                             android:id="@+id/storageAvailable"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings"
                             android:textIsSelectable="true"
                             tools:text="10 MB" />
                     </LinearLayout>
@@ -180,19 +143,22 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
-                            android:text="@string/settings_total_storage" />
+                            android:text="@string/settings_total_storage"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
 
                         <TextView
                             android:id="@+id/storageTotal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"
+                            android:textAppearance="@style/TextAppearance.Courier.Body.Settings"
                             android:textIsSelectable="true"
                             tools:text="24 MB" />
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
+
+            <!-- Clear -->
 
             <TextView
                 android:layout_width="match_parent"
@@ -203,7 +169,8 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -224,8 +191,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="@string/settings_clear_data_description"
-                        android:textAppearance="@style/TextAppearance.Courier.Body"
-                        android:textSize="14sp" />
+                        android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/deleteData"
@@ -237,6 +203,71 @@
                 </LinearLayout>
             </FrameLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginBottom="24dp"
+                android:background="?android:listDivider" />
+
+            <!-- About -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/about"
+                android:textAppearance="@style/TextAppearance.Courier.SubTitle" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_info"
+                    android:tint="?appIconTint" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginBottom="32dp"
+                    android:orientation="vertical"
+                    tools:ignore="RtlSymmetry">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/main_title"
+                        android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
+
+                    <TextView
+                        android:id="@+id/version"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="@string/about_version"
+                        android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/knowMore"
+                        style="@style/Widget.Courier.Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/about_know_more" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/licenses"
+                        style="@style/Widget.Courier.Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/about_open_licenses" />
+
+                </LinearLayout>
+            </FrameLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
