@@ -2,21 +2,52 @@
 
 # Relaynet Courier for Android
 
-This repository contains the source code for the [Relaynet Courier for Android](https://play.google.com/store/apps/details?id=tech.replaycorp.courier). As a Relaynet Courier implementation, its sole function is to relay cargo between Relaynet gateways. To learn more about Relaynet, visit [relaynet.network](https://relaynet.network).
+This repository contains the source code for the [Relaynet Courier for Android](https://play.google.com/store/apps/details?id=tech.replaycorp.courier). 
+As a Relaynet Courier implementation, its sole function is to relay cargo between Relaynet gateways. 
+To learn more about Relaynet, visit [relaynet.network](https://relaynet.network).
 
-This document is aimed at advanced users and (prospective) contributors. We aim to make the app as simple and intuitive as possible, and we're therefore not planning on publishing end-user documentation at this point.
+This document is aimed at advanced users and (prospective) contributors. We aim to make the app as 
+simple and intuitive as possible, and we're therefore not planning on publishing end-user 
+documentation at this point.
 
 ## Multiple IP addresses in the private subnet are unsupported
 
-If you've rooted your Android device or flashed it with a custom ROM, you might be able to have multiple IP address in the subnet `192.168.43.0/24`. If that were the case, the courier app will fail to allow incoming connections from private gateways: We need exactly one IP address in that range so that the app can self-issue TLS certificates for it.
+If you've rooted your Android device or flashed it with a custom ROM, you might be able to have 
+multiple IP address in the subnet `192.168.43.0/24`. If that were the case, the courier app will 
+fail to allow incoming connections from private gateways: We need exactly one IP address in that 
+range so that the app can self-issue TLS certificates for it.
 
 ## Architecture
 
-TODO: Write anything that an experienced Android developer would like to know to understand the high-level design of the app. Here's an example for a server-side app: https://docs.relaycorp.tech/relaynet-pong/#architecture-and-backing-services
+The app follows clean architecture principals. Domain logic is separated from external elements
+such as UI and data. The main components / layers / packages are:
+ 
+ - `domain` - Domain logic, with one class per use-case
+ - `ui` - Presentation logic, organized per screen, and following an [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) pattern
+ - `data` - Data persistence logic using preferences, database and disk
+ - `background` - Background connect state listeners
+ - `cogrpc` - Implementation of the [CogRPC](https://specs.relaynet.network/RS-008) protocol
+
+Components are tied by dependency injection using [Dagger](https://dagger.dev). 
+Kotlin coroutines and flow are used for threading and reactive design. 
+For the views material components were preferred whenever possible.
 
 ## Development
 
-TODO: Add anything else that may be relevant
+The project should build and run out-of-the-box with Android Studio 4+. 
+The minimum Android OS version supported is Android 5 (Lollipop, API 21).
+
+### Run Android lint
+
+```
+./gradlew lint 
+```
+
+### Run kotlin lint
+
+```
+./gradlew spotlessCheck 
+```
 
 ### Run unit tests
 
