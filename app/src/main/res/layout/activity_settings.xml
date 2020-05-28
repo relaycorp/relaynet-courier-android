@@ -250,21 +250,28 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="@string/about_version"
-                        android:textAppearance="@style/TextAppearance.Courier.Body.Settings" />
+                        android:textAppearance="@style/TextAppearance.Courier.Body2" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/knowMore"
                         style="@style/Widget.Courier.Button.Text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/about_know_more" />
+                        android:layout_marginStart="-8dp"
+                        android:layout_marginTop="16dp"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/about_know_more"
+                        tools:ignore="NegativeMargin" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/licenses"
                         style="@style/Widget.Courier.Button.Text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/about_open_licenses" />
+                        android:layout_marginStart="-8dp"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/about_open_licenses"
+                        tools:ignore="NegativeMargin" />
 
                 </LinearLayout>
             </FrameLayout>

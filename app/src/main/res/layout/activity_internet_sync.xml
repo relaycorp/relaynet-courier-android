@@ -8,50 +8,57 @@
 
     <include layout="@layout/common_app_bar" />
 
+    <TextView
+        android:id="@+id/stateMessage"
+        android:layout_width="match_parent"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:minHeight="56dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="128dp"
+        android:gravity="center"
+        android:textIsSelectable="true"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Syncing" />
+
     <ImageView
         android:id="@+id/animation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
         android:contentDescription="@null"
         android:tint="?colorOnBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stateMessage"
         app:srcCompat="@drawable/ic_sync_animation" />
-
-    <TextView
-        android:id="@+id/stateMessage"
-        android:layout_width="224dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textIsSelectable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/animation"
-        app:layout_constraintStart_toStartOf="@+id/animation"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Syncing" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/stop"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        style="@style/Widget.Courier.Button.Outline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
         android:text="@string/stop"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/animation" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
         android:text="@string/close"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/animation"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

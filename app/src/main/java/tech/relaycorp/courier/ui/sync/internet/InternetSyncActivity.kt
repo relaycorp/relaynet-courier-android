@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.domain.PublicSync
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToMargin
 import tech.relaycorp.courier.ui.common.startLoopingAvd
 import tech.relaycorp.courier.ui.common.stopLoopingAvd
 import javax.inject.Inject
@@ -38,6 +39,8 @@ class InternetSyncActivity : BaseActivity() {
         component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_internet_sync)
+        stop.addSystemWindowInsetToMargin(bottom = true)
+        close.addSystemWindowInsetToMargin(bottom = true)
 
         stop.setOnClickListener { showStopConfirmDialog() }
         close.setOnClickListener { finish() }
