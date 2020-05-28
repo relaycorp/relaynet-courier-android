@@ -1,11 +1,11 @@
 buildscript {
     repositories {
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
-        classpath "com.github.triplet.gradle:play-publisher:2.7.5"
+        classpath 'com.github.triplet.gradle:play-publisher:2.7.5'
     }
 }
 
@@ -14,12 +14,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.diffplug.gradle.spotless'
-apply plugin: "com.github.triplet.play"
+apply plugin: 'com.github.triplet.play'
 
 apply from: 'jacoco.gradle'
 
 repositories {
-    maven { url "https://jitpack.io" }
+    maven { url 'https://jitpack.io' }
 }
 
 android {
@@ -136,21 +136,21 @@ dependencies {
     implementation 'com.github.tfcporciuncula:flow-preferences:1.1.0'
 
     // gRPC
-    implementation "io.grpc:grpc-netty:${grpcVersion}"
-    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
-    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation "io.grpc:grpc-netty:$grpcVersion"
+    implementation "io.grpc:grpc-protobuf:$grpcVersion"
+    implementation "io.grpc:grpc-stub:$grpcVersion"
 
     // Android TLS support for Netty
     implementation "io.netty:netty-handler:$nettyVersion"
     implementation 'org.conscrypt:conscrypt-android:2.4.0'
-    implementation("org.bouncycastle:bcpkix-jdk15on:1.65")
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.65'
 
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
     testImplementation 'org.mockito:mockito-inline:3.3.3'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
-    testImplementation "io.grpc:grpc-testing:${grpcVersion}"
+    testImplementation "io.grpc:grpc-testing:$grpcVersion"
 
     // Instrumentation Testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
