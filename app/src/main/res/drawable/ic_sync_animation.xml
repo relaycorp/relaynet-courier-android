@@ -2,80 +2,55 @@
     xmlns:aapt="http://schemas.android.com/aapt">
     <aapt:attr name="android:drawable">
         <vector
-            android:width="288dp"
-            android:height="288dp"
-            android:viewportWidth="210"
-            android:viewportHeight="210">
-            <group
-                android:name="circleGroup"
-                android:pivotX="105.0"
-                android:pivotY="105.0"
-                android:scaleX="0.9"
-                android:scaleY="0.9">
-                <path
-                    android:name="circle"
-                    android:pathData="m5,105a100,100 0,1 1,200 0a100,100 0,1 1,-200 0"
-                    android:strokeWidth="5"
-                    android:strokeAlpha="1"
-                    android:strokeColor="#000000" />
-            </group>
+            android:width="411dp"
+            android:height="56dp"
+            android:viewportWidth="411"
+            android:viewportHeight="56">
+            <path
+                android:name="line"
+                android:fillColor="#00000000"
+                android:pathData="M0,52.806C77.5,67.5 130.476,1 206.253,1C282.029,1 332,67.5 411,52.806"
+                android:strokeWidth="2"
+                android:strokeAlpha="0.5"
+                android:strokeColor="#ffffff" />
         </vector>
+
     </aapt:attr>
-    <target android:name="circleGroup">
-        <aapt:attr name="android:animation">
-            <set>
-                <set android:ordering="sequentially">
-                    <objectAnimator
-                        android:interpolator="@android:anim/linear_interpolator"
-                        android:duration="2000"
-                        android:propertyName="scaleX"
-                        android:valueFrom="0.9"
-                        android:valueTo="1"
-                        android:valueType="floatType" />
-                    <objectAnimator
-                        android:interpolator="@android:anim/linear_interpolator"
-                        android:duration="2000"
-                        android:propertyName="scaleX"
-                        android:valueFrom="0.8"
-                        android:valueTo="0.9"
-                        android:valueType="floatType" />
-                </set>
-                <set android:ordering="sequentially">
-                    <objectAnimator
-                        android:interpolator="@android:anim/linear_interpolator"
-                        android:duration="2000"
-                        android:propertyName="scaleY"
-                        android:valueFrom="0.9"
-                        android:valueTo="1"
-                        android:valueType="floatType" />
-                    <objectAnimator
-                        android:interpolator="@android:anim/linear_interpolator"
-                        android:duration="2000"
-                        android:propertyName="scaleY"
-                        android:valueFrom="0.8"
-                        android:valueTo="0.9"
-                        android:valueType="floatType" />
-                </set>
-            </set>
-        </aapt:attr>
-    </target>
-    <target android:name="circle">
+    <target android:name="line">
         <aapt:attr name="android:animation">
             <set android:ordering="sequentially">
-                <objectAnimator
-                    android:interpolator="@android:anim/linear_interpolator"
-                    android:duration="2000"
-                    android:propertyName="strokeAlpha"
-                    android:valueFrom="1"
-                    android:valueTo="0"
-                    android:valueType="floatType" />
-                <objectAnimator
-                    android:interpolator="@android:anim/linear_interpolator"
-                    android:duration="2000"
-                    android:propertyName="strokeAlpha"
-                    android:valueFrom="0"
-                    android:valueTo="1"
-                    android:valueType="floatType" />
+                <set>
+                    <objectAnimator
+                        android:duration="1500"
+                        android:interpolator="@android:anim/linear_interpolator"
+                        android:propertyName="trimPathStart"
+                        android:startOffset="1300"
+                        android:valueFrom="0"
+                        android:valueTo="1" />
+                    <objectAnimator
+                        android:duration="1500"
+                        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+                        android:propertyName="trimPathEnd"
+                        android:startOffset="1000"
+                        android:valueFrom="0"
+                        android:valueTo="1" />
+                </set>
+                <set>
+                    <objectAnimator
+                        android:duration="1500"
+                        android:interpolator="@android:anim/linear_interpolator"
+                        android:propertyName="trimPathEnd"
+                        android:startOffset="1300"
+                        android:valueFrom="1"
+                        android:valueTo="0" />
+                    <objectAnimator
+                        android:duration="1500"
+                        android:startOffset="1000"
+                        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+                        android:propertyName="trimPathStart"
+                        android:valueFrom="1"
+                        android:valueTo="0" />
+                </set>
             </set>
         </aapt:attr>
     </target>

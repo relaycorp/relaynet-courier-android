@@ -9,58 +9,52 @@
 
     <include layout="@layout/common_app_bar" />
 
-    <ImageView
-        android:id="@+id/animation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:tint="?colorOnBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_sync_animation" />
-
     <LinearLayout
-        android:layout_width="224dp"
+        android:id="@+id/info"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/animation"
-        app:layout_constraintEnd_toEndOf="@id/animation"
-        app:layout_constraintStart_toStartOf="@id/animation"
-        app:layout_constraintTop_toTopOf="@id/animation">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/syncMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
             android:gravity="center_horizontal"
-            android:textIsSelectable="true"
-            tools:text="Syncing with" />
-
-        <TextView
-            android:id="@+id/waitingFirstClient"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center_horizontal"
+            android:minHeight="56dp"
             android:text="@string/sync_people_waiting_first_client"
             android:textIsSelectable="true"
-            android:textSize="18sp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/clientsConnected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:includeFontPadding="false"
             android:textIsSelectable="true"
-            android:textSize="64sp"
+            android:textSize="72sp"
             android:visibility="gone"
             tools:text="2"
             tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/animation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:contentDescription="@null"
+            android:tint="?colorOnBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info"
+            app:srcCompat="@drawable/ic_sync_animation" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -68,21 +62,23 @@
         style="?materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="80dp"
         android:text="@string/stop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/animation" />
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="80dp"
         android:text="@string/close"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/animation"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
