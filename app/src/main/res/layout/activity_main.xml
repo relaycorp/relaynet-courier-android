@@ -78,6 +78,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_phone"
                     android:drawablePadding="8dp"
+                    android:textIsSelectable="true"
                     app:drawableTint="@color/white"
                     tools:text="100 MB used of 1.2 GB max" />
 

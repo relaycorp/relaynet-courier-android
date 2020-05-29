@@ -58,7 +58,6 @@
 
     <!-- Private / People Sync -->
     <string name="sync_people_starting">Setting up</string>
-    <string name="sync_people_syncing">Syncing</string>
     <string name="sync_people_waiting_first_client">Waiting for the first person\nto connect</string>
     <string name="sync_people_syncing_some">Syncing with</string>
     <string name="sync_people_stop_confirm_message">Some people are syncing with your device at the moment.</string>
@@ -100,7 +99,7 @@
 
     <!-- About -->
     <string name="about">About</string>
-    <string name="about_version">Version %1$s (%2$s)</string>
+    <string name="about_version">Version %1$s (%2$d)</string>
     <string name="about_know_more">Know more about Relaynet</string>
     <string name="about_open_licenses">See open source libraries</string>
     <string name="about_licenses">Open Source Libraries</string>
