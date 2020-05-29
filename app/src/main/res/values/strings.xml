@@ -10,36 +10,37 @@
 
     <!-- Main -->
     <string name="main_title">Relaynet Courier</string>
-    <string name="main_storage_usage">Data storage usage</string>
-    <string name="main_storage_usage_values">%1$s used of %2$s max</string>
+    <string name="main_storage_usage">Storage utilization</string>
+    <string name="main_storage_usage_values">%1$s used of %2$s allocated</string>
     <string name="main_low_storage">
         Your available storage is running low.
-        The app might not be able to store new data to be exchanged.
+        The app may not be able to receive new data.
     </string>
-    <string name="main_deleted_expired_messages">%s of expired data has been deleted</string>
+    <string name="main_deleted_expired_messages">%s worth of expired data has been deleted</string>
 
     <!-- Sync -->
     <string name="sync">Sync</string>
-    <string name="sync_people">Sync with People</string>
-    <string name="sync_internet">Sync with Internet</string>
+    <string name="sync_people">Sync with Relaynet users</string>
+    <string name="sync_internet">Sync with the Internet</string>
     <string name="sync_people_disabled">
-      You can only sync with people when you don’t have Internet connection.
+      You can only exchange data with Relaynet users when you don’t have access to the Internet.
     </string>
     <string name="sync_people_enabled">
-      Press sync to exchange data with people without Internet connection.
+      Collect data from Relaynet users disconnected from the Internet and deliver any data
+        addressed to them.
     </string>
     <string name="sync_internet_enabled">
-      Press sync to exchange data with Internet.
-        You have data to send to the Internet and you may also have data to receive.
+      Deliver the data you collected from users and collect new data on their behalf.
     </string>
     <string name="sync_internet_disabled_offline">
-      You need a connection to exchange data with the Internet.
+      You need a connection to the Internet to deliver data from users and collect new data
+        on their behalf.
     </string>
     <string name="sync_internet_disabled_no_data">
-      You don’t have data to exchange with the Internet. You need to sync with people first.
+      You don\'t have any data from Relaynet users. You should sync with them first.
     </string>
     <string name="sync_internet_disabled_synced">
-      You’re already synced with the Internet. You need to sync with people next.
+      You\'re all caught up. You may now go back to Relaynet users disconnected from the Internet.
     </string>
 
     <!-- States -->
@@ -48,51 +49,51 @@
     <string name="internet_on">Online</string>
 
     <!-- Public / Internet Sync -->
-    <string name="sync_delivering_cargo">Delivering data</string>
-    <string name="sync_waiting">Waiting while the server processes data</string>
-    <string name="sync_collecting_cargo">Collecting data</string>
-    <string name="sync_finished">Sync complete</string>
-    <string name="sync_error">An error occurred when syncing. Please try again.</string>
-    <string name="sync_stop_confirm_title">Are you want to interrupt the sync?</string>
+    <string name="sync_delivering_cargo">Delivering data…</string>
+    <string name="sync_waiting">Waiting for the incoming data to become available…</string>
+    <string name="sync_collecting_cargo">Collecting data…</string>
+    <string name="sync_finished">Done!</string>
+    <string name="sync_error">An error has occurred. You may try again.</string>
+    <string name="sync_stop_confirm_title">
+        Are you sure you want to interrupt the synchronization?
+    </string>
     <string name="sync_internet_stop_confirm_message">The sync hasn\'t finished yet.</string>
 
     <!-- Private / People Sync -->
-    <string name="sync_people_starting">Setting up</string>
-    <string name="sync_people_waiting_first_client">Waiting for the first person\nto connect</string>
-    <string name="sync_people_syncing_some">Syncing with</string>
-    <string name="sync_people_stop_confirm_message">Some people are syncing with your device at the moment.</string>
+    <string name="sync_people_starting">Getting ready…</string>
+    <string name="sync_people_waiting_first_client">Waiting for the first user…</string>
+    <string name="sync_people_syncing_some">Users currently synchronizing:</string>
+    <string name="sync_people_stop_confirm_message">
+        Some users are still synchronizing data with you.
+    </string>
 
     <!-- Hotspot Instructions -->
-    <string name="hotspot_instructions">Wi-Fi hotspot</string>
+    <string name="hotspot_instructions">Wi-Fi Hotspot</string>
     <string name="hotspot_instructions_disabled">Wi-Fi hotspot is disabled</string>
     <string name="hotspot_instructions_disabled_text">
-      Your Wi-Fi hotspot is disabled at the moment.
-      You need to enable it in your device settings to be able to Sync with People.
+      You need to enable it to be able to sync data with Relaynet users.
     </string>
-    <string name="hotspot_instructions_open_settings">Open Wi-Fi hotspot Settings</string>
+    <string name="hotspot_instructions_open_settings">Open Wi-Fi hotspot settings</string>
     <string name="hotspot_instructions_enabled">Wi-Fi hotspot is enabled</string>
     <string name="hotspot_instructions_enabled_text">
-      Your Wi-Fi hotspot is now enabled.\nYou can start the Sync with People.
+      Keep it enabled throughout the synchronization with users to avoid disruptions.
     </string>
-    <string name="hotspot_instructions_start_sync">Start to Sync</string>
-    <string name="hotspot_instructions_stay_enabled">
-        The Wi-Fi hotspot should stay enabled throughout the synchronization with people.
-    </string>
+    <string name="hotspot_instructions_start_sync">Start sync with users</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
-    <string name="settings_manage_storage">Manage data storage</string>
+    <string name="settings_manage_storage">Manage storage utilization</string>
     <string name="settings_select_max_storage">
-        Select the maximum amount of data the app can use on your device.
+        Specify the maximum amount of space that Relaynet users\'s data can take up on your device.
     </string>
-    <string name="settings_max_storage">Maximum app storage</string>
-    <string name="settings_used_storage">Storage currently used by app</string>
+    <string name="settings_max_storage">Maximum allocation</string>
+    <string name="settings_used_storage">Current utilization</string>
     <string name="settings_available_storage">Available storage on device</string>
     <string name="settings_total_storage">Total storage on device</string>
-    <string name="settings_clear_data">Clear all stored data</string>
+    <string name="settings_clear_data">Clear all user data</string>
     <string name="settings_clear_data_description">
-        Deleting the data stored on your device will not lose anyone’s messages.
-        Messages will be delivered by the next courier exchange.
+        Any data lost in transit will eventually reach its destination. It\'d just take longer if
+        you delete it now.
     </string>
     <string name="settings_clear">Clear</string>
     <string name="settings_clear_dialog_title">Are you sure?</string>
@@ -100,7 +101,7 @@
     <!-- About -->
     <string name="about">About</string>
     <string name="about_version">Version %1$s (%2$d)</string>
-    <string name="about_know_more">Know more about Relaynet</string>
+    <string name="about_know_more">Learn more about Relaynet</string>
     <string name="about_open_licenses">See open source libraries</string>
     <string name="about_licenses">Open Source Libraries</string>
 
