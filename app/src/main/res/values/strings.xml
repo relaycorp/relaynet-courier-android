@@ -71,7 +71,7 @@
     <string name="hotspot_instructions">Wi-Fi Hotspot</string>
     <string name="hotspot_instructions_disabled">Wi-Fi hotspot is disabled</string>
     <string name="hotspot_instructions_disabled_text">
-      You need to enable it to be able to sync data with Relaynet users.
+      You need to enable it so that Relaynet users can connect to this device and exchange data.
     </string>
     <string name="hotspot_instructions_open_settings">Open Wi-Fi hotspot settings</string>
     <string name="hotspot_instructions_enabled">Wi-Fi hotspot is enabled</string>
