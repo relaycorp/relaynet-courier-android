@@ -84,7 +84,7 @@
     <string name="settings">Settings</string>
     <string name="settings_manage_storage">Manage storage utilization</string>
     <string name="settings_select_max_storage">
-        Specify the maximum amount of space that Relaynet users\'s data can take up on your device.
+        Specify the maximum amount of space that Relaynet users\' data can take up on your device.
     </string>
     <string name="settings_max_storage">Maximum allocation</string>
     <string name="settings_used_storage">Current utilization</string>
