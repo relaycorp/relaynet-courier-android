@@ -49,15 +49,6 @@
             android:textIsSelectable="true"
             tools:text="@string/hotspot_instructions_disabled_text" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:gravity="center"
-            android:text="@string/hotspot_instructions_stay_enabled"
-            android:textAppearance="@style/TextAppearance.Courier.Body2"
-            android:textIsSelectable="true" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/openSettings"
             style="@style/Widget.Courier.Button.Outline"
