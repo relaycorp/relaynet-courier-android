@@ -13,7 +13,9 @@ import kotlinx.android.synthetic.main.activity_internet_sync.animation
 import kotlinx.android.synthetic.main.activity_internet_sync.close
 import kotlinx.android.synthetic.main.activity_internet_sync.stateMessage
 import kotlinx.android.synthetic.main.activity_internet_sync.stop
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
@@ -47,13 +49,13 @@ class InternetSyncActivity : BaseActivity() {
 
         viewModel
             .state
-            .onEach {
-                stateMessage.setText(it.toStringRes())
-
-                val isDone = it == PublicSync.State.Finished || it == PublicSync.State.Error
-                stop.isVisible = !isDone
-                close.isVisible = isDone
-                if (!isDone) {
+            .onEach { stateMessage.setText(it.toStringRes()) }
+            .map { it != PublicSync.State.Finished && it != PublicSync.State.Error }
+            .distinctUntilChanged()
+            .onEach { isSyncing ->
+                stop.isVisible = isSyncing
+                close.isVisible = !isSyncing
+                if (isSyncing) {
                     animation.startLoopingAvd(R.drawable.ic_sync_animation)
                 } else {
                     animation.stopLoopingAvd()
