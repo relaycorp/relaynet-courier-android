@@ -106,6 +106,7 @@ class SettingsActivity : BaseActivity() {
             .withVersionShown(false)
             .withOwnLibsActivityClass(LicensesActivity::class.java)
             .withEdgeToEdge(true)
+            .withFields(R.string::class.java.fields)
             .start(this)
     }
 
