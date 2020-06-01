@@ -132,12 +132,12 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="@drawable/background_icon_full"
-                        android:backgroundTint="@color/icon_activatable"
                         android:contentDescription="@null"
                         android:padding="6dp"
                         android:src="@drawable/ic_hotspot"
                         android:tint="?colorOnPrimary"
                         android:visibility="gone"
+                        app:backgroundTint="@color/icon_activatable"
                         tools:visibility="visible" />
                 </LinearLayout>
 
@@ -210,12 +210,12 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="@drawable/background_icon_full"
-                        android:backgroundTint="@color/icon_activatable"
                         android:contentDescription="@null"
                         android:padding="6dp"
                         android:src="@drawable/ic_internet"
                         android:tint="?colorOnPrimary"
                         android:visibility="gone"
+                        app:backgroundTint="@color/icon_activatable"
                         tools:visibility="visible" />
                 </LinearLayout>
 

@@ -12,21 +12,16 @@
                 android:pathData="M0,52.806C77.5,67.5 130.476,1 206.253,1C282.029,1 332,67.5 411,52.806"
                 android:strokeWidth="2"
                 android:strokeAlpha="0.5"
-                android:strokeColor="#ffffff" />
+                android:strokeColor="#ffffff"
+                android:trimPathStart="0"
+                android:trimPathEnd="0" />
         </vector>
 
     </aapt:attr>
     <target android:name="line">
         <aapt:attr name="android:animation">
-            <set android:ordering="sequentially">
-                <set>
-                    <objectAnimator
-                        android:duration="1500"
-                        android:interpolator="@android:anim/linear_interpolator"
-                        android:propertyName="trimPathStart"
-                        android:startOffset="1300"
-                        android:valueFrom="0"
-                        android:valueTo="1" />
+            <set android:ordering="together">
+                <set android:ordering="sequentially">
                     <objectAnimator
                         android:duration="1500"
                         android:interpolator="@android:anim/accelerate_decelerate_interpolator"
@@ -34,22 +29,30 @@
                         android:startOffset="1000"
                         android:valueFrom="0"
                         android:valueTo="1" />
+                    <objectAnimator
+                        android:duration="1500"
+                        android:interpolator="@android:anim/linear_interpolator"
+                        android:propertyName="trimPathEnd"
+                        android:startOffset="1600"
+                        android:valueFrom="1"
+                        android:valueTo="0" />
                 </set>
-                <set>
+                <set android:ordering="sequentially">
                     <objectAnimator
                         android:duration="1500"
                         android:interpolator="@android:anim/linear_interpolator"
-                        android:propertyName="trimPathEnd"
+                        android:propertyName="trimPathStart"
                         android:startOffset="1300"
-                        android:valueFrom="1"
-                        android:valueTo="0" />
+                        android:valueFrom="0"
+                        android:valueTo="1" />
                     <objectAnimator
                         android:duration="1500"
-                        android:startOffset="1000"
                         android:interpolator="@android:anim/accelerate_decelerate_interpolator"
                         android:propertyName="trimPathStart"
+                        android:startOffset="1000"
                         android:valueFrom="1"
                         android:valueTo="0" />
+
                 </set>
             </set>
         </aapt:attr>
