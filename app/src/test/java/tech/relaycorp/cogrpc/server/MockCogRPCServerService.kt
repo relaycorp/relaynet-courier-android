@@ -24,9 +24,9 @@ open class MockCogRPCServerService : CogRPCServer.Service {
         processCargoCollectionAckCalls.add(localId)
     }
 
-    override suspend fun deliverCargo(cargoSerialized: InputStream): Boolean {
+    override suspend fun deliverCargo(cargoSerialized: InputStream): CogRPCServer.DeliverResult {
         deliverCargoCalls.add(cargoSerialized)
-        return true
+        return CogRPCServer.DeliverResult.Successful
     }
 
     companion object {
