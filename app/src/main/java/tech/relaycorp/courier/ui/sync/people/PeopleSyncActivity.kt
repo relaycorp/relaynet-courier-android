@@ -15,12 +15,12 @@ import kotlinx.android.synthetic.main.activity_people_sync.clientsConnected
 import kotlinx.android.synthetic.main.activity_people_sync.close
 import kotlinx.android.synthetic.main.activity_people_sync.stop
 import kotlinx.android.synthetic.main.activity_people_sync.syncMessage
-import kotlinx.android.synthetic.main.activity_people_sync.waitingFirstClient
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToMargin
 import tech.relaycorp.courier.ui.common.startLoopingAvd
 import tech.relaycorp.courier.ui.common.stopLoopingAvd
 import javax.inject.Inject
@@ -40,6 +40,8 @@ class PeopleSyncActivity : BaseActivity() {
         component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_people_sync)
+        stop.addSystemWindowInsetToMargin(bottom = true)
+        close.addSystemWindowInsetToMargin(bottom = true)
 
         stop.setOnClickListener { viewModel.stopClicked() }
         close.setOnClickListener { finish() }
@@ -49,10 +51,8 @@ class PeopleSyncActivity : BaseActivity() {
             .onEach { state ->
                 syncMessage.setText(state.toSyncMessageRes())
 
-                waitingFirstClient.isVisible =
-                    state == PeopleSyncViewModel.State.Syncing.WaitingFirstClient
-                clientsConnected.isVisible =
-                    state is PeopleSyncViewModel.State.Syncing.HadFirstClient
+                clientsConnected.isInvisible =
+                    state !is PeopleSyncViewModel.State.Syncing.HadFirstClient
                 clientsConnected.text = state.clientsConnectedValue.toString()
 
                 stop.isInvisible = state !is PeopleSyncViewModel.State.Syncing
@@ -114,7 +114,7 @@ class PeopleSyncActivity : BaseActivity() {
     private fun PeopleSyncViewModel.State.toSyncMessageRes() =
         when (this) {
             PeopleSyncViewModel.State.Starting -> R.string.sync_people_starting
-            PeopleSyncViewModel.State.Syncing.WaitingFirstClient -> R.string.sync_people_syncing
+            PeopleSyncViewModel.State.Syncing.WaitingFirstClient -> R.string.sync_people_waiting_first_client
             is PeopleSyncViewModel.State.Syncing.HadFirstClient -> R.string.sync_people_syncing_some
             is PeopleSyncViewModel.State.Error -> R.string.sync_error
         }

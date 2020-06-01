@@ -14,20 +14,20 @@
         android:layout_marginBottom="40dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="32dp"
+        android:padding="48dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginBottom="64dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/background_icon_large"
-            android:backgroundTint="?colorPrimary"
             android:contentDescription="@null"
             android:padding="12dp"
             android:src="@drawable/ic_hotspot"
-            android:tint="?colorPrimary" />
+            android:tint="?colorPrimary"
+            app:backgroundTint="?colorPrimary" />
 
         <TextView
             android:id="@+id/titleText"
@@ -49,25 +49,16 @@
             android:textIsSelectable="true"
             tools:text="@string/hotspot_instructions_disabled_text" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:gravity="center"
-            android:text="@string/hotspot_instructions_stay_enabled"
-            android:textAppearance="@style/TextAppearance.Courier.Body2"
-            android:textIsSelectable="true" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/openSettings"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Courier.Button.Outline"
+            android:layout_width="248dp"
             android:layout_height="wrap_content"
             android:text="@string/hotspot_instructions_open_settings" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/startSync"
-            android:layout_width="wrap_content"
+            android:layout_width="248dp"
             android:layout_height="wrap_content"
             android:text="@string/hotspot_instructions_start_sync" />
 

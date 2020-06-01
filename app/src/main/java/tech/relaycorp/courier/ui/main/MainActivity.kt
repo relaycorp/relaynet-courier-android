@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.hotspotIcon
 import kotlinx.android.synthetic.main.activity_main.hotspotLabel
+import kotlinx.android.synthetic.main.activity_main.innerContainer
 import kotlinx.android.synthetic.main.activity_main.internetIcon
 import kotlinx.android.synthetic.main.activity_main.internetLabel
 import kotlinx.android.synthetic.main.activity_main.lowStorageMessage
@@ -25,6 +26,7 @@ import tech.relaycorp.courier.R
 import tech.relaycorp.courier.background.WifiHotspotState
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.ui.BaseActivity
+import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
 import tech.relaycorp.courier.ui.common.format
 import tech.relaycorp.courier.ui.settings.SettingsActivity
 import tech.relaycorp.courier.ui.sync.internet.InternetSyncActivity
@@ -45,6 +47,7 @@ class MainActivity : BaseActivity() {
         component.inject(this)
         setTitle(R.string.main_title)
         setContentView(R.layout.activity_main)
+        innerContainer.addSystemWindowInsetToPadding(bottom = true)
 
         settings.setOnClickListener { openSettings() }
         syncPeopleButton.setOnClickListener { openSyncWithPeople() }

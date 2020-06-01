@@ -49,5 +49,10 @@
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.settings.LicensesActivity"
+            android:label="@string/about_licenses"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>
