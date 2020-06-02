@@ -1,1 +1,5 @@
 When the Internet is unavailable, become a Relaynet courier and restore connectivity around you. Do it for profit, the greater good or both! This app is all you need.
+
+Please note that at this point you won't be able to do much with this app until we've built and released the Relaynet app for end users.
+
+To learn more about the job of a Relaynet courier and to subscribe to important updates, please visit https://relaynet.network/couriers
