@@ -4,7 +4,7 @@
 
 This repository contains the source code for the [Relaynet Courier for Android](https://play.google.com/store/apps/details?id=tech.replaycorp.courier). 
 As a Relaynet Courier implementation, its sole function is to relay cargo between Relaynet gateways. 
-To learn more about Relaynet, visit [relaynet.network](https://relaynet.network).
+To learn more about Relaynet couriers, visit [relaynet.network](https://relaynet.network/couriers).
 
 This document is aimed at advanced users and (prospective) contributors. We aim to make the app as 
 simple and intuitive as possible, and we're therefore not planning on publishing end-user 
@@ -19,7 +19,7 @@ range so that the app can self-issue TLS certificates for it.
 
 ## Architecture
 
-The app follows clean architecture principals. Domain logic is separated from external elements
+The app follows clean architecture principles. Domain logic is separated from external elements
 such as UI and data. The main components / layers / packages are:
  
  - `domain` - Domain logic, with one class per use-case
@@ -73,4 +73,4 @@ Requires an Android device or emulator
 
 We love contributions! If you haven't contributed to a Relaycorp project before, please take a minute to [read our guidelines](https://github.com/relaycorp/.github/blob/master/CONTRIBUTING.md) first.
 
-Please note that we're not accepting translations just yet as the copy is likely to change frequently and radically until the beta release. We're just trying to be mindful of your time and ours! Once the copy reaches a relatively stable state, we'll want to translate the app into as many languages as possible.
+Please note that we're not accepting translations just yet as the copy is likely to change radically until the UX is independently assessed, which will happen at some point before making the app generally available. We're just trying to be mindful of your time and ours! Once the copy reaches a relatively stable state, we'll want to translate the app into as many languages as possible, so stay tuned.

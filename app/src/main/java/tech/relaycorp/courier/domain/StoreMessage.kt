@@ -25,38 +25,38 @@ class StoreMessage
     private val getStorageUsage: GetStorageUsage
 ) {
 
-    suspend fun storeCargo(cargoInputStream: InputStream): StoredMessage? {
+    suspend fun storeCargo(cargoInputStream: InputStream): Result {
         val cargoBytes = cargoInputStream.readBytesAndClose()
         val cargo = try {
             Cargo.deserialize(cargoBytes)
         } catch (exc: RAMFException) {
             logger.warning("Malformed Cargo received: ${exc.message}")
-            return null
+            return Result.Error.Malformed
         }
 
         try {
             cargo.validate()
         } catch (exc: RAMFException) {
             logger.warning("Invalid cargo received: ${exc.message}")
-            return null
+            return Result.Error.Invalid
         }
 
         return storeMessage(MessageType.Cargo, cargo, cargoBytes)
     }
 
-    suspend fun storeCCA(ccaSerialized: ByteArray): StoredMessage? {
+    suspend fun storeCCA(ccaSerialized: ByteArray): Result {
         val cca = try {
             CargoCollectionAuthorization.deserialize(ccaSerialized)
         } catch (exc: RAMFException) {
             logger.warning("Malformed CCA received: ${exc.message}")
-            return null
+            return Result.Error.Malformed
         }
 
         try {
             cca.validate()
         } catch (exc: RAMFException) {
             logger.warning("Invalid CCA received: ${exc.message}")
-            return null
+            return Result.Error.Invalid
         }
 
         return storeMessage(MessageType.CCA, cca, ccaSerialized)
@@ -66,14 +66,14 @@ class StoreMessage
         type: MessageType,
         message: RAMFMessage,
         data: ByteArray
-    ): StoredMessage? {
+    ): Result {
         val dataSize = StorageSize(data.size.toLong())
-        if (!checkForAvailableSpace(dataSize)) return null
+        if (!checkForAvailableSpace(dataSize)) return Result.Error.NoSpaceAvailable
 
         val storagePath = diskRepository.writeMessage(data)
         val storedMessage = message.toStoredMessage(type, storagePath, dataSize)
         storedMessageDao.insert(storedMessage)
-        return storedMessage
+        return Result.Success(storedMessage)
     }
 
     private suspend fun checkForAvailableSpace(dataSize: StorageSize) =
@@ -96,5 +96,14 @@ class StoreMessage
             size = dataSize,
             storagePath = storagePath
         )
+    }
+
+    sealed class Result {
+        data class Success(val message: StoredMessage) : Result()
+        sealed class Error : Result() {
+            object NoSpaceAvailable : Error()
+            object Malformed : Error()
+            object Invalid : Error()
+        }
     }
 }

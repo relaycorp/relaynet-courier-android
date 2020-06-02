@@ -115,6 +115,10 @@ internal constructor(
     interface Service {
         suspend fun collectCargo(ccaSerialized: ByteArray): Iterable<CargoDeliveryRequest>
         suspend fun processCargoCollectionAck(localId: String)
-        suspend fun deliverCargo(cargoSerialized: InputStream): Boolean
+        suspend fun deliverCargo(cargoSerialized: InputStream): DeliverResult
+    }
+
+    enum class DeliverResult {
+        Successful, Malformed, Invalid, UnavailableStorage
     }
 }
