@@ -43,11 +43,11 @@ internal class CogRPCServerDeliveryCargoTest {
     }
 
     @Test
-    internal fun `deliverCargo without ack when unsuccessful`() = runBlockingTest {
+    internal fun `deliverCargo without ack when no space available`() = runBlockingTest {
         val mockService = object : MockCogRPCServerService() {
-            override suspend fun deliverCargo(cargoSerialized: InputStream): Boolean {
+            override suspend fun deliverCargo(cargoSerialized: InputStream): CogRPCServer.DeliverResult {
                 super.deliverCargo(cargoSerialized)
-                return false
+                return CogRPCServer.DeliverResult.UnavailableStorage
             }
         }
         val testServer = TestCogRPCServer(mockService)
@@ -66,7 +66,10 @@ internal class CogRPCServerDeliveryCargoTest {
                 .toString(Charset.defaultCharset())
         )
         assertTrue(ackRecorder.values.isEmpty())
-        assertEquals(Status.RESOURCE_EXHAUSTED, (ackRecorder.error as StatusRuntimeException).status)
+        assertEquals(
+            Status.RESOURCE_EXHAUSTED,
+            (ackRecorder.error as StatusRuntimeException).status
+        )
 
         testServer.stop()
     }

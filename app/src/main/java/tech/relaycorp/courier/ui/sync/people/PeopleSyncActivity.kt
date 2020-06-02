@@ -56,12 +56,15 @@ class PeopleSyncActivity : BaseActivity() {
                 clientsConnected.text = state.clientsConnectedValue.toString()
 
                 stop.isInvisible = state !is PeopleSyncViewModel.State.Syncing
-                val isDone = state == PeopleSyncViewModel.State.Error
-                close.isVisible = isDone
-                if (!isDone) {
-                    animation.startLoopingAvd(R.drawable.ic_sync_animation)
-                } else {
-                    animation.stopLoopingAvd()
+                close.isVisible = state == PeopleSyncViewModel.State.Error
+
+                when {
+                    state is PeopleSyncViewModel.State.Syncing.HadFirstClient && state.clientsConnected > 0 ->
+                        animation.startLoopingAvd(R.drawable.ic_sync_animation_fast)
+                    state is PeopleSyncViewModel.State.Syncing ->
+                        animation.startLoopingAvd(R.drawable.ic_sync_animation)
+                    else ->
+                        animation.stopLoopingAvd()
                 }
             }
             .onCompletion { animation.stopLoopingAvd() }

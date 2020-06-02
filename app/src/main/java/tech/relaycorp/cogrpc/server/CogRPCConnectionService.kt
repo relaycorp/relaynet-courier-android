@@ -24,14 +24,22 @@ class CogRPCConnectionService(
             override fun onNext(cargoDelivery: CargoDelivery) {
                 coroutineScope.launch {
                     logger.info("deliverCargo next ${cargoDelivery.id}")
-                    val result = serverService.deliverCargo(cargoDelivery.cargo.newInput())
-                    if (result) {
-                        logger.info("deliverCargo next ack ${cargoDelivery.id}")
-                        responseObserver.onNext(cargoDelivery.toAck())
-                    } else {
-                        logger.info("deliverCargo no space available for ${cargoDelivery.id}")
-                        logger.info("deliverCargo closing with error")
-                        responseObserver.onError(StatusRuntimeException(Status.RESOURCE_EXHAUSTED))
+                    when (serverService.deliverCargo(cargoDelivery.cargo.newInput())) {
+                        CogRPCServer.DeliverResult.Successful -> {
+                            logger.info("deliverCargo next ack ${cargoDelivery.id}")
+                            responseObserver.onNext(cargoDelivery.toAck())
+                        }
+                        CogRPCServer.DeliverResult.UnavailableStorage -> {
+                            logger.info("deliverCargo no space available for ${cargoDelivery.id}")
+                            logger.info("deliverCargo closing with error")
+                            responseObserver.onError(StatusRuntimeException(Status.RESOURCE_EXHAUSTED))
+                        }
+                        CogRPCServer.DeliverResult.Invalid,
+                        CogRPCServer.DeliverResult.Malformed -> {
+                            logger.info("deliverCargo invalid or malformed cargo ${cargoDelivery.id}")
+                            logger.info("deliverCargo closing with error")
+                            responseObserver.onError(StatusRuntimeException(Status.INVALID_ARGUMENT))
+                        }
                     }
                 }
             }
