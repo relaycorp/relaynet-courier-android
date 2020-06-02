@@ -7,8 +7,8 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.data.database.StoredMessageDao
@@ -44,7 +44,7 @@ internal class StoreMessageTest {
         val storage = StorageUsage(StorageSize.ZERO, StorageSize(message.size.toLong()))
         whenever(getStorageUsage.get()).thenReturn(storage)
 
-        assertNotNull(subject.storeCargo(message.inputStream()))
+        assertTrue(subject.storeCargo(message.inputStream()) is StoreMessage.Result.Success)
         verify(diskRepository).writeMessage(any())
         verify(storedMessageDao).insert(any())
     }
@@ -54,14 +54,22 @@ internal class StoreMessageTest {
         val noStorageSpace = StorageUsage(StorageSize.ZERO, StorageSize.ZERO)
         whenever(getStorageUsage.get()).thenReturn(noStorageSpace)
 
-        assertNull(subject.storeCargo(RAMFMessageFactory.buildCargoSerialized().inputStream()))
+        val result = subject.storeCargo(RAMFMessageFactory.buildCargoSerialized().inputStream())
+        assertEquals(
+            StoreMessage.Result.Error.NoSpaceAvailable,
+            result
+        )
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
 
     @Test
     internal fun `do not store malformed cargo`() = runBlockingTest {
-        assertNull(subject.storeCargo("Not really a cargo".byteInputStream()))
+        val result = subject.storeCargo("Not really a cargo".byteInputStream())
+        assertEquals(
+            StoreMessage.Result.Error.Malformed,
+            result
+        )
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
@@ -79,14 +87,23 @@ internal class StoreMessageTest {
 
         val invalidCargoSerialized =
             invalidCargo.serialize(RAMFMessageFactory.senderKeyPair.private)
-        assertNull(subject.storeCargo(invalidCargoSerialized.inputStream()))
+        val result = subject.storeCargo(invalidCargoSerialized.inputStream())
+
+        assertEquals(
+            StoreMessage.Result.Error.Invalid,
+            result
+        )
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
 
     @Test
     internal fun `do not store malformed CCA`() = runBlockingTest {
-        assertNull(subject.storeCCA("Not a RAMF message".toByteArray()))
+        val result = subject.storeCCA("Not a RAMF message".toByteArray())
+        assertEquals(
+            StoreMessage.Result.Error.Malformed,
+            result
+        )
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
@@ -102,14 +119,20 @@ internal class StoreMessageTest {
             ttl = 1
         )
 
-        assertNull(subject.storeCCA(invalidCCA.serialize(RAMFMessageFactory.senderKeyPair.private)))
+        val result =
+            subject.storeCCA(invalidCCA.serialize(RAMFMessageFactory.senderKeyPair.private))
+
+        assertEquals(
+            StoreMessage.Result.Error.Invalid,
+            result
+        )
         verify(diskRepository, never()).writeMessage(any())
         verify(storedMessageDao, never()).insert(any())
     }
 
     @Test
     internal fun `store valid CCA`() = runBlockingTest {
-        assertNotNull(subject.storeCCA(RAMFMessageFactory.buildCCASerialized()))
+        assertTrue(subject.storeCCA(RAMFMessageFactory.buildCCASerialized()) is StoreMessage.Result.Success)
         verify(diskRepository).writeMessage(any())
         verify(storedMessageDao).insert(any())
     }

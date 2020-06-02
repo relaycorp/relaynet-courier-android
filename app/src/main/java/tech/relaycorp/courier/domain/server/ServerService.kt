@@ -24,7 +24,11 @@ class ServerService
     private val messagesSentForCollection = mutableMapOf<String, StoredMessage>()
 
     override suspend fun collectCargo(ccaSerialized: ByteArray): Iterable<CargoDeliveryRequest> {
-        val ccaMessage = storeMessage.storeCCA(ccaSerialized) ?: return emptyList()
+        val ccaMessageResult = storeMessage.storeCCA(ccaSerialized)
+        if (ccaMessageResult !is StoreMessage.Result.Success) return emptyList()
+        val ccaMessage =
+            (ccaMessageResult as? StoreMessage.Result.Success)?.message ?: return emptyList()
+
         val messages = storedMessageDao
             .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
         val messagesWithId = messages
@@ -41,7 +45,12 @@ class ServerService
     }
 
     override suspend fun deliverCargo(cargoSerialized: InputStream) =
-        storeMessage.storeCargo(cargoSerialized) != null
+        when (storeMessage.storeCargo(cargoSerialized)) {
+            is StoreMessage.Result.Success -> CogRPCServer.DeliverResult.Successful
+            is StoreMessage.Result.Error.NoSpaceAvailable -> CogRPCServer.DeliverResult.UnavailableStorage
+            is StoreMessage.Result.Error.Invalid -> CogRPCServer.DeliverResult.Invalid
+            is StoreMessage.Result.Error.Malformed -> CogRPCServer.DeliverResult.Malformed
+        }
 
     private suspend fun Map<String, StoredMessage>.toRequests() =
         mapNotNull { (localId, message) -> buildRequest(localId, message) }
