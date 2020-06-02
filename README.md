@@ -19,7 +19,7 @@ range so that the app can self-issue TLS certificates for it.
 
 ## Architecture
 
-The app follows clean architecture principals. Domain logic is separated from external elements
+The app follows clean architecture principles. Domain logic is separated from external elements
 such as UI and data. The main components / layers / packages are:
  
  - `domain` - Domain logic, with one class per use-case
@@ -73,4 +73,4 @@ Requires an Android device or emulator
 
 We love contributions! If you haven't contributed to a Relaycorp project before, please take a minute to [read our guidelines](https://github.com/relaycorp/.github/blob/master/CONTRIBUTING.md) first.
 
-Please note that we're not accepting translations just yet as the copy is likely to change frequently and radically until the beta release. We're just trying to be mindful of your time and ours! Once the copy reaches a relatively stable state, we'll want to translate the app into as many languages as possible.
+Please note that we're not accepting translations just yet as the copy is likely to change frequently and radically until the UX is independently assessed, which will happen at some point before making the app generally available. We're just trying to be mindful of your time and ours! Once the copy reaches a relatively stable state, we'll want to translate the app into as many languages as possible, so stay tuned.
