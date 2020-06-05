@@ -2,7 +2,7 @@
 
 # Relaynet Courier for Android
 
-This repository contains the source code for the [Relaynet Courier for Android](https://play.google.com/store/apps/details?id=tech.replaycorp.courier). 
+This repository contains the source code for the [Relaynet Courier for Android](https://play.google.com/store/apps/details?id=tech.relaycorp.courier). 
 As a Relaynet Courier implementation, its sole function is to relay cargo between Relaynet gateways. 
 To learn more about Relaynet couriers, visit [relaynet.network](https://relaynet.network/couriers).
 
