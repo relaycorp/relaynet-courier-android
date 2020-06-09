@@ -50,11 +50,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
             android:contentDescription="@null"
-            android:tint="?colorOnBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/info"
-            app:srcCompat="@drawable/ic_sync_animation" />
+            app:srcCompat="@drawable/ic_sync_animation"
+            app:tint="?colorOnBackground" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
