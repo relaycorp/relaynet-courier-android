@@ -26,8 +26,8 @@
             android:contentDescription="@null"
             android:padding="12dp"
             android:src="@drawable/ic_hotspot"
-            android:tint="?colorPrimary"
-            app:backgroundTint="?colorPrimary" />
+            app:backgroundTint="?colorPrimary"
+            app:tint="?colorPrimary" />
 
         <TextView
             android:id="@+id/titleText"
