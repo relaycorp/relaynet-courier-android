@@ -21,24 +21,30 @@ class CogRPCConnectionService(
 
     override fun deliverCargo(responseObserver: StreamObserver<CargoDeliveryAck>) =
         object : StreamObserver<CargoDelivery> {
+            private var isResponseFinished = false
+
             override fun onNext(cargoDelivery: CargoDelivery) {
                 coroutineScope.launch {
                     logger.info("deliverCargo next ${cargoDelivery.id}")
                     when (serverService.deliverCargo(cargoDelivery.cargo.newInput())) {
                         CogRPCServer.DeliverResult.Successful -> {
-                            logger.info("deliverCargo next ack ${cargoDelivery.id}")
-                            responseObserver.onNext(cargoDelivery.toAck())
+                            if (!isResponseFinished) {
+                                logger.info("deliverCargo next ack ${cargoDelivery.id}")
+                                responseObserver.onNext(cargoDelivery.toAck())
+                            }
                         }
                         CogRPCServer.DeliverResult.UnavailableStorage -> {
                             logger.info("deliverCargo no space available for ${cargoDelivery.id}")
                             logger.info("deliverCargo closing with error")
                             responseObserver.onError(StatusRuntimeException(Status.RESOURCE_EXHAUSTED))
+                            isResponseFinished = true
                         }
                         CogRPCServer.DeliverResult.Invalid,
                         CogRPCServer.DeliverResult.Malformed -> {
                             logger.info("deliverCargo invalid or malformed cargo ${cargoDelivery.id}")
                             logger.info("deliverCargo closing with error")
                             responseObserver.onError(StatusRuntimeException(Status.INVALID_ARGUMENT))
+                            isResponseFinished = true
                         }
                     }
                 }
