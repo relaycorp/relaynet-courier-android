@@ -33,22 +33,28 @@ import kotlin.time.seconds
 class CogRPCClient
 internal constructor(
     serverAddress: String,
-    val useTls: Boolean = true
+    val requireTls: Boolean = true
 ) {
+    private val serverUrl = URL(serverAddress)
+
+    init {
+        if (requireTls && serverUrl.protocol != "https") {
+            throw CogRPCException(message = "Cannot connect to $serverAddress with TLS required")
+        }
+    }
 
     internal val address by lazy {
-        val url = URL(serverAddress)
-        val fallbackPort = if (url.protocol == "https") 443 else 80
+        val fallbackPort = if (serverUrl.protocol == "https") 443 else 80
         InetSocketAddress(
-            url.host,
-            url.port.let { if (it != -1) it else fallbackPort }
+            serverUrl.host,
+            serverUrl.port.let { if (it != -1) it else fallbackPort }
         )
     }
 
     internal val channel by lazy {
         NettyChannelBuilder
             .forAddress(address)
-            .run { if (useTls) useTransportSecurity() else usePlaintext() }
+            .run { if (requireTls) useTransportSecurity() else usePlaintext() }
             .build()
     }
 
@@ -145,12 +151,14 @@ internal constructor(
             AuthorizationMetadata.makeMetadata(cca)
         )
 
-    open class CogRPCException(throwable: Throwable? = null) : Exception(throwable)
+    open class CogRPCException(throwable: Throwable? = null, message: String? = null) :
+        Exception(message, throwable)
+
     class CCARefusedException : CogRPCException()
 
     object Builder {
-        fun build(serverAddress: String, useTls: Boolean = true) =
-            CogRPCClient(serverAddress, useTls)
+        fun build(serverAddress: String, requireTls: Boolean = true) =
+            CogRPCClient(serverAddress, requireTls)
     }
 
     companion object {

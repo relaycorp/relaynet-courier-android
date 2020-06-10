@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import tech.relaycorp.relaynet.CargoDeliveryRequest
@@ -38,30 +39,45 @@ internal class CogRPCClientTest {
         testServer = null
     }
 
-    @Test
-    @Throws(MalformedURLException::class)
-    internal fun `build with invalid address throws exception`() {
-        CogRPCClient.Builder.build("invalid")
-    }
+    @Nested
+    inner class Build {
+        @Test
+        internal fun `invalid address throws exception`() {
+            assertThrows<MalformedURLException> { CogRPCClient.Builder.build("invalid") }
+        }
 
-    @Test
-    internal fun `build defaults to TLS`() {
-        val client = CogRPCClient.Builder.build("invalid")
-        assertTrue(client.useTls)
-    }
+        @Test
+        internal fun `TLS is required by default`() {
+            val client = CogRPCClient.Builder.build("https://example.org")
+            assertTrue(client.requireTls)
+        }
 
-    @Test
-    internal fun `build with HTTPS defaults to port 443`() {
-        val client = CogRPCClient.Builder.build("https://example.org")
-        assertEquals("example.org", client.address.hostName)
-        assertEquals(443, client.address.port)
-    }
+        @Test
+        internal fun `HTTPS URL defaults to port 443`() {
+            val client = CogRPCClient.Builder.build("https://example.org")
+            assertEquals("example.org", client.address.hostName)
+            assertEquals(443, client.address.port)
+        }
 
-    @Test
-    internal fun `build without HTTPS defaults to port 80`() {
-        val client = CogRPCClient.Builder.build("http://example.org")
-        assertEquals("example.org", client.address.hostName)
-        assertEquals(80, client.address.port)
+        @Test
+        internal fun `HTTP URL with TLS required should throw an exception`() {
+            val serverAddress = "http://example.com"
+            val exception =
+                assertThrows<CogRPCClient.CogRPCException> {
+                    CogRPCClient.Builder.build(
+                        serverAddress
+                    )
+                }
+
+            assertEquals("Cannot connect to $serverAddress with TLS required", exception.message)
+        }
+
+        @Test
+        internal fun `HTTP URL defaults to port 80`() {
+            val client = CogRPCClient.Builder.build("http://example.org", false)
+            assertEquals("example.org", client.address.hostName)
+            assertEquals(80, client.address.port)
+        }
     }
 
     @Test
