@@ -2,9 +2,11 @@ package tech.relaycorp.relaynet.cogrpc.client
 
 import io.grpc.Status
 import io.grpc.StatusException
+import io.grpc.netty.GrpcSslContexts
 import io.grpc.netty.NettyChannelBuilder
 import io.grpc.stub.MetadataUtils
 import io.grpc.stub.StreamObserver
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +25,7 @@ import tech.relaycorp.relaynet.cogrpc.readBytesAndClose
 import tech.relaycorp.relaynet.cogrpc.toCargoDelivery
 import tech.relaycorp.relaynet.cogrpc.toCargoDeliveryAck
 import java.io.InputStream
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.URL
 import java.util.concurrent.TimeUnit
@@ -30,7 +33,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.seconds
 
-class CogRPCClient
+open class CogRPCClient
 internal constructor(
     serverAddress: String,
     val requireTls: Boolean = true
@@ -43,7 +46,7 @@ internal constructor(
         }
     }
 
-    internal val address by lazy {
+    private val address by lazy {
         val fallbackPort = if (serverUrl.protocol == "https") 443 else 80
         InetSocketAddress(
             serverUrl.host,
@@ -52,9 +55,19 @@ internal constructor(
     }
 
     internal val channel by lazy {
-        NettyChannelBuilder
-            .forAddress(address)
-            .run { if (requireTls) useTransportSecurity() else usePlaintext() }
+        val useTls = requireTls || serverUrl.protocol == "https"
+        val isHostPrivateAddress = InetAddress.getByName(serverUrl.host).isSiteLocalAddress
+        initialChannelBuilder
+            .run { if (useTls) useTransportSecurity() else usePlaintext() }
+            .let { if (useTls && isHostPrivateAddress) it.sslContext(insecureTlsContext) else it }
+            .build()
+    }
+
+    internal open val initialChannelBuilder by lazy { NettyChannelBuilder.forAddress(address) }
+
+    internal val insecureTlsContext by lazy {
+        GrpcSslContexts.forClient()
+            .trustManager(InsecureTrustManagerFactory.INSTANCE)
             .build()
     }
 
