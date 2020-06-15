@@ -16,7 +16,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
 
     // Relaynet
-    implementation 'tech.relaycorp:relaynet:1.15.4'
+    implementation 'tech.relaycorp:relaynet:1.15.6'
 
     // Protobuf
     implementation "com.google.protobuf:protobuf-gradle-plugin:$protobufGradleVersion"
