@@ -17,17 +17,14 @@ import javax.inject.Singleton
 class DataModule {
 
     @Provides
-    @Named("database_name")
-    fun databaseName(appMode: App.Mode) =
-        when (appMode) {
-            App.Mode.Normal -> "courier"
-            App.Mode.Test -> "courier_test"
-        }
-
-    @Provides
     @Singleton
-    fun database(context: Context, @Named("database_name") databaseName: String) =
-        Room.databaseBuilder(context, AppDatabase::class.java, databaseName).build()
+    fun database(context: Context, appMode: App.Mode): AppDatabase =
+        when (appMode) {
+            App.Mode.Normal ->
+                Room.databaseBuilder(context, AppDatabase::class.java, "courier")
+            App.Mode.Test ->
+                Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+        }.build()
 
     @Provides
     fun storedMessageDao(database: AppDatabase) = database.storedMessageDao()

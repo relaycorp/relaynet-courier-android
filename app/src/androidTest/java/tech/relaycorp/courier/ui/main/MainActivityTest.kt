@@ -1,21 +1,61 @@
 package tech.relaycorp.courier.ui.main
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.ActivityTestRule
+import com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled
+import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import tech.relaycorp.courier.R
+import tech.relaycorp.courier.data.database.StoredMessageDao
+import tech.relaycorp.courier.data.model.StorageSize
+import tech.relaycorp.courier.data.preference.StoragePreferences
+import tech.relaycorp.courier.test.BaseActivityTestRule
+import tech.relaycorp.courier.test.appComponent
+import tech.relaycorp.courier.test.context
+import tech.relaycorp.courier.test.factory.StoredMessageFactory
+import tech.relaycorp.courier.ui.common.format
+import javax.inject.Inject
 
-@RunWith(AndroidJUnit4::class)
 class MainActivityTest {
+
     @JvmField
     @Rule
-    val activityTestRule = ActivityTestRule(MainActivity::class.java)
+    val activityTestRule = BaseActivityTestRule(MainActivity::class)
+
+    @Inject
+    lateinit var storagePreferences: StoragePreferences
+
+    @Inject
+    lateinit var storedMessageDao: StoredMessageDao
+
+    @Before
+    fun setUp() {
+        appComponent.inject(this)
+    }
 
     @Test
     fun title() {
         assertDisplayed(R.string.main_title)
+    }
+
+    @Test
+    fun showsStorageValues() {
+        val maxSize = StorageSize(100_000L)
+        val currentSize = StorageSize(1_000L)
+        runBlocking {
+            storagePreferences.setMaxStorageSize(maxSize)
+            storedMessageDao.insert(StoredMessageFactory.build().copy(size = currentSize))
+        }
+
+        assertContains(maxSize.format(context))
+        assertContains(currentSize.format(context))
+    }
+
+    @Test
+    fun syncDisabledWithoutData() {
+        assertDisabled(R.id.syncInternetButton)
+        assertDisplayed(R.string.sync_internet_disabled_no_data)
     }
 }

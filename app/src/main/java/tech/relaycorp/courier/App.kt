@@ -11,12 +11,12 @@ import java.util.logging.Level
 import java.util.logging.LogManager
 import javax.inject.Inject
 
-class App : Application() {
+open class App : Application() {
 
     @Inject
     lateinit var wifiHotspotStateReceiver: WifiHotspotStateReceiver
 
-    val component: AppComponent by lazy {
+    open val component: AppComponent by lazy {
         DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .build()
