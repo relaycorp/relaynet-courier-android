@@ -6,7 +6,6 @@ import org.junit.Test
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.test.BaseActivityTestRule
 
-
 class HotspotInstructionsActivityTest {
     @JvmField
     @Rule

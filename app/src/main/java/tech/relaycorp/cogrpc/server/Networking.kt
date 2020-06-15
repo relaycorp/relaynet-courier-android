@@ -1,9 +1,11 @@
 package tech.relaycorp.cogrpc.server
 
+import androidx.annotation.VisibleForTesting
 import java.net.NetworkInterface
 
 internal object Networking {
-    private const val androidGatewaySubnetPrefix = "192.168.43."
+    @VisibleForTesting
+    var androidGatewaySubnetPrefix = "192.168.43."
 
     /**
      * Return the local IP address used by the current device in the WiFi hotspot network it created
