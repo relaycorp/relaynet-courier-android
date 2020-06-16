@@ -1,5 +1,6 @@
 package tech.relaycorp.relaynet.cogrpc.client
 
+import io.grpc.ManagedChannel
 import io.grpc.Status
 import io.grpc.StatusException
 import io.grpc.netty.GrpcSslContexts
@@ -33,10 +34,12 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.time.seconds
 
+
 open class CogRPCClient
 internal constructor(
     serverAddress: String,
-    val requireTls: Boolean = true
+    val requireTls: Boolean = true,
+    val channelBuilderProvider: (InetSocketAddress) -> NettyChannelBuilder = { NettyChannelBuilder.forAddress(it) }
 ) {
     private val serverUrl = URL(serverAddress)
 
@@ -57,13 +60,12 @@ internal constructor(
     internal val channel by lazy {
         val useTls = requireTls || serverUrl.protocol == "https"
         val isHostPrivateAddress = InetAddress.getByName(serverUrl.host).isSiteLocalAddress
-        initialChannelBuilder
+        channelBuilderProvider
+            .invoke(address)
             .run { if (useTls) useTransportSecurity() else usePlaintext() }
             .let { if (useTls && isHostPrivateAddress) it.sslContext(insecureTlsContext) else it }
             .build()
     }
-
-    internal open val initialChannelBuilder by lazy { NettyChannelBuilder.forAddress(address) }
 
     internal val insecureTlsContext by lazy {
         GrpcSslContexts.forClient()

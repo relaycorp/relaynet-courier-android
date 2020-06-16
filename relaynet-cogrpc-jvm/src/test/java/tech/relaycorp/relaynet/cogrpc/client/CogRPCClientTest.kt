@@ -51,6 +51,9 @@ internal class CogRPCClientTest {
         private val spiedChannelBuilder: NettyChannelBuilder =
             spy(NettyChannelBuilder.forAddress(InetSocketAddress(80)))
 
+        private val spiedChannelBuilderProvider: (InetSocketAddress) -> NettyChannelBuilder =
+            { spiedChannelBuilder }
+
         @Test
         internal fun `invalid address throws exception`() {
             assertThrows<MalformedURLException> { CogRPCClient.Builder.build("invalid") }
@@ -91,9 +94,8 @@ internal class CogRPCClientTest {
 
         @Test
         internal fun `Channel should use TLS if URL is HTTPS`() {
-            val spiedClient = spy(object : CogRPCClient("https://1.1.1.1") {
-                override val initialChannelBuilder = spiedChannelBuilder
-            })
+            val spiedClient =
+                spy(CogRPCClient("https://1.1.1.1", true, spiedChannelBuilderProvider))
 
             assertTrue(spiedClient.channel is ManagedChannel)
             verify(spiedChannelBuilder, never()).usePlaintext()
@@ -101,9 +103,7 @@ internal class CogRPCClientTest {
 
         @Test
         internal fun `Channel should use TLS if TLS is not required but URL is HTTPS`() {
-            val spiedClient = spy(object : CogRPCClient("https://1.1.1.1", false) {
-                override val initialChannelBuilder = spiedChannelBuilder
-            })
+            val spiedClient = spy(CogRPCClient("https://1.1.1.1", false, spiedChannelBuilderProvider))
 
             assertTrue(spiedClient.channel is ManagedChannel)
             verify(spiedChannelBuilder).useTransportSecurity()
@@ -112,9 +112,7 @@ internal class CogRPCClientTest {
 
         @Test
         internal fun `TLS server certificate should be validated if host is not private IP`() {
-            val spiedClient = spy(object : CogRPCClient("https://1.1.1.1") {
-                override val initialChannelBuilder = spiedChannelBuilder
-            })
+            val spiedClient = spy(CogRPCClient("https://1.1.1.1", true, spiedChannelBuilderProvider))
 
             assertTrue(spiedClient.channel is ManagedChannel)
             verify(spiedChannelBuilder, never()).usePlaintext()
@@ -123,9 +121,7 @@ internal class CogRPCClientTest {
 
         @Test
         internal fun `TLS server certificate should not be validated if host is private IP`() {
-            val spiedClient = spy(object : CogRPCClient("https://192.168.43.1") {
-                override val initialChannelBuilder = spiedChannelBuilder
-            })
+            val spiedClient = spy(CogRPCClient("https://192.168.43.1", true, spiedChannelBuilderProvider))
 
             assertTrue(spiedClient.channel is ManagedChannel)
             verify(spiedChannelBuilder, never()).usePlaintext()
@@ -134,9 +130,7 @@ internal class CogRPCClientTest {
 
         @Test
         internal fun `TLS should not be used if URL is HTTP`() {
-            val spiedClient = spy(object : CogRPCClient("http://192.168.43.1", false) {
-                override val initialChannelBuilder = spiedChannelBuilder
-            })
+            val spiedClient = spy(CogRPCClient("http://192.168.43.1", false, spiedChannelBuilderProvider))
 
             assertTrue(spiedClient.channel is ManagedChannel)
             verify(spiedChannelBuilder).usePlaintext()
@@ -170,6 +164,7 @@ internal class CogRPCClientTest {
         )
 
         client.close()
+        testServer?.stop()
     }
 
     @Test
@@ -198,6 +193,9 @@ internal class CogRPCClientTest {
             Status.DEADLINE_EXCEEDED.code,
             (exception.cause as StatusRuntimeException).status.code
         )
+
+        client.close()
+        testServer?.stop()
     }
 
     @Test
@@ -230,6 +228,7 @@ internal class CogRPCClientTest {
         assertTrue(ackRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
 
         client.close()
+        testServer?.stop()
     }
 
     @Test
@@ -265,6 +264,7 @@ internal class CogRPCClientTest {
         )
 
         client.close()
+        testServer?.stop()
     }
 
     private fun buildAndStartServer(service: BindableService) {
