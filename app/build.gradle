@@ -24,14 +24,14 @@ repositories {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
     ndkVersion '21.3.6528147'
 
     defaultConfig {
         applicationId "tech.relaycorp.courier"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "0.1"
 
