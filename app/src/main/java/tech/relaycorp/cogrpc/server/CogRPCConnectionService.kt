@@ -26,12 +26,13 @@ class CogRPCConnectionService(
             override fun onNext(cargoDelivery: CargoDelivery) {
                 coroutineScope.launch {
                     logger.info("deliverCargo next ${cargoDelivery.id}")
-                    when (serverService.deliverCargo(cargoDelivery.cargo.newInput())) {
+                    val cargoInputStream = cargoDelivery.cargo.newInput()
+                    val result = serverService.deliverCargo(cargoInputStream)
+                    if (isResponseFinished) return@launch
+                    when (result) {
                         CogRPCServer.DeliverResult.Successful -> {
-                            if (!isResponseFinished) {
-                                logger.info("deliverCargo next ack ${cargoDelivery.id}")
-                                responseObserver.onNext(cargoDelivery.toAck())
-                            }
+                            logger.info("deliverCargo next ack ${cargoDelivery.id}")
+                            responseObserver.onNext(cargoDelivery.toAck())
                         }
                         CogRPCServer.DeliverResult.UnavailableStorage -> {
                             logger.info("deliverCargo no space available for ${cargoDelivery.id}")
@@ -57,6 +58,7 @@ class CogRPCConnectionService(
             override fun onCompleted() {
                 logger.info("deliverCargo complete")
                 coroutineScope.launch {
+                    isResponseFinished = true
                     responseObserver.onCompleted()
                 }
             }
