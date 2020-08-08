@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.triplet.gradle:play-publisher:2.7.5'
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.6.2.0"
     }
 }
 
@@ -16,6 +17,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.diffplug.spotless'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+apply plugin: "de.mannodermaus.android-junit5"
 
 apply from: 'jacoco.gradle'
 
@@ -148,7 +150,8 @@ dependencies {
     implementation "com.mikepenz:aboutlibraries:$aboutLibsVersion"
 
     // Testing
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
     testImplementation 'org.mockito:mockito-inline:3.4.4'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
