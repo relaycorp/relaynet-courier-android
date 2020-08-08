@@ -13,11 +13,6 @@ internal class ClientsConnectedFilterTest {
     private val subject = ClientsConnectedFilter()
 
     @Test
-    fun `wrong 1`() {
-        assertEquals(1, 2)
-    }
-
-    @Test
     internal fun count() = runBlockingTest {
         val client1Attributes =
             Attributes.newBuilder().set(Grpc.TRANSPORT_ATTR_REMOTE_ADDR, LocalAddress("1")).build()
