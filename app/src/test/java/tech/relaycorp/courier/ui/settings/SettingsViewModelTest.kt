@@ -4,6 +4,7 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -16,9 +17,9 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import tech.relaycorp.courier.domain.DeleteAllStorage
 import tech.relaycorp.courier.domain.GetStorageUsage
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.ui.common.EnableState
-import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 
 internal class SettingsViewModelTest {
 
@@ -38,12 +39,12 @@ internal class SettingsViewModelTest {
 
     @Test
     fun `deleteData clicked called right domain method`() = runBlocking {
-        buildViewModel().deleteDataClicked()
+        runBlocking(Dispatchers.IO) { buildViewModel().deleteDataClicked() }
         verify(deleteAllStorage).delete()
     }
 
     @Test
-    fun `deleteData is disabled when data is empty`() = runBlocking {
+    fun `deleteData is disabled when data is empty`() = runBlocking(Dispatchers.IO) {
         val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(0L))
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
@@ -55,7 +56,7 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `deleteData is enabled when there's data`() = runBlocking {
+    fun `deleteData is enabled when there's data`() = runBlocking(Dispatchers.IO) {
         val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(1L))
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
@@ -67,7 +68,7 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `observe storage stats`() = runBlocking {
+    fun `observe storage stats`() = runBlocking(Dispatchers.IO) {
         val total = StorageSize(1_000_000)
         val available = StorageSize(500_000)
         val used = StorageSize(100_000)
@@ -84,7 +85,7 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `max storage boundary`() = runBlocking {
+    fun `max storage boundary`() = runBlocking(Dispatchers.IO) {
         val totalStorage = SettingsViewModel.MIN_STORAGE_SIZE * 10
         whenever(diskStats.getTotalStorage()).thenReturn(totalStorage)
 
@@ -100,12 +101,12 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    internal fun `max storage value changed`() {
-        runBlocking {
-            val newValue = StorageSize(1_000_000_00)
+    internal fun `max storage value changed`() = runBlocking {
+        val newValue = StorageSize(1_000_000_00)
+        runBlocking(Dispatchers.IO) {
             buildViewModel().maxStorageChanged(newValue)
-            verify(storagePreferences).setMaxStorageSize(eq(newValue))
         }
+        verify(storagePreferences).setMaxStorageSize(eq(newValue))
     }
 
     private fun buildViewModel() =

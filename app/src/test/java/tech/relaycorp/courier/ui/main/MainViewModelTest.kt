@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
@@ -18,10 +18,10 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.domain.DeleteExpiredMessages
 import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.domain.ObserveCCACount
-import tech.relaycorp.courier.test.factory.StorageUsageFactory
-import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 import tech.relaycorp.courier.test.WaitAssertions.waitForAssertTrue
+import tech.relaycorp.courier.test.factory.StorageUsageFactory
+import tech.relaycorp.courier.test.factory.StoredMessageFactory
 
 internal class MainViewModelTest {
 
@@ -43,7 +43,7 @@ internal class MainViewModelTest {
 
     @Test
     internal fun syncPeopleState() {
-        runBlockingTest {
+        runBlocking {
             val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
             whenever(hotspotStateReceiver.state()).thenReturn(flowOf(WifiHotspotState.Disabled))
             whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
@@ -64,7 +64,7 @@ internal class MainViewModelTest {
 
     @Test
     internal fun syncInternetState() {
-        runBlockingTest {
+        runBlocking {
             val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
             whenever(getStorageUsage.observe()).thenReturn(flowOf(StorageUsageFactory.build()))
             whenever(observeCCACount.observe()).thenReturn(flowOf(1L))
@@ -85,7 +85,7 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun storageUsage() = runBlockingTest {
+    internal fun storageUsage() = runBlocking {
         val storageUsage = StorageUsageFactory.build()
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
@@ -94,7 +94,7 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun `deletes expired messages and show notice with size deleted`() = runBlockingTest {
+    internal fun `deletes expired messages and show notice with size deleted`() = runBlocking {
         val messagesToDelete = listOf(StoredMessageFactory.build())
         whenever(deleteExpiredMessages.delete()).thenReturn(messagesToDelete)
         val viewModel = buildViewModel()
@@ -106,7 +106,7 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun `low storage message is visible`() = runBlockingTest {
+    internal fun `low storage message is visible`() = runBlocking {
         val storageUsage = StorageUsage(StorageSize(1), StorageSize(1))
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
