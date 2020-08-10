@@ -18,7 +18,7 @@ import tech.relaycorp.courier.domain.DeleteAllStorage
 import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.ui.common.EnableState
-import tech.relaycorp.test.WaitAssertions.waitForAssertEquals
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 
 internal class SettingsViewModelTest {
 

@@ -1,4 +1,4 @@
-package tech.relaycorp.test
+package tech.relaycorp.courier.test
 
 import kotlinx.coroutines.delay
 
@@ -18,7 +18,10 @@ object WaitAssertions {
     }
 
     suspend fun waitForAssertTrue(actualCheck: suspend () -> Boolean) {
-        waitForAssertEquals(true, actualCheck)
+        waitForAssertEquals(
+            true,
+            actualCheck
+        )
     }
 
     private const val TIMEOUT = 10_000L

@@ -6,7 +6,7 @@ import io.netty.channel.local.LocalAddress
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
-import tech.relaycorp.test.WaitAssertions.waitForAssertEquals
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 
 internal class ClientsConnectedFilterTest {
 

@@ -20,8 +20,8 @@ import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.domain.ObserveCCACount
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
-import tech.relaycorp.test.WaitAssertions.waitForAssertEquals
-import tech.relaycorp.test.WaitAssertions.waitForAssertTrue
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertTrue
 
 internal class MainViewModelTest {
 
