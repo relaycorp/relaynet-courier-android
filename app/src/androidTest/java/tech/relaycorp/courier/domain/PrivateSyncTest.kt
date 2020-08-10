@@ -31,7 +31,7 @@ class PrivateSyncTest {
 
     @Test
     fun privateSync() {
-        Networking.androidGatewaySubnetPrefix = "192.168.1"
+        Networking.androidGatewaySubnetPrefix = null
         runBlocking { privateSync.startSync() }
 
         val deliveryStream = StreamRecorder.create<CargoDelivery>()
