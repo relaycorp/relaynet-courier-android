@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.data.disk.DiskStats
@@ -19,6 +18,7 @@ import tech.relaycorp.courier.domain.DeleteAllStorage
 import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.ui.common.EnableState
+import tech.relaycorp.test.WaitAssertions.waitForAssertEquals
 
 internal class SettingsViewModelTest {
 
@@ -48,9 +48,9 @@ internal class SettingsViewModelTest {
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             EnableState.Disabled,
-            vm.deleteDataEnabled().first()
+            vm.deleteDataEnabled()::first
         )
     }
 
@@ -60,9 +60,9 @@ internal class SettingsViewModelTest {
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             EnableState.Enabled,
-            vm.deleteDataEnabled().first()
+            vm.deleteDataEnabled()::first
         )
     }
 
@@ -77,9 +77,9 @@ internal class SettingsViewModelTest {
         whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(available))
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             StorageStats(used, 20, available, total),
-            vm.storageStats().first()
+            vm.storageStats()::first
         )
     }
 
@@ -89,13 +89,13 @@ internal class SettingsViewModelTest {
         whenever(diskStats.getTotalStorage()).thenReturn(totalStorage)
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             SizeBoundary(
                 SettingsViewModel.MIN_STORAGE_SIZE,
                 totalStorage,
                 SettingsViewModel.STORAGE_SIZE_STEP
             ),
-            vm.maxStorageBoundary().first()
+            vm.maxStorageBoundary()::first
         )
     }
 
