@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_people_sync.animation
 import kotlinx.android.synthetic.main.activity_people_sync.clientsConnected
 import kotlinx.android.synthetic.main.activity_people_sync.close
@@ -19,6 +18,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
+import tech.relaycorp.courier.common.di.ViewModelFactory
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToMargin
 import tech.relaycorp.courier.ui.common.startLoopingAvd

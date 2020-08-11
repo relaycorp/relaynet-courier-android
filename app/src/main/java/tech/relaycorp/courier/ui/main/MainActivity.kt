@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.hotspotIcon
 import kotlinx.android.synthetic.main.activity_main.hotspotLabel
 import kotlinx.android.synthetic.main.activity_main.innerContainer
@@ -24,6 +23,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.background.WifiHotspotState
+import tech.relaycorp.courier.common.di.ViewModelFactory
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding

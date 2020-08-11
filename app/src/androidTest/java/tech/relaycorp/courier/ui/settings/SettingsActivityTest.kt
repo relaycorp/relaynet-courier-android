@@ -6,7 +6,6 @@ import com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnab
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,6 +14,7 @@ import tech.relaycorp.courier.R
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import tech.relaycorp.courier.test.BaseActivityTestRule
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 import tech.relaycorp.courier.test.appComponent
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import javax.inject.Inject
@@ -64,9 +64,9 @@ class SettingsActivityTest {
         val slider = activity.findViewById<Slider>(R.id.storageMaxSlider)
         slider.value = slider.valueFrom
         runBlocking {
-            assertEquals(
+            waitForAssertEquals(
                 SettingsViewModel.MIN_STORAGE_SIZE,
-                storagePreferences.getMaxStorageSize().first()
+                storagePreferences.getMaxStorageSize()::first
             )
         }
     }

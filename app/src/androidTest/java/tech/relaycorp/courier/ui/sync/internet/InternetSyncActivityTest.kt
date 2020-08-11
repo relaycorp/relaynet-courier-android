@@ -14,6 +14,6 @@ class InternetSyncActivityTest {
 
     @Test
     fun showsDeliveringMessage() {
-        assertDisplayed(R.string.sync_delivering_cargo)
+        assertDisplayed(R.id.stateMessage)
     }
 }

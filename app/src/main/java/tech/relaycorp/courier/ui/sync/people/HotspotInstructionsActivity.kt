@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_hotspot_instructions.icon
 import kotlinx.android.synthetic.main.activity_hotspot_instructions.openSettings
 import kotlinx.android.synthetic.main.activity_hotspot_instructions.startSync
@@ -16,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_hotspot_instructions.titleText
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
+import tech.relaycorp.courier.common.di.ViewModelFactory
 import tech.relaycorp.courier.ui.BaseActivity
 import javax.inject.Inject
 

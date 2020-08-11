@@ -1,4 +1,4 @@
-package com.stationhead.android.shared.viewmodel
+package tech.relaycorp.courier.common.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

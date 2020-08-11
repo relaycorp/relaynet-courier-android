@@ -2,14 +2,11 @@ package tech.relaycorp.courier.ui.main
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
@@ -21,9 +18,10 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.domain.DeleteExpiredMessages
 import tech.relaycorp.courier.domain.GetStorageUsage
 import tech.relaycorp.courier.domain.ObserveCCACount
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertTrue
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
-import tech.relaycorp.courier.test.test
 
 internal class MainViewModelTest {
 
@@ -46,45 +44,43 @@ internal class MainViewModelTest {
     @Test
     internal fun syncPeopleState() {
         runBlocking {
+            val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
             whenever(hotspotStateReceiver.state()).thenReturn(flowOf(WifiHotspotState.Disabled))
-            whenever(connectionObserver.observe()).thenReturn(flow {
-                delay(10)
-                emit(InternetConnection.Offline)
-                emit(InternetConnection.Online)
-            })
+            whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
             val viewModel = buildViewModel()
-            val syncMode = viewModel.syncPeopleState().test(this)
 
-            delay(100)
-            syncMode
-                .assertValues(
-                    MainViewModel.SyncPeopleState.Enabled(WifiHotspotState.Disabled),
-                    MainViewModel.SyncPeopleState.Disabled
-                )
-                .finish()
+            waitForAssertEquals(
+                MainViewModel.SyncPeopleState.Enabled(WifiHotspotState.Disabled),
+                viewModel.syncPeopleState()::first
+            )
+
+            connectionStateFlow.value = InternetConnection.Online
+            waitForAssertEquals(
+                MainViewModel.SyncPeopleState.Disabled,
+                viewModel.syncPeopleState()::first
+            )
         }
     }
 
     @Test
     internal fun syncInternetState() {
         runBlocking {
+            val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
             whenever(getStorageUsage.observe()).thenReturn(flowOf(StorageUsageFactory.build()))
             whenever(observeCCACount.observe()).thenReturn(flowOf(1L))
-            whenever(connectionObserver.observe()).thenReturn(flow {
-                delay(10)
-                emit(InternetConnection.Offline)
-                emit(InternetConnection.Online)
-            })
+            whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
             val viewModel = buildViewModel()
-            val syncMode = viewModel.syncInternetState().test(this)
 
-            delay(100)
-            syncMode
-                .assertValues(
-                    MainViewModel.SyncInternetState.Disabled.Offline,
-                    MainViewModel.SyncInternetState.Enabled
-                )
-                .finish()
+            waitForAssertEquals(
+                MainViewModel.SyncInternetState.Disabled.Offline,
+                viewModel.syncInternetState()::first
+            )
+
+            connectionStateFlow.value = InternetConnection.Online
+            waitForAssertEquals(
+                MainViewModel.SyncInternetState.Enabled,
+                viewModel.syncInternetState()::first
+            )
         }
     }
 
@@ -94,7 +90,7 @@ internal class MainViewModelTest {
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
         val viewModel = buildViewModel()
-        assertEquals(storageUsage, viewModel.storageUsage().first())
+        waitForAssertEquals(storageUsage, viewModel.storageUsage()::first)
     }
 
     @Test
@@ -102,9 +98,10 @@ internal class MainViewModelTest {
         val messagesToDelete = listOf(StoredMessageFactory.build())
         whenever(deleteExpiredMessages.delete()).thenReturn(messagesToDelete)
         val viewModel = buildViewModel()
-        assertEquals(
+
+        waitForAssertEquals(
             messagesToDelete.first().size,
-            viewModel.expiredMessagesDeleted().first()
+            viewModel.expiredMessagesDeleted()::first
         )
     }
 
@@ -114,7 +111,7 @@ internal class MainViewModelTest {
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
         val viewModel = buildViewModel()
-        assertTrue(viewModel.lowStorageMessageIsVisible().first())
+        waitForAssertTrue { viewModel.lowStorageMessageIsVisible().first() }
     }
 
     private fun buildViewModel() =
