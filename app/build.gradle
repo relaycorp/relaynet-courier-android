@@ -124,7 +124,7 @@ dependencies {
 
     // Relaynet
     implementation 'tech.relaycorp:relaynet:1.16.1'
-    implementation 'com.github.relaycorp:relaynet-cogrpc-jvm:PR41-SNAPSHOT'
+    implementation 'com.github.relaycorp:relaynet-cogrpc-jvm:PR42-SNAPSHOT'
 
     // ORM
     def room_version = "2.2.5"
@@ -166,6 +166,10 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin'
     }
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.28'
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 spotless {
