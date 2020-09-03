@@ -1,5 +1,6 @@
 package tech.relaycorp.courier.domain.client
 
+import io.grpc.okhttp.OkHttpChannelBuilder
 import kotlinx.coroutines.flow.collect
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
@@ -12,8 +13,10 @@ import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import java.io.InputStream
+import java.security.SecureRandom
 import java.util.logging.Level
 import javax.inject.Inject
+import javax.net.ssl.SSLContext
 
 class CargoCollection
 @Inject constructor(
@@ -44,7 +47,18 @@ class CargoCollection
 
     @Throws(CogRPCClient.CogRPCException::class)
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
-        val client = clientBuilder.build(cca.recipientAddress.value)
+        val client = clientBuilder.build(cca.recipientAddress.value, { address, trustManager ->
+            OkHttpChannelBuilder.forAddress(address.hostName, address.port)
+                .let {
+                    if (trustManager != null) {
+                        val sslContext = SSLContext.getInstance("TLS")
+                        sslContext.init(null, arrayOf(trustManager), SecureRandom())
+                        it.sslSocketFactory(sslContext.socketFactory)
+                    } else {
+                        it
+                    }
+                }
+        })
         try {
             client
                 .collectCargo(cca.getSerializedInputStream())

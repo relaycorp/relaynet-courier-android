@@ -1,6 +1,7 @@
 package tech.relaycorp.courier.domain.client
 
 import androidx.annotation.VisibleForTesting
+import io.grpc.okhttp.OkHttpChannelBuilder
 import kotlinx.coroutines.flow.collect
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
@@ -12,8 +13,10 @@ import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.relaynet.CargoDeliveryRequest
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
+import java.security.SecureRandom
 import java.util.logging.Level
 import javax.inject.Inject
+import javax.net.ssl.SSLContext
 
 class CargoDelivery
 @Inject constructor(
@@ -55,7 +58,18 @@ class CargoDelivery
         val cargoesWithId =
             cargoes.map { StoredMessage.generateLocalId() to it }.toMap().toMutableMap()
         val requests = cargoesWithId.toRequests()
-        val client = clientBuilder.build(recipientAddress.value)
+        val client = clientBuilder.build(recipientAddress.value, { address, trustManager ->
+            OkHttpChannelBuilder.forAddress(address.hostName, address.port)
+                .let {
+                    if (trustManager != null) {
+                        val sslContext = SSLContext.getInstance("TLS")
+                        sslContext.init(null, arrayOf(trustManager), SecureRandom())
+                        it.sslSocketFactory(sslContext.socketFactory)
+                    } else {
+                        it
+                    }
+                }
+        })
         try {
             client
                 .deliverCargo(requests)
