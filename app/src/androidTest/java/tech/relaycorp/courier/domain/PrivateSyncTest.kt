@@ -1,23 +1,22 @@
 package tech.relaycorp.courier.domain
 
 import io.grpc.internal.testing.StreamRecorder
-import io.grpc.okhttp.OkHttpChannelBuilder
 import io.grpc.stub.MetadataUtils
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import tech.relaycorp.cogrpc.okhttp.OkHTTPChannelBuilderProvider
 import tech.relaycorp.cogrpc.server.Networking
 import tech.relaycorp.courier.test.appComponent
 import tech.relaycorp.relaynet.cogrpc.AuthorizationMetadata
 import tech.relaycorp.relaynet.cogrpc.CargoDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
 import tech.relaycorp.relaynet.cogrpc.client.PrivateSubnetTrustManager
-import java.security.SecureRandom
+import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.net.ssl.SSLContext
 
 class PrivateSyncTest {
 
@@ -47,12 +46,8 @@ class PrivateSyncTest {
 
     private val clientChannel by lazy {
         val gatewayIpAddress = Networking.getGatewayIpAddress()
-        val sslContext = SSLContext.getInstance("TLS")
-        sslContext.init(null, arrayOf(PrivateSubnetTrustManager.INSTANCE), SecureRandom())
-        OkHttpChannelBuilder
-            .forAddress(gatewayIpAddress, 21473)
-            .useTransportSecurity()
-            .sslSocketFactory(sslContext.socketFactory)
+        val address = InetSocketAddress(gatewayIpAddress, 21473)
+        OkHTTPChannelBuilderProvider.makeBuilder(address, PrivateSubnetTrustManager.INSTANCE)
             .build()
     }
 
