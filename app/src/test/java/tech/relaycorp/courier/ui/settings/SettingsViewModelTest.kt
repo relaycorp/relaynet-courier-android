@@ -4,11 +4,11 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.data.disk.DiskStats
@@ -17,6 +17,7 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import tech.relaycorp.courier.domain.DeleteAllStorage
 import tech.relaycorp.courier.domain.GetStorageUsage
+import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.ui.common.EnableState
 
@@ -38,36 +39,36 @@ internal class SettingsViewModelTest {
 
     @Test
     fun `deleteData clicked called right domain method`() = runBlocking {
-        buildViewModel().deleteDataClicked()
+        runBlocking(Dispatchers.IO) { buildViewModel().deleteDataClicked() }
         verify(deleteAllStorage).delete()
     }
 
     @Test
-    fun `deleteData is disabled when data is empty`() = runBlocking {
+    fun `deleteData is disabled when data is empty`() = runBlocking(Dispatchers.IO) {
         val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(0L))
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             EnableState.Disabled,
-            vm.deleteDataEnabled().first()
+            vm.deleteDataEnabled()::first
         )
     }
 
     @Test
-    fun `deleteData is enabled when there's data`() = runBlocking {
+    fun `deleteData is enabled when there's data`() = runBlocking(Dispatchers.IO) {
         val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(1L))
         whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             EnableState.Enabled,
-            vm.deleteDataEnabled().first()
+            vm.deleteDataEnabled()::first
         )
     }
 
     @Test
-    fun `observe storage stats`() = runBlocking {
+    fun `observe storage stats`() = runBlocking(Dispatchers.IO) {
         val total = StorageSize(1_000_000)
         val available = StorageSize(500_000)
         val used = StorageSize(100_000)
@@ -77,35 +78,35 @@ internal class SettingsViewModelTest {
         whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(available))
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             StorageStats(used, 20, available, total),
-            vm.storageStats().first()
+            vm.storageStats()::first
         )
     }
 
     @Test
-    fun `max storage boundary`() = runBlocking {
+    fun `max storage boundary`() = runBlocking(Dispatchers.IO) {
         val totalStorage = SettingsViewModel.MIN_STORAGE_SIZE * 10
         whenever(diskStats.getTotalStorage()).thenReturn(totalStorage)
 
         val vm = buildViewModel()
-        assertEquals(
+        waitForAssertEquals(
             SizeBoundary(
                 SettingsViewModel.MIN_STORAGE_SIZE,
                 totalStorage,
                 SettingsViewModel.STORAGE_SIZE_STEP
             ),
-            vm.maxStorageBoundary().first()
+            vm.maxStorageBoundary()::first
         )
     }
 
     @Test
-    internal fun `max storage value changed`() {
-        runBlocking {
-            val newValue = StorageSize(1_000_000_00)
+    internal fun `max storage value changed`() = runBlocking {
+        val newValue = StorageSize(1_000_000_00)
+        runBlocking(Dispatchers.IO) {
             buildViewModel().maxStorageChanged(newValue)
-            verify(storagePreferences).setMaxStorageSize(eq(newValue))
         }
+        verify(storagePreferences).setMaxStorageSize(eq(newValue))
     }
 
     private fun buildViewModel() =

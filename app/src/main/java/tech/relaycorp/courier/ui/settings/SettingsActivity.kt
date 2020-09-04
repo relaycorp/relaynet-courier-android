@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.mikepenz.aboutlibraries.LibsBuilder
-import com.stationhead.android.shared.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_settings.deleteData
 import kotlinx.android.synthetic.main.activity_settings.innerContainer
 import kotlinx.android.synthetic.main.activity_settings.knowMore
@@ -24,6 +23,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import tech.relaycorp.courier.BuildConfig
 import tech.relaycorp.courier.R
+import tech.relaycorp.courier.common.di.ViewModelFactory
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
 import tech.relaycorp.courier.ui.common.format
