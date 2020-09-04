@@ -139,7 +139,6 @@ dependencies {
 
     // gRPC
     implementation "io.grpc:grpc-netty:$grpcVersion"
-    implementation "io.grpc:grpc-okhttp:$grpcVersion"
     implementation "io.grpc:grpc-protobuf:$grpcVersion"
     implementation "io.grpc:grpc-stub:$grpcVersion"
 
