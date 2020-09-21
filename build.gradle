@@ -9,7 +9,7 @@ buildscript {
         protobufGradleVersion = '0.8.12'
         nettyVersion = '4.1.51.Final'
         aboutLibsVersion = '8.3.0'
-        junitVersion = '5.6.2'
+        junitVersion = '5.7.0'
     }
     repositories {
         google()
