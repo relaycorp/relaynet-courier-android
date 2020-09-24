@@ -2,6 +2,7 @@ package tech.relaycorp.courier.domain.client
 
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.collect
+import tech.relaycorp.cogrpc.okhttp.OkHTTPChannelBuilderProvider
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
@@ -55,7 +56,10 @@ class CargoDelivery
         val cargoesWithId =
             cargoes.map { StoredMessage.generateLocalId() to it }.toMap().toMutableMap()
         val requests = cargoesWithId.toRequests()
-        val client = clientBuilder.build(recipientAddress.value)
+        val client = clientBuilder.build(
+            recipientAddress.value,
+            OkHTTPChannelBuilderProvider.Companion::makeBuilder
+        )
         try {
             client
                 .deliverCargo(requests)
