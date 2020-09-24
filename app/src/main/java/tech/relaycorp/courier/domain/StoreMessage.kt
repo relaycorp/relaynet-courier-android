@@ -14,6 +14,7 @@ import tech.relaycorp.relaynet.messages.Cargo
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
 import tech.relaycorp.relaynet.ramf.RAMFException
 import tech.relaycorp.relaynet.ramf.RAMFMessage
+import tech.relaycorp.relaynet.ramf.RecipientAddressType
 import java.io.InputStream
 import java.util.Date
 import javax.inject.Inject
@@ -53,7 +54,7 @@ class StoreMessage
         }
 
         try {
-            cca.validate(null)
+            cca.validate(RecipientAddressType.PUBLIC)
         } catch (exc: RAMFException) {
             logger.warning("Invalid CCA received: ${exc.message}")
             return Result.Error.Invalid
