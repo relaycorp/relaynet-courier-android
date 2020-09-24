@@ -21,7 +21,7 @@ class NetworkingTest {
                 assertThrows<GatewayIPAddressException> { spiedNetworking.getGatewayIpAddress() }
 
             assertEquals(
-                "No address in the subnet 192.168.43.0/24 was found",
+                "No address with the prefix 192.168.43. was found",
                 exception.message
             )
         }
@@ -36,7 +36,7 @@ class NetworkingTest {
                 assertThrows<GatewayIPAddressException> { spiedNetworking.getGatewayIpAddress() }
 
             assertEquals(
-                "Multiple addresses in the subnet 192.168.43.0/24 were found",
+                "Multiple addresses with the prefix 192.168.43. were found",
                 exception.message
             )
         }

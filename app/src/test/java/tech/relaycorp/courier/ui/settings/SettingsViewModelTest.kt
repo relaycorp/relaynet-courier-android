@@ -38,8 +38,8 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `deleteData clicked called right domain method`() = runBlocking {
-        runBlocking(Dispatchers.IO) { buildViewModel().deleteDataClicked() }
+    fun `deleteData clicked called right domain method`() = runBlocking(Dispatchers.IO) {
+        buildViewModel().deleteDataClicked()
         verify(deleteAllStorage).delete()
     }
 

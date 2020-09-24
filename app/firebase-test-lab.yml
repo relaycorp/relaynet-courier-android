@@ -1,6 +1,7 @@
 spec:
-  type: robo
+  type: instrumentation
   app: app/build/outputs/apk/debug/app-debug.apk
+  test: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
   device:
     # Huawei P8 lite (physical). The oldest device we're testing and it's important not to use
     # a Google phone just so we also make sure the manufacturer's ROM doesn't break the app.

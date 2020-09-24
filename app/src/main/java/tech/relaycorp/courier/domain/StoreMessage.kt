@@ -14,6 +14,7 @@ import tech.relaycorp.relaynet.messages.Cargo
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
 import tech.relaycorp.relaynet.ramf.RAMFException
 import tech.relaycorp.relaynet.ramf.RAMFMessage
+import tech.relaycorp.relaynet.ramf.RecipientAddressType
 import java.io.InputStream
 import java.util.Date
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class StoreMessage
         }
 
         try {
-            cargo.validate()
+            cargo.validate(null)
         } catch (exc: RAMFException) {
             logger.warning("Invalid cargo received: ${exc.message}")
             return Result.Error.Invalid
@@ -53,7 +54,7 @@ class StoreMessage
         }
 
         try {
-            cca.validate()
+            cca.validate(RecipientAddressType.PUBLIC)
         } catch (exc: RAMFException) {
             logger.warning("Invalid CCA received: ${exc.message}")
             return Result.Error.Invalid
@@ -64,7 +65,7 @@ class StoreMessage
 
     private suspend fun storeMessage(
         type: MessageType,
-        message: RAMFMessage,
+        message: RAMFMessage<*>,
         data: ByteArray
     ): Result {
         val dataSize = StorageSize(data.size.toLong())
@@ -79,7 +80,7 @@ class StoreMessage
     private suspend fun checkForAvailableSpace(dataSize: StorageSize) =
         getStorageUsage.get().available >= dataSize
 
-    private fun RAMFMessage.toStoredMessage(
+    private fun RAMFMessage<*>.toStoredMessage(
         type: MessageType,
         storagePath: String,
         dataSize: StorageSize
