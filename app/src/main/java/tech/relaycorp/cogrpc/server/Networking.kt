@@ -33,7 +33,7 @@ internal object Networking {
         val networkInterfaces = NetworkInterface.getNetworkInterfaces().iterator().asSequence()
         val localAddresses = networkInterfaces.flatMap {
             it.inetAddresses.asSequence()
-                .filter { inetAddress -> inetAddress.isSiteLocalAddress }
+                .filter { inetAddress -> inetAddress.isSiteLocalAddress && !inetAddress.hostAddress.contains(":") }
                 .map { inetAddress -> inetAddress.hostAddress }
         }
         return localAddresses.toList()

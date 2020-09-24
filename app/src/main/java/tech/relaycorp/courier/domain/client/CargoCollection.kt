@@ -1,6 +1,7 @@
 package tech.relaycorp.courier.domain.client
 
 import kotlinx.coroutines.flow.collect
+import tech.relaycorp.cogrpc.okhttp.OkHTTPChannelBuilderProvider
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
@@ -44,7 +45,10 @@ class CargoCollection
 
     @Throws(CogRPCClient.CogRPCException::class)
     private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
-        val client = clientBuilder.build(cca.recipientAddress.value)
+        val client = clientBuilder.build(
+            cca.recipientAddress.value,
+            OkHTTPChannelBuilderProvider.Companion::makeBuilder
+        )
         try {
             client
                 .collectCargo(cca.getSerializedInputStream())

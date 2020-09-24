@@ -35,7 +35,7 @@ class StoreMessage
         }
 
         try {
-            cargo.validate()
+            cargo.validate(null)
         } catch (exc: RAMFException) {
             logger.warning("Invalid cargo received: ${exc.message}")
             return Result.Error.Invalid
@@ -53,7 +53,7 @@ class StoreMessage
         }
 
         try {
-            cca.validate()
+            cca.validate(null)
         } catch (exc: RAMFException) {
             logger.warning("Invalid CCA received: ${exc.message}")
             return Result.Error.Invalid
@@ -64,7 +64,7 @@ class StoreMessage
 
     private suspend fun storeMessage(
         type: MessageType,
-        message: RAMFMessage,
+        message: RAMFMessage<*>,
         data: ByteArray
     ): Result {
         val dataSize = StorageSize(data.size.toLong())
@@ -79,7 +79,7 @@ class StoreMessage
     private suspend fun checkForAvailableSpace(dataSize: StorageSize) =
         getStorageUsage.get().available >= dataSize
 
-    private fun RAMFMessage.toStoredMessage(
+    private fun RAMFMessage<*>.toStoredMessage(
         type: MessageType,
         storagePath: String,
         dataSize: StorageSize
