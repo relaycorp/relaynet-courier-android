@@ -17,7 +17,6 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import tech.relaycorp.courier.domain.DeleteAllStorage
 import tech.relaycorp.courier.domain.GetStorageUsage
-import tech.relaycorp.courier.test.WaitAssertions.suspendWaitFor
 import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
 import tech.relaycorp.courier.test.factory.StorageUsageFactory
 import tech.relaycorp.courier.ui.common.EnableState
@@ -39,13 +38,9 @@ internal class SettingsViewModelTest {
     }
 
     @Test
-    fun `deleteData clicked called right domain method`() = runBlocking {
-        runBlocking(Dispatchers.IO) {
-            buildViewModel().deleteDataClicked()
-        }
-        suspendWaitFor {
-            verify(deleteAllStorage).delete()
-        }
+    fun `deleteData clicked called right domain method`() = runBlocking(Dispatchers.IO) {
+        buildViewModel().deleteDataClicked()
+        verify(deleteAllStorage).delete()
     }
 
     @Test

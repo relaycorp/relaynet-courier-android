@@ -7,7 +7,7 @@ object WaitAssertions {
 
     fun waitFor(check: () -> Unit) {
         val initialTime = System.currentTimeMillis()
-        var lastError: Throwable? = null
+        var lastError: Throwable?
         do {
             try {
                 check.invoke()
