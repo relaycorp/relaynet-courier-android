@@ -5,7 +5,7 @@ import java.net.NetworkInterface
 
 internal object Networking {
     @VisibleForTesting
-    var androidGatewaySubnetPrefix = "192.168.43."
+    var androidGatewaySubnetPrefix: String? = "192.168.43."
 
     /**
      * Return the local IP address used by the current device in the WiFi hotspot network it created
@@ -16,16 +16,15 @@ internal object Networking {
     @Throws(GatewayIPAddressException::class)
     fun getGatewayIpAddress(): String {
         val localAddresses = getAllLocalIpAddresses()
-        val gatewayAddresses =
-            localAddresses.filter { it.startsWith(androidGatewaySubnetPrefix) }
+        val prefix = androidGatewaySubnetPrefix
+            ?: return localAddresses.firstOrNull { it != "127.0.0.1" }
+                ?: throw GatewayIPAddressException("No valid local address found")
+
+        val gatewayAddresses = localAddresses.filter { it.startsWith(prefix) }
         if (gatewayAddresses.isEmpty()) {
-            throw GatewayIPAddressException(
-                "No address in the subnet ${androidGatewaySubnetPrefix}0/24 was found"
-            )
+            throw GatewayIPAddressException("No address with the prefix $prefix was found")
         } else if (gatewayAddresses.size > 1) {
-            throw GatewayIPAddressException(
-                "Multiple addresses in the subnet ${androidGatewaySubnetPrefix}0/24 were found"
-            )
+            throw GatewayIPAddressException("Multiple addresses with the prefix $prefix were found")
         }
         return gatewayAddresses.first()
     }
@@ -34,7 +33,7 @@ internal object Networking {
         val networkInterfaces = NetworkInterface.getNetworkInterfaces().iterator().asSequence()
         val localAddresses = networkInterfaces.flatMap {
             it.inetAddresses.asSequence()
-                .filter { inetAddress -> inetAddress.isSiteLocalAddress }
+                .filter { inetAddress -> inetAddress.isSiteLocalAddress && !inetAddress.hostAddress.contains(":") }
                 .map { inetAddress -> inetAddress.hostAddress }
         }
         return localAddresses.toList()
