@@ -57,10 +57,8 @@ class CogRPCConnectionService(
 
             override fun onCompleted() {
                 logger.info("deliverCargo complete")
-                coroutineScope.launch {
-                    isResponseFinished = true
-                    responseObserver.onCompleted()
-                }
+                isResponseFinished = true
+                responseObserver.onCompleted()
             }
         }
 
