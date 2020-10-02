@@ -54,7 +54,7 @@ class MainViewModel
             }
         }
             .onEach(syncPeopleState::send)
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         combine(
             internetConnectionObserver.observe(),
@@ -72,7 +72,7 @@ class MainViewModel
             }
         }
             .onEach(syncInternetState::send)
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         getStorageUsage
             .observe()
@@ -80,9 +80,9 @@ class MainViewModel
                 storageUsage.send(it)
                 lowStorageMessageIsVisible.send(it.isLowOnSpace)
             }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
-        ioScope.launch {
+        scope.launch {
             val messagesDeleted = deleteExpiredMessages.delete()
             if (messagesDeleted.any()) {
                 expiredMessagesDeleted.send(messagesDeleted.sumMessageSize())

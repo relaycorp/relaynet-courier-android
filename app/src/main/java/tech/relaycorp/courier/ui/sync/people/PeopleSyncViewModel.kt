@@ -61,7 +61,7 @@ class PeopleSyncViewModel
                     }
                 }
             }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         wifiHotspotStateReceiver
             .state()
@@ -72,14 +72,14 @@ class PeopleSyncViewModel
                 openHotspotInstructions.send(Unit)
                 finish.send(Finish)
             }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         privateSync
             .clientsConnected()
             .filter { it > 0 }
             .take(1)
             .onEach { hadFirstClient = true }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         combine(
             privateSync.state(),
@@ -98,7 +98,7 @@ class PeopleSyncViewModel
                 PrivateSync.State.Error -> state.send(State.Error)
             }
         }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         stopClicks
             .asFlow()
@@ -113,12 +113,12 @@ class PeopleSyncViewModel
                     finish.send(Finish)
                 }
             }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         confirmStopClicks
             .asFlow()
             .onEach { finish.send(Finish) }
-            .launchIn(ioScope)
+            .launchIn(scope)
     }
 
     override fun onCleared() {

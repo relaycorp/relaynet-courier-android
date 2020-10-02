@@ -51,6 +51,7 @@ class PrivateSyncTest {
                 InetSocketAddress(gatewayIpAddress, 21473),
                 PrivateSubnetTrustManager.INSTANCE
             )
+            .hostnameVerifier { _, _ -> true }
             .build()
     }
 

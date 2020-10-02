@@ -32,7 +32,7 @@ class InternetSyncViewModel
     val finish get() = finishChannel.asFlow()
 
     init {
-        val syncJob = ioScope.launch {
+        val syncJob = scope.launch {
             publicSync.sync()
         }
 
@@ -40,7 +40,7 @@ class InternetSyncViewModel
             publicSync
                 .state()
                 .onEach { stateChannel.send(it) }
-                .launchIn(ioScope)
+                .launchIn(scope)
 
         stopClicks
             .asFlow()
@@ -49,6 +49,6 @@ class InternetSyncViewModel
                 syncJob.cancel()
                 finishChannel.send(Finish)
             }
-            .launchIn(ioScope)
+            .launchIn(scope)
     }
 }

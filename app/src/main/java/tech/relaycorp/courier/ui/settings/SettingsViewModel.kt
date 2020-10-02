@@ -56,7 +56,7 @@ class SettingsViewModel
             .onEach {
                 deleteDataEnabled.send((!it.usedByApp.isZero).toEnableState())
             }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         combine(
             getStorageUsage.observe(),
@@ -70,24 +70,24 @@ class SettingsViewModel
             )
         }
             .onEach(storageStats::send)
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         deleteDataClicks
             .asFlow()
             .onEach { deleteAllStorage.delete() }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         storagePreferences
             .getMaxStorageSize()
             .onEach(maxStorage::send)
-            .launchIn(ioScope)
+            .launchIn(scope)
 
         maxStorageChanged
             .asFlow()
             .onEach { storagePreferences.setMaxStorageSize(it) }
-            .launchIn(ioScope)
+            .launchIn(scope)
 
-        ioScope.launch {
+        scope.launch {
             val totalStorageValue = diskStats.getTotalStorage()
             maxStorageBoundary.send(
                 SizeBoundary(
