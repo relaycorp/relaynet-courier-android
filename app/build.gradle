@@ -23,9 +23,6 @@ apply from: 'jacoco.gradle'
 
 repositories {
     maven { url 'https://jitpack.io' }
-
-    // TODO: Remove once the CogRPC libs have been approved for inclusion in JCenter
-    maven { url  "https://dl.bintray.com/relaycorp/maven" }
 }
 
 android {
