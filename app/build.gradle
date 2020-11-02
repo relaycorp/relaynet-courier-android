@@ -124,8 +124,8 @@ dependencies {
 
     // Relaynet
     implementation 'tech.relaycorp:relaynet:1.38.4'
-    implementation 'tech.relaycorp:relaynet-cogrpc:1.1.2'
-    implementation 'tech.relaycorp:relaynet-cogrpc-okhttp:1.1.0'
+    implementation 'tech.relaycorp:cogrpc:1.1.6'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.4'
 
     // ORM
     def room_version = "2.2.5"
