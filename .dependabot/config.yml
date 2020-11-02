@@ -3,6 +3,12 @@ update_configs:
   - package_manager: "java:gradle"
     directory: "/"
     update_schedule: "weekly"
+    ignored_updates:
+      - match:
+          # See: https://github.com/relaycorp/relaynet-courier-android/issues/231
+          dependency_name: "io.grpc:grpc-*"
+          version_requirement: "1.x"
+
   - package_manager: "javascript"
     directory: "/"
     update_schedule: "weekly"
