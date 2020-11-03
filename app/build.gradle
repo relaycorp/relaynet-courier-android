@@ -37,7 +37,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "0.1"
+        versionName project.findProperty("versionName") ?: "0.1"
 
         testInstrumentationRunner 'tech.relaycorp.courier.test.TestAndroidJUnitRunner'
 
@@ -100,11 +100,6 @@ android {
         test {
             java.srcDirs += "src/sharedTest/java"
             resources.srcDirs += "src/sharedTest/resources"
-        }
-    }
-    onVariantProperties {
-        for (output in outputs) {
-            output.versionName.set(output.versionCode.toString())
         }
     }
 }
