@@ -4,6 +4,7 @@ import com.google.android.material.slider.Slider
 import com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled
 import com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains
+import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -14,7 +15,7 @@ import tech.relaycorp.courier.R
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.preference.StoragePreferences
 import tech.relaycorp.courier.test.BaseActivityTestRule
-import tech.relaycorp.courier.test.WaitAssertions.waitForAssertEquals
+import tech.relaycorp.courier.test.WaitAssertions.suspendWaitFor
 import tech.relaycorp.courier.test.appComponent
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import javax.inject.Inject
@@ -62,14 +63,14 @@ class SettingsActivityTest {
     fun setMaxStorageToMinimum() {
         val activity = testRule.start()
         val slider = activity.findViewById<Slider>(R.id.storageMaxSlider)
-        slider.postDelayed({
-            slider.value = slider.valueFrom
-        }, 500)
         runBlocking {
-            waitForAssertEquals(
-                SettingsViewModel.MIN_STORAGE_SIZE,
-                storagePreferences.getMaxStorageSize()::first
-            )
+            suspendWaitFor {
+                slider.value = slider.valueFrom
+                assertEquals(
+                    SettingsViewModel.MIN_STORAGE_SIZE,
+                    storagePreferences.getMaxStorageSize().first()
+                )
+            }
         }
     }
 }
