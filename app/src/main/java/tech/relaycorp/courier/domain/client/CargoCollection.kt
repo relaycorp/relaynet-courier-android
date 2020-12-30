@@ -8,9 +8,12 @@ import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
+import tech.relaycorp.courier.data.model.PublicAddressResolutionException
+import tech.relaycorp.courier.data.model.PublicMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
+import tech.relaycorp.doh.DoHClient
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import java.io.InputStream
 import java.util.logging.Level
@@ -25,14 +28,16 @@ class CargoCollection
     private val diskRepository: DiskRepository
 ) {
 
-    suspend fun collect() {
+    suspend fun collect(dohClient: DoHClient) {
         getCCAs()
             .forEach { cca ->
                 try {
-                    collectAndStoreCargoForCCA(cca)
+                    collectAndStoreCargoForCCA(cca, dohClient)
                     deleteCCA(cca)
                 } catch (e: CogRPCClient.CogRPCException) {
                     logger.log(Level.WARNING, "Cargo collection error", e)
+                } catch (e: PublicAddressResolutionException) {
+                    logger.log(Level.WARNING, "Failed to resolve ${cca.recipientAddress.value}", e)
                 }
             }
     }
@@ -44,9 +49,10 @@ class CargoCollection
         )
 
     @Throws(CogRPCClient.CogRPCException::class)
-    private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage) {
+    private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage, dohClient: DoHClient) {
+        val resolvedAddress = (cca.recipientAddress as PublicMessageAddress).resolve(dohClient)
         val client = clientBuilder.build(
-            cca.recipientAddress.value,
+            resolvedAddress,
             OkHTTPChannelBuilderProvider.Companion::makeBuilder
         )
         try {

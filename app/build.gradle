@@ -128,6 +128,7 @@ dependencies {
     implementation 'tech.relaycorp:relaynet:1.39.0'
     implementation 'tech.relaycorp:cogrpc:1.1.6'
     implementation 'tech.relaycorp:cogrpc-okhttp:1.1.4'
+    implementation 'tech.relaycorp:doh:1.0.0'
 
     // ORM
     def room_version = "2.2.5"
