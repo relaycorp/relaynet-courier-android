@@ -9,10 +9,11 @@ import java.util.Date
 import java.util.Random
 
 object StoredMessageFactory {
-    fun build(): StoredMessage {
-        val recipientAddress = MessageAddress.of(Random().nextInt().toString())
+    fun build(
+        recipientAddress: MessageAddress = MessageAddress.of(Random().nextInt().toString())
+    ): StoredMessage {
         return StoredMessage(
-            recipientAddress = MessageAddress.of(Random().nextInt().toString()),
+            recipientAddress = recipientAddress,
             recipientType = recipientAddress.type,
             senderAddress = PrivateMessageAddress(Random().nextInt().toString()),
             messageId = MessageId(Random().nextInt().toString()),
