@@ -6,6 +6,7 @@ import tech.relaycorp.courier.common.BehaviorChannel
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.domain.client.CargoCollection
 import tech.relaycorp.courier.domain.client.CargoDelivery
+import tech.relaycorp.doh.DoHClient
 import java.util.logging.Level
 import javax.inject.Inject
 import kotlin.time.seconds
@@ -29,14 +30,17 @@ class PublicSync
     }
 
     private suspend fun syncUnhandled() {
-        state.send(State.DeliveringCargo)
-        cargoDelivery.deliver()
+        val dohClient = DoHClient()
+        dohClient.use {
+            state.send(State.DeliveringCargo)
+            cargoDelivery.deliver(dohClient)
 
-        state.send(State.Waiting)
-        delay(WAIT_PERIOD)
+            state.send(State.Waiting)
+            delay(WAIT_PERIOD)
 
-        state.send(State.CollectingCargo)
-        cargoCollection.collect()
+            state.send(State.CollectingCargo)
+            cargoCollection.collect(dohClient)
+        }
 
         state.send(State.Finished)
     }
