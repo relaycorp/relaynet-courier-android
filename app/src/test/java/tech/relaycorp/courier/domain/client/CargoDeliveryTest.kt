@@ -3,6 +3,7 @@ package tech.relaycorp.courier.domain.client
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -16,8 +17,11 @@ import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
+import tech.relaycorp.courier.data.model.PublicAddressResolutionException
+import tech.relaycorp.courier.data.model.PublicMessageAddress
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
+import tech.relaycorp.doh.DoHClient
 import tech.relaycorp.relaynet.CargoDeliveryRequest
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 
@@ -29,6 +33,11 @@ internal class CargoDeliveryTest {
     private val deleteMessage = mock<DeleteMessage>()
 
     private val client = mock<CogRPCClient>()
+    private val dohClient = mock<DoHClient>()
+
+    private val publicGatewayURL = "https://example.com"
+    private val publicGatewayTargetURL = "https://cogrpc.example.com:443"
+    private val publicGatewayAddress = mock<PublicMessageAddress>()
 
     private val subject = CargoDelivery(
         clientBuilder, storedMessageDao, diskRepository, deleteMessage
@@ -36,13 +45,17 @@ internal class CargoDeliveryTest {
 
     @BeforeEach
     internal fun setUp() = runBlockingTest {
-        whenever(clientBuilder.build(any(), any(), any())).thenReturn(client)
+        whenever(publicGatewayAddress.resolve(dohClient)).thenReturn(publicGatewayTargetURL)
+        whenever(publicGatewayAddress.publicValue).thenReturn(publicGatewayURL)
+        whenever(publicGatewayAddress.type).thenCallRealMethod()
+
+        whenever(clientBuilder.build(eq(publicGatewayTargetURL), any(), any())).thenReturn(client)
         whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
     }
 
     @Test
-    internal fun `deliver cargo successfully`() = runBlockingTest {
-        val cargo = StoredMessageFactory.build()
+    fun `deliver cargo successfully`() = runBlockingTest {
+        val cargo = StoredMessageFactory.build(publicGatewayAddress)
         whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
             .thenReturn(listOf(cargo))
         whenever(client.deliverCargo(any()))
@@ -53,7 +66,7 @@ internal class CargoDeliveryTest {
                     .asFlow()
             }
 
-        subject.deliver()
+        subject.deliver(dohClient)
 
         verify(client).deliverCargo(any())
         verify(deleteMessage).delete(eq(cargo))
@@ -61,7 +74,7 @@ internal class CargoDeliveryTest {
 
     @Test
     internal fun `deliver when unknown ack is received ignore it`() = runBlockingTest {
-        val cargo = StoredMessageFactory.build()
+        val cargo = StoredMessageFactory.build(publicGatewayAddress)
         whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
             .thenReturn(listOf(cargo))
         whenever(client.deliverCargo(any()))
@@ -73,14 +86,14 @@ internal class CargoDeliveryTest {
                 )
             }
 
-        subject.deliver()
+        subject.deliver(dohClient)
 
         verify(deleteMessage, times(1)).delete(any())
     }
 
     @Test
-    internal fun `deliverToRecipient throws exception when cargo was not acknowledged`() = runBlockingTest {
-        val cargo1 = StoredMessageFactory.build()
+    fun `deliverToRecipient throws exception when cargo was not acknowledged`() = runBlockingTest {
+        val cargo1 = StoredMessageFactory.build(publicGatewayAddress)
         val cargo2 = cargo1.copy(messageId = MessageId("id"))
         whenever(client.deliverCargo(any()))
             .thenAnswer { inv ->
@@ -90,15 +103,32 @@ internal class CargoDeliveryTest {
 
         assertThrows<CargoDelivery.IncompleteDeliveryException> {
             runBlockingTest {
-                subject.deliverToRecipient(cargo1.recipientAddress, listOf(cargo1, cargo2))
+                subject.deliverToRecipient(publicGatewayAddress, listOf(cargo1, cargo2), dohClient)
             }
         }
     }
 
     @Test
-    internal fun `deliver to multiple recipients even if one fails`() = runBlockingTest {
-        val cargo1 = StoredMessageFactory.build()
-        val cargo2 = StoredMessageFactory.build()
+    fun `Failing to resolve DNS should be ignored`() = runBlockingTest {
+        val cargo = StoredMessageFactory.build(publicGatewayAddress)
+        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
+            .thenReturn(listOf(cargo))
+        whenever(publicGatewayAddress.resolve(dohClient))
+            .thenThrow(PublicAddressResolutionException("Whoops"))
+
+        subject.deliver(dohClient)
+
+        verify(client, never()).deliverCargo(any())
+    }
+
+    @Test
+    fun `deliver to multiple recipients even if one fails`() = runBlockingTest {
+        val cargo1 = StoredMessageFactory.build(publicGatewayAddress)
+        val publicGatewayAddress2 = mock<PublicMessageAddress>()
+        whenever(publicGatewayAddress2.publicValue).thenReturn("https://another-gw.com")
+        whenever(publicGatewayAddress2.type).thenCallRealMethod()
+        whenever(publicGatewayAddress2.resolve(dohClient)).thenReturn(publicGatewayTargetURL)
+        val cargo2 = StoredMessageFactory.build(publicGatewayAddress2)
         whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
             .thenReturn(listOf(cargo1, cargo2))
         whenever(client.deliverCargo(any()))
@@ -110,7 +140,7 @@ internal class CargoDeliveryTest {
                 )
             }
 
-        subject.deliver()
+        subject.deliver(dohClient)
 
         verify(client, times(2)).deliverCargo(any())
     }

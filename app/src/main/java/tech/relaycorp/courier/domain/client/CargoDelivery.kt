@@ -9,8 +9,11 @@ import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
 import tech.relaycorp.courier.data.model.MessageAddress
 import tech.relaycorp.courier.data.model.MessageType
+import tech.relaycorp.courier.data.model.PublicAddressResolutionException
+import tech.relaycorp.courier.data.model.PublicMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
+import tech.relaycorp.doh.DoHClient
 import tech.relaycorp.relaynet.CargoDeliveryRequest
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
 import java.util.logging.Level
@@ -24,16 +27,18 @@ class CargoDelivery
     private val deleteMessage: DeleteMessage
 ) {
 
-    suspend fun deliver() {
+    suspend fun deliver(dohClient: DoHClient) {
         getCargoesToDeliver()
             .groupByRecipient()
             .forEach { (recipientAddress, cargoes) ->
                 try {
-                    deliverToRecipient(recipientAddress, cargoes)
+                    deliverToRecipient(recipientAddress as PublicMessageAddress, cargoes, dohClient)
                 } catch (e: IncompleteDeliveryException) {
-                    logger.log(Level.WARNING, "Cargo delivery error", e)
+                    logger.log(Level.WARNING, "Server failed to acknowledge one or more cargoes")
                 } catch (e: CogRPCClient.CogRPCException) {
                     logger.log(Level.WARNING, "Cargo delivery error", e)
+                } catch (e: PublicAddressResolutionException) {
+                    logger.log(Level.WARNING, "Failed to resolve ${recipientAddress.value}", e)
                 }
             }
     }
@@ -50,14 +55,15 @@ class CargoDelivery
     @Throws(IncompleteDeliveryException::class, CogRPCClient.CogRPCException::class)
     @VisibleForTesting
     internal suspend fun deliverToRecipient(
-        recipientAddress: MessageAddress,
-        cargoes: List<StoredMessage>
+        recipientAddress: PublicMessageAddress,
+        cargoes: List<StoredMessage>,
+        dohClient: DoHClient
     ) {
         val cargoesWithId =
             cargoes.map { StoredMessage.generateLocalId() to it }.toMap().toMutableMap()
         val requests = cargoesWithId.toRequests()
         val client = clientBuilder.build(
-            recipientAddress.value,
+            recipientAddress.resolve(dohClient),
             OkHTTPChannelBuilderProvider.Companion::makeBuilder
         )
         try {
