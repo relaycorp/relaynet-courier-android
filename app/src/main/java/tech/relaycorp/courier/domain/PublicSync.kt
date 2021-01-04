@@ -30,7 +30,7 @@ class PublicSync
     }
 
     private suspend fun syncUnhandled() {
-        val dohClient = DoHClient()
+        val dohClient = DoHClient(DOH_RESOLVER_URL)
         dohClient.use {
             state.send(State.DeliveringCargo)
             cargoDelivery.deliver(dohClient)
@@ -51,5 +51,9 @@ class PublicSync
 
     companion object {
         private val WAIT_PERIOD = 2.seconds
+
+        // TODO: Remove this once we can use CloudFlare
+        // https://github.com/cloudflare/cloudflare-docs/issues/565
+        private const val DOH_RESOLVER_URL = "https://dns.google/dns-query"
     }
 }
