@@ -13,7 +13,7 @@ documentation at this point.
 ## Multiple IP addresses in the private subnet are unsupported
 
 If you've rooted your Android device or flashed it with a custom ROM, you might be able to have 
-multiple IP address in the subnet `192.168.43.0/24`. If that were the case, the courier app will 
+multiple IP address in the subnet `192.168.0.0/16`. If that were the case, the courier app will 
 fail to allow incoming connections from private gateways: We need exactly one IP address in that 
 range so that the app can self-issue TLS certificates for it.
 
