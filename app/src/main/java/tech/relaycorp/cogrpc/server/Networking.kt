@@ -1,7 +1,6 @@
 package tech.relaycorp.cogrpc.server
 
 import androidx.annotation.VisibleForTesting
-import tech.relaycorp.courier.common.Logging.logger
 import java.net.NetworkInterface
 
 internal object Networking {
