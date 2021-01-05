@@ -1,17 +1,18 @@
 package tech.relaycorp.cogrpc.server
 
 import androidx.annotation.VisibleForTesting
+import tech.relaycorp.courier.common.Logging.logger
 import java.net.NetworkInterface
 
 internal object Networking {
     @VisibleForTesting
-    var androidGatewaySubnetPrefix: String? = "192.168.43."
+    var androidGatewaySubnetPrefix: String? = "192.168."
 
     /**
      * Return the local IP address used by the current device in the WiFi hotspot network it created
      *
      * An exception may be thrown in rooted devices or those with a custom version of Android where
-     * the number of local IP addresses in the subnet 192.168.43.0/24 does not equal one.
+     * the number of local IP addresses in the subnet 192.168.0.0/16 does not equal one.
      */
     @Throws(GatewayIPAddressException::class)
     fun getGatewayIpAddress(): String {
