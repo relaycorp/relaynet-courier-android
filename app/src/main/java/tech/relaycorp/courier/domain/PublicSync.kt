@@ -50,7 +50,7 @@ class PublicSync
     }
 
     companion object {
-        private val WAIT_PERIOD = 2.seconds
+        private val WAIT_PERIOD = 10.seconds
 
         // TODO: Remove this once we can use CloudFlare
         // https://github.com/cloudflare/cloudflare-docs/issues/565
