@@ -39,7 +39,7 @@ jobs:
         with:
           arg-spec: 'app/firebase-test-lab.yml:spec'
         env:
-          SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          SERVICE_ACCOUNT: ${{ secrets.CI_GCP_SERVICE_ACCOUNT }}
 
   release:
     name: "Deploy to Google Play Store"
@@ -82,4 +82,4 @@ jobs:
           ANDROID_KEYSTORE_KEY_ALIAS: ${{ secrets.ANDROID_KEYSTORE_KEY_NAME }}
           ANDROID_KEYSTORE_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ANDROID_PUBLISHER_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          ANDROID_PUBLISHER_CREDENTIALS: ${{ secrets.PUBLISHER_GCP_SERVICE_ACCOUNT }}
