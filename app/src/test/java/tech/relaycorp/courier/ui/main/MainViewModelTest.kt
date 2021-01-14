@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
@@ -42,13 +43,13 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun syncPeopleState() {
-        runBlocking {
-            val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
-            whenever(hotspotStateReceiver.state()).thenReturn(flowOf(WifiHotspotState.Disabled))
-            whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
-            val viewModel = buildViewModel()
+    internal fun syncPeopleState() = runBlockingTest {
+        val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
+        whenever(hotspotStateReceiver.state()).thenReturn(flowOf(WifiHotspotState.Disabled))
+        whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
+        val viewModel = buildViewModel()
 
+        viewModel.scope.launch {
             waitForAssertEquals(
                 MainViewModel.SyncPeopleState.Enabled(WifiHotspotState.Disabled),
                 viewModel.syncPeopleState()::first
@@ -63,13 +64,13 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun syncInternetState() {
-        runBlocking {
-            val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
-            whenever(getStorageUsage.observe()).thenReturn(flowOf(StorageUsageFactory.build()))
-            whenever(observeCCACount.observe()).thenReturn(flowOf(1L))
-            whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
-            val viewModel = buildViewModel()
+    internal fun syncInternetState() = runBlockingTest {
+        val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
+        whenever(getStorageUsage.observe()).thenReturn(flowOf(StorageUsageFactory.build()))
+        whenever(observeCCACount.observe()).thenReturn(flowOf(1L))
+        whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
+        val viewModel = buildViewModel()
+        viewModel.scope.launch {
 
             waitForAssertEquals(
                 MainViewModel.SyncInternetState.Disabled.Offline,
@@ -85,33 +86,39 @@ internal class MainViewModelTest {
     }
 
     @Test
-    internal fun storageUsage() = runBlocking {
+    internal fun storageUsage() = runBlockingTest {
         val storageUsage = StorageUsageFactory.build()
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
         val viewModel = buildViewModel()
-        waitForAssertEquals(storageUsage, viewModel.storageUsage()::first)
+        viewModel.scope.launch {
+            waitForAssertEquals(storageUsage, viewModel.storageUsage()::first)
+        }
     }
 
     @Test
-    internal fun `deletes expired messages and show notice with size deleted`() = runBlocking {
+    internal fun `deletes expired messages and show notice with size deleted`() = runBlockingTest {
         val messagesToDelete = listOf(StoredMessageFactory.build())
         whenever(deleteExpiredMessages.delete()).thenReturn(messagesToDelete)
         val viewModel = buildViewModel()
 
-        waitForAssertEquals(
-            messagesToDelete.first().size,
-            viewModel.expiredMessagesDeleted()::first
-        )
+        viewModel.scope.launch {
+            waitForAssertEquals(
+                messagesToDelete.first().size,
+                viewModel.expiredMessagesDeleted()::first
+            )
+        }
     }
 
     @Test
-    internal fun `low storage message is visible`() = runBlocking {
+    internal fun `low storage message is visible`() = runBlockingTest {
         val storageUsage = StorageUsage(StorageSize(1), StorageSize(1))
         whenever(getStorageUsage.observe()).thenReturn(flowOf(storageUsage))
 
         val viewModel = buildViewModel()
-        waitForAssertTrue { viewModel.lowStorageMessageIsVisible().first() }
+        viewModel.scope.launch {
+            waitForAssertTrue { viewModel.lowStorageMessageIsVisible().first() }
+        }
     }
 
     private fun buildViewModel() =
