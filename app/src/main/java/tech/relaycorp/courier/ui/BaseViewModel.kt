@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.plus
 
 abstract class BaseViewModel : ViewModel() {
-    protected val scope = viewModelScope + VIEW_MODEL_DISPATCHER
+    val scope = viewModelScope + VIEW_MODEL_DISPATCHER
 
     companion object {
         @VisibleForTesting
