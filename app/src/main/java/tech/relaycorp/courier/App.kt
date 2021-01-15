@@ -61,10 +61,10 @@ open class App : Application() {
                   Checks disabled:
                   - UntaggedSockets (we aren't able to tag Netty socket threads)
                   - CleartextNetwork (it's considering gRPC over TLS communication as cleartext)
+                  - ActivityLeaks (it's too eager on Android 5, triggering unnecessarily)
                  */
                 StrictMode.VmPolicy.Builder()
                     .detectLeakedSqlLiteObjects()
-                    .detectActivityLeaks()
                     .detectLeakedClosableObjects()
                     .detectLeakedRegistrationObjects()
                     .detectFileUriExposure()
