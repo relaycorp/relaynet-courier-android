@@ -166,7 +166,7 @@ dependencies {
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
     androidTestImplementation "io.grpc:grpc-testing:$grpcVersion"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    androidTestImplementation('com.schibsted.spain:barista:3.7.0') {
+    androidTestImplementation('com.schibsted.spain:barista:3.8.0') {
         exclude group: 'org.jetbrains.kotlin'
     }
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.28'
