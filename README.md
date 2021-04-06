@@ -1,10 +1,10 @@
 <img src="./courier-icon.png" align="right"/>
 
-# Relaynet Courier for Android
+# Awala Courier for Android
 
-This repository contains the source code for the [Relaynet Courier for Android](https://play.google.com/store/apps/details?id=tech.relaycorp.courier). 
-As a Relaynet Courier implementation, its sole function is to relay cargo between Relaynet gateways. 
-To learn more about Relaynet couriers, visit [relaynet.network/couriers](https://relaynet.network/couriers).
+This repository contains the source code for the [Awala Courier for Android](https://play.google.com/store/apps/details?id=tech.relaycorp.courier). 
+As a Awala Courier implementation, its sole function is to relay cargo between Awala gateways. 
+To learn more about Awala couriers, visit [awala.network/couriers](https://awala.network/couriers).
 
 This document is aimed at advanced users and (prospective) contributors. We aim to make the app as 
 simple and intuitive as possible, and we're therefore not planning on publishing end-user 
@@ -26,7 +26,7 @@ such as UI and data. The main components / layers / packages are:
  - `ui` - Presentation logic, organized per screen, and following an [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) pattern
  - `data` - Data persistence logic using preferences, database and disk
  - `background` - Background connect state listeners
- - `cogrpc` - Implementation of the [CogRPC](https://specs.relaynet.network/RS-008) protocol
+ - `cogrpc` - Implementation of the [CogRPC](https://specs.awala.network/RS-008) protocol
 
 Components are tied by dependency injection using [Dagger](https://dagger.dev). 
 Kotlin coroutines and flow are used for threading and reactive design. 

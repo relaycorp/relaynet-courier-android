@@ -2,5 +2,5 @@ plugins {
     id "com.gradle.enterprise" version "3.3.4"
 }
 
-rootProject.name='Relaynet Courier'
+rootProject.name='Awala Courier'
 include ':app'
