@@ -3,7 +3,6 @@ package tech.relaycorp.courier.test
 import android.app.Activity
 import android.content.Intent
 import androidx.test.rule.ActivityTestRule
-import com.schibsted.spain.barista.rule.BaristaRule
 import com.schibsted.spain.barista.rule.cleardata.ClearFilesRule
 import com.schibsted.spain.barista.rule.cleardata.ClearPreferencesRule
 import com.schibsted.spain.barista.rule.flaky.FlakyTestRule
