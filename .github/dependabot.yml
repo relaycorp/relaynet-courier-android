@@ -1,0 +1,50 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "08:00"
+    timezone: Etc/UCT
+  open-pull-requests-limit: 99
+  ignore:
+  - dependency-name: io.grpc:grpc-*
+    versions:
+    - 1.x
+  - dependency-name: io.grpc:grpc-testing
+    versions:
+    - 1.36.1
+  - dependency-name: io.grpc:grpc-stub
+    versions:
+    - 1.36.1
+  - dependency-name: io.grpc:grpc-protobuf
+    versions:
+    - 1.36.1
+  - dependency-name: io.grpc:grpc-netty
+    versions:
+    - 1.36.1
+  - dependency-name: androidx.lifecycle:lifecycle-viewmodel-ktx
+    versions:
+    - 2.3.0
+  - dependency-name: tech.relaycorp:relaynet
+    versions:
+    - 1.44.0
+    - 1.47.0
+    - 1.48.0
+  - dependency-name: com.schibsted.spain:barista
+    versions:
+    - 3.8.0
+  - dependency-name: com.diffplug.spotless:spotless-plugin-gradle
+    versions:
+    - 5.10.1
+    - 5.10.2
+  - dependency-name: com.google.android.material:material
+    versions:
+    - 1.3.0-rc01
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "08:00"
+    timezone: Etc/UCT
+  open-pull-requests-limit: 99
