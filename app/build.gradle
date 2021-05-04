@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.triplet.gradle:play-publisher:3.2.0'
+        classpath 'com.github.triplet.gradle:play-publisher:3.4.0'
         classpath "de.mannodermaus.gradle.plugins:android-junit5:1.7.0.0"
     }
 }
@@ -127,7 +127,7 @@ dependencies {
     // Awala
     implementation 'tech.relaycorp:relaynet:1.42.1'
     implementation 'tech.relaycorp:cogrpc:1.1.7'
-    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.7'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.10'
     implementation 'tech.relaycorp:doh:1.0.1'
 
     // ORM
