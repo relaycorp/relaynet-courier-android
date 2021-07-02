@@ -43,7 +43,7 @@ data class PublicMessageAddress(val publicValue: String) : MessageAddress() {
     @Throws(PublicAddressResolutionException::class)
     suspend fun resolve(doHClient: DoHClient): String {
         val originalURL = URL(publicValue)
-        val srvName = "_rcrc._tcp.${originalURL.host}"
+        val srvName = "_awala-crc._tcp.${originalURL.host}"
         val answer = try {
             doHClient.lookUp(srvName, "SRV")
         } catch (exc: LookupFailureException) {
