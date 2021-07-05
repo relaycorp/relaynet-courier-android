@@ -162,7 +162,7 @@ dependencies {
     testImplementation "io.grpc:grpc-testing:$grpcVersion"
 
     // Instrumentation Testing
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
     androidTestImplementation "io.grpc:grpc-testing:$grpcVersion"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
