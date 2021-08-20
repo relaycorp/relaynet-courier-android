@@ -1,7 +1,7 @@
 package tech.relaycorp.courier.data.preference
 
 import androidx.annotation.VisibleForTesting
-import com.tfcporciuncula.flow.FlowSharedPreferences
+import com.fredporciuncula.flow.preferences.FlowSharedPreferences
 import kotlinx.coroutines.flow.map
 import tech.relaycorp.courier.data.model.StorageSize
 import javax.inject.Inject

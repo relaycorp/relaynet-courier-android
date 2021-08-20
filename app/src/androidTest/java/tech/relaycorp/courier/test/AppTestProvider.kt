@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
-import com.tfcporciuncula.flow.FlowSharedPreferences
+import com.fredporciuncula.flow.preferences.FlowSharedPreferences
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import tech.relaycorp.courier.App
