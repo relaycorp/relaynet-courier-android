@@ -9,7 +9,7 @@ buildscript {
         protobufGradleVersion = '0.8.12'
         nettyVersion = '4.1.59.Final'
         aboutLibsVersion = '8.3.1'
-        junitVersion = '5.7.1'
+        junitVersion = '5.7.2'
     }
     repositories {
         google()
@@ -27,6 +27,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 }
 

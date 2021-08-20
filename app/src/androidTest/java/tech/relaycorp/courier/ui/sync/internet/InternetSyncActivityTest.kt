@@ -1,6 +1,6 @@
 package tech.relaycorp.courier.ui.sync.internet
 
-import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
+import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import org.junit.Rule
 import org.junit.Test
 import tech.relaycorp.courier.R
