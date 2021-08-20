@@ -3,9 +3,9 @@ package tech.relaycorp.courier.test
 import android.app.Activity
 import android.content.Intent
 import androidx.test.rule.ActivityTestRule
-import com.schibsted.spain.barista.rule.cleardata.ClearFilesRule
-import com.schibsted.spain.barista.rule.cleardata.ClearPreferencesRule
-import com.schibsted.spain.barista.rule.flaky.FlakyTestRule
+import com.adevinta.android.barista.rule.cleardata.ClearFilesRule
+import com.adevinta.android.barista.rule.cleardata.ClearPreferencesRule
+import com.adevinta.android.barista.rule.flaky.FlakyTestRule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.Description
