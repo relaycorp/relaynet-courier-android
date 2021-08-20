@@ -127,14 +127,13 @@ dependencies {
     // Awala
     implementation 'tech.relaycorp:awala:1.48.5'
     implementation 'tech.relaycorp:cogrpc:1.1.11'
-    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.10'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.11'
     implementation 'tech.relaycorp:doh:1.0.1'
 
     // ORM
-    def room_version = "2.2.6"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
 
     // Preferences
     implementation 'androidx.preference:preference:1.1.1'
@@ -166,7 +165,7 @@ dependencies {
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
     androidTestImplementation "io.grpc:grpc-testing:$grpcVersion"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    androidTestImplementation('com.schibsted.spain:barista:3.7.0') {
+    androidTestImplementation('com.adevinta.android:barista:4.0.0') {
         exclude group: 'org.jetbrains.kotlin'
     }
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.28'
