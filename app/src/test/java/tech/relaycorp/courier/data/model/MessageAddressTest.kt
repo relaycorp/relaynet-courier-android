@@ -40,7 +40,7 @@ class PublicMessageAddressTest {
         private val originalPublicAddress = "https://$originalHost"
         private val targetHost = "target.example.com"
         private val targetPort = "1357"
-        private val srvRecordName = "_rcrc._tcp.$originalHost"
+        private val srvRecordName = "_awala-crc._tcp.$originalHost"
         private val srvRecordData = "0 1 $targetPort $targetHost."
 
         private val publicAddress = PublicMessageAddress(originalPublicAddress)
