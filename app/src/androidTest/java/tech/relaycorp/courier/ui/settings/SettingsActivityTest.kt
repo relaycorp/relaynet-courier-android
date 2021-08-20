@@ -1,9 +1,9 @@
 package tech.relaycorp.courier.ui.settings
 
 import com.google.android.material.slider.Slider
-import com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled
-import com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled
-import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains
+import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertDisabled
+import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertEnabled
+import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertContains
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking

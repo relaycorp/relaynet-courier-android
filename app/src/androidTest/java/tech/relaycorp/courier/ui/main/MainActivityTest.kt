@@ -1,8 +1,8 @@
 package tech.relaycorp.courier.ui.main
 
-import com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled
-import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains
-import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
+import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertDisabled
+import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertContains
+import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.junit.Before
