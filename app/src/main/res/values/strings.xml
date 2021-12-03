@@ -92,8 +92,7 @@
     <string name="settings_total_storage">Total storage on device</string>
     <string name="settings_clear_data">Clear all user data</string>
     <string name="settings_clear_data_description">
-        You can delete all the data you’re currently transporting to free disk space.
-        Awala keeps backups of in-transit data, so deleting your copies now will simply
+        Awala keeps backups of in-transit data, so deleting your copies will simply
         delay their delivery.
     </string>
     <string name="settings_clear">Clear</string>
