@@ -92,8 +92,9 @@
     <string name="settings_total_storage">Total storage on device</string>
     <string name="settings_clear_data">Clear all user data</string>
     <string name="settings_clear_data_description">
-        Any data lost in transit will eventually reach its destination. It’d just take longer if
-        you delete it now.
+        You can delete all the data you’re currently transporting to free disk space.
+        Awala keeps backups of in-transit data, so deleting your copies now will simply
+        delay their delivery.
     </string>
     <string name="settings_clear">Clear</string>
     <string name="settings_clear_dialog_title">Are you sure?</string>
