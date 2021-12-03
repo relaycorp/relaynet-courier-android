@@ -4,6 +4,7 @@ import com.google.android.material.slider.Slider
 import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertDisabled
 import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertEnabled
 import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertContains
+import com.schibsted.spain.barista.rule.flaky.AllowFlaky
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -38,6 +39,7 @@ class SettingsActivityTest {
     }
 
     @Test
+    @AllowFlaky(attempts = 3)
     fun displaysVersion() {
         testRule.start()
         assertContains(BuildConfig.VERSION_CODE.toString())
@@ -51,6 +53,7 @@ class SettingsActivityTest {
     }
 
     @Test
+    @AllowFlaky(attempts = 3)
     fun clearButtonDisabledWithData() {
         runBlocking {
             storedMessageDao.insert(StoredMessageFactory.build())
