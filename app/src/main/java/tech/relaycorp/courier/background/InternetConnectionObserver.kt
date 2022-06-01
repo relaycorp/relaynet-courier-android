@@ -5,7 +5,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
@@ -26,15 +26,15 @@ class InternetConnectionObserver
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            state.sendBlocking(InternetConnection.Online)
+            state.trySendBlocking(InternetConnection.Online)
         }
 
         override fun onUnavailable() {
-            state.sendBlocking(InternetConnection.Offline)
+            state.trySendBlocking(InternetConnection.Offline)
         }
 
         override fun onLost(network: Network) {
-            state.sendBlocking(InternetConnection.Offline)
+            state.trySendBlocking(InternetConnection.Offline)
         }
     }
 

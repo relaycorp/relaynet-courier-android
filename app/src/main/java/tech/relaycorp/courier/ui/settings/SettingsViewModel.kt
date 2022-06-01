@@ -1,7 +1,7 @@
 package tech.relaycorp.courier.ui.settings
 
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -31,10 +31,10 @@ class SettingsViewModel
     // Inputs
 
     private val deleteDataClicks = PublishChannel<Click>()
-    fun deleteDataClicked() = deleteDataClicks.sendBlocking(Click)
+    fun deleteDataClicked() = deleteDataClicks.trySendBlocking(Click)
 
     private val maxStorageChanged = PublishChannel<StorageSize>()
-    fun maxStorageChanged(value: StorageSize) = maxStorageChanged.sendBlocking(value)
+    fun maxStorageChanged(value: StorageSize) = maxStorageChanged.trySendBlocking(value)
 
     // Outputs
 
