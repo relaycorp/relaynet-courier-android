@@ -125,7 +125,7 @@ dependencies {
 
     // Awala
     implementation 'tech.relaycorp:awala:1.65.0'
-    implementation 'tech.relaycorp:cogrpc:1.1.24'
+    implementation 'tech.relaycorp:cogrpc:1.1.25'
     implementation 'tech.relaycorp:cogrpc-okhttp:1.1.12'
     implementation 'tech.relaycorp:doh:1.0.10'
 
@@ -136,7 +136,7 @@ dependencies {
 
     // Preferences
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.github.tfcporciuncula:flow-preferences:1.3.4' 
+    implementation 'com.github.tfcporciuncula:flow-preferences:1.3.4'
 
     // gRPC
     implementation "io.grpc:grpc-netty:$grpcVersion"

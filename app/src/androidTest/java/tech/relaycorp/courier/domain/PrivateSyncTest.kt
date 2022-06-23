@@ -56,9 +56,10 @@ class PrivateSyncTest {
     }
 
     private val client by lazy {
-        MetadataUtils.attachHeaders(
-            CargoRelayGrpc.newStub(clientChannel),
-            AuthorizationMetadata.makeMetadata("CCA".toByteArray())
+        CargoRelayGrpc.newStub(clientChannel).withInterceptors(
+            MetadataUtils.newAttachHeadersInterceptor(
+                AuthorizationMetadata.makeMetadata("CCA".toByteArray())
+            )
         )
     }
 }
