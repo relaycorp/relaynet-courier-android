@@ -125,7 +125,7 @@ dependencies {
 
     // Awala
     implementation 'tech.relaycorp:awala:1.65.0'
-    implementation 'tech.relaycorp:cogrpc:1.1.11'
+    implementation 'tech.relaycorp:cogrpc:1.1.24'
     implementation 'tech.relaycorp:cogrpc-okhttp:1.1.12'
     implementation 'tech.relaycorp:doh:1.0.10'
 
