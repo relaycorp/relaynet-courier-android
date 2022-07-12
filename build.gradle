@@ -5,7 +5,7 @@ buildscript {
         kotlinVersion = '1.6.21'
         kotlinCoroutinesVersion = '1.6.2'
         grpcVersion = '1.47.0'
-        protobufVersion = '3.21.1'
+        protobufVersion = '3.21.2'
         protobufGradleVersion = '0.8.18'
         nettyVersion = '4.1.77.Final'
         aboutLibsVersion = '8.6.3'
