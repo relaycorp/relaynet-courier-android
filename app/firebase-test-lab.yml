@@ -4,8 +4,8 @@ spec:
   test: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
   timeout: 30m
   device:
-    # Huawei ALE-L23 (physical). The oldest device we're testing.
-    - model: hwALE-H
+    # Nexus 4 (virtual)
+    - model: Nexus4
       version: 21   # Android 5.0
       locale: en
       orientation: portrait
