@@ -4,8 +4,8 @@ spec:
   test: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
   timeout: 30m
   device:
-    # Asus Nexus 7 (physical). The oldest device we're testing.
-    - model: flo
+    # Nexus 4 (virtual)
+    - model: Nexus4
       version: 21   # Android 5.0
       locale: en
       orientation: portrait
@@ -28,8 +28,8 @@ spec:
       locale: en
       orientation: portrait
 
-    # Pixel 2 (physical)
-    - model: walleye
+    # LG LM-Q910 (physical)
+    - model: phoenix_sprout
       version: 28   # Android 9.0
       locale: en
       orientation: portrait
