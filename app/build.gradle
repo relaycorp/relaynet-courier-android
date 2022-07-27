@@ -136,7 +136,7 @@ dependencies {
 
     // Preferences
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.github.tfcporciuncula:flow-preferences:1.3.4'
+    implementation 'com.github.tfcporciuncula:flow-preferences:1.4.0'
 
     // gRPC
     implementation "io.grpc:grpc-netty:$grpcVersion"
