@@ -124,7 +124,7 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.42'
 
     // Awala
-    implementation 'tech.relaycorp:awala:1.65.0'
+    implementation 'tech.relaycorp:awala:1.65.3'
     implementation 'tech.relaycorp:cogrpc:1.1.27'
     implementation 'tech.relaycorp:cogrpc-okhttp:1.1.15'
     implementation 'tech.relaycorp:doh:1.0.10'
@@ -155,7 +155,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
-    testImplementation 'org.mockito:mockito-inline:4.6.0'
+    testImplementation 'org.mockito:mockito-inline:4.6.1'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation "io.grpc:grpc-testing:$grpcVersion"
 
