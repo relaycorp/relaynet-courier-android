@@ -3,7 +3,7 @@
 buildscript {
     ext {
         kotlinVersion = '1.6.21'
-        kotlinCoroutinesVersion = '1.6.2'
+        kotlinCoroutinesVersion = '1.6.4'
         grpcVersion = '1.48.0'
         protobufVersion = '3.21.2'
         protobufGradleVersion = '0.8.18'
