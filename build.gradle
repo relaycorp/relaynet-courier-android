@@ -9,7 +9,7 @@ buildscript {
         protobufGradleVersion = '0.8.18'
         nettyVersion = '4.1.77.Final'
         aboutLibsVersion = '8.6.3'
-        junitVersion = '5.8.2'
+        junitVersion = '5.9.0'
         roomVersion = '2.4.0-beta02'
     }
     repositories {
