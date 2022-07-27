@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.triplet.gradle:play-publisher:3.4.0'
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.7.0.0"
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.8.2.1"
     }
 }
 
@@ -113,10 +113,10 @@ dependencies {
 
     // Android
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
 
     // Dependency Injection
@@ -124,7 +124,7 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.42'
 
     // Awala
-    implementation 'tech.relaycorp:awala:1.65.0'
+    implementation 'tech.relaycorp:awala:1.65.3'
     implementation 'tech.relaycorp:cogrpc:1.1.27'
     implementation 'tech.relaycorp:cogrpc-okhttp:1.1.15'
     implementation 'tech.relaycorp:doh:1.0.10'
@@ -155,7 +155,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
-    testImplementation 'org.mockito:mockito-inline:4.6.0'
+    testImplementation 'org.mockito:mockito-inline:4.6.1'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation "io.grpc:grpc-testing:$grpcVersion"
 
