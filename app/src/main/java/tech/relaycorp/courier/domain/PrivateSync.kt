@@ -1,6 +1,6 @@
 package tech.relaycorp.courier.domain
 
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import tech.relaycorp.cogrpc.server.CogRPCServer
 import tech.relaycorp.courier.common.BehaviorChannel
@@ -23,14 +23,14 @@ class PrivateSync
 
         state.send(State.Starting)
         cogRPCServer.start(service) {
-            state.sendBlocking(State.Error)
+            state.trySendBlocking(State.Error)
         }
         if (state.value == State.Starting) state.send(State.Syncing)
     }
 
     fun stopSync() {
         cogRPCServer.stop()
-        state.sendBlocking(State.Stopped)
+        state.trySendBlocking(State.Stopped)
     }
 
     enum class State {

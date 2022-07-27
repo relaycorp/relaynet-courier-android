@@ -28,14 +28,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 32
     ndkVersion '21.3.6528147'
 
     defaultConfig {
         applicationId "tech.relaycorp.courier"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 1
         versionName project.findProperty("versionName") ?: "0.1"
 
@@ -106,29 +105,29 @@ android {
 
 dependencies {
     // Java 8
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
 
     // Android
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
 
     // Dependency Injection
-    api 'com.google.dagger:dagger:2.37'
-    kapt 'com.google.dagger:dagger-compiler:2.28.1'
+    api 'com.google.dagger:dagger:2.42'
+    kapt 'com.google.dagger:dagger-compiler:2.42'
 
     // Awala
-    implementation 'tech.relaycorp:awala:1.48.5'
-    implementation 'tech.relaycorp:cogrpc:1.1.11'
-    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.10'
-    implementation 'tech.relaycorp:doh:1.0.1'
+    implementation 'tech.relaycorp:awala:1.65.0'
+    implementation 'tech.relaycorp:cogrpc:1.1.27'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.15'
+    implementation 'tech.relaycorp:doh:1.0.10'
 
     // ORM
     implementation "androidx.room:room-runtime:$roomVersion"
@@ -137,7 +136,7 @@ dependencies {
 
     // Preferences
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.github.tfcporciuncula:flow-preferences:1.1.0'
+    implementation 'com.github.tfcporciuncula:flow-preferences:1.3.4'
 
     // gRPC
     implementation "io.grpc:grpc-netty:$grpcVersion"
@@ -147,7 +146,7 @@ dependencies {
     // Android TLS support for Netty
     implementation "io.netty:netty-handler:$nettyVersion"
     implementation 'org.conscrypt:conscrypt-android:2.5.2'
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.67'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
 
     // Display open-source licenses
     implementation "com.mikepenz:aboutlibraries:$aboutLibsVersion"
@@ -156,24 +155,25 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
-    testImplementation 'org.mockito:mockito-inline:3.7.7'
+    testImplementation 'org.mockito:mockito-inline:4.6.0'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation "io.grpc:grpc-testing:$grpcVersion"
 
     // Instrumentation Testing
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
     androidTestImplementation "io.grpc:grpc-testing:$grpcVersion"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    androidTestImplementation('com.adevinta.android:barista:4.0.0') {
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation('com.adevinta.android:barista:4.2.0') {
         exclude group: 'org.jetbrains.kotlin'
     }
-    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.28'
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.42'
 }
 
 spotless {
     kotlin {
-        ktlint('0.36.0').userData(['disabled_rules': 'import-ordering'])
+        ktlint('0.43.2').userData(['disabled_rules': 'import-ordering'])
         target '**/*.kt'
     }
 }

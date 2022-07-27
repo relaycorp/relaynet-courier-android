@@ -1,6 +1,6 @@
 package tech.relaycorp.courier.ui.sync.people
 
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
@@ -26,10 +26,10 @@ class PeopleSyncViewModel
 
     // Inputs
 
-    fun stopClicked() = stopClicks.sendBlocking(Click)
+    fun stopClicked() = stopClicks.trySendBlocking(Click)
     private val stopClicks = PublishChannel<Click>()
 
-    fun confirmStopClicked() = confirmStopClicks.sendBlocking(Click)
+    fun confirmStopClicked() = confirmStopClicks.trySendBlocking(Click)
     private val confirmStopClicks = PublishChannel<Click>()
 
     // Outputs

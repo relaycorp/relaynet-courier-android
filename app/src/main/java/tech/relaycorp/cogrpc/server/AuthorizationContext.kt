@@ -9,7 +9,7 @@ import tech.relaycorp.relaynet.cogrpc.AuthorizationMetadata
 
 internal object AuthorizationContext {
     // Context values are bound to the current thread
-    internal val contextKey = Context.key<ByteArray>("Authorization")
+    internal val contextKey: Context.Key<ByteArray> = Context.key("Authorization")
 
     internal val interceptor by lazy {
         object : ServerInterceptor {

@@ -2,13 +2,14 @@ package tech.relaycorp.courier.data.database
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.test.AppTestProvider.database
+import tech.relaycorp.courier.test.AppTestProvider.testDispatcher
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import java.util.Date
 
@@ -23,7 +24,7 @@ class StoredMessageDaoTest {
     }
 
     @Test
-    fun insertAndGet() = runBlockingTest {
+    fun insertAndGet() = runTest(testDispatcher) {
         val messages = StoredMessageFactory.build()
         storedMessageDao.insert(messages)
         assertEquals(
@@ -33,7 +34,7 @@ class StoredMessageDaoTest {
     }
 
     @Test
-    fun observeTotalSize() = runBlockingTest {
+    fun observeTotalSize() = runTest(testDispatcher) {
         assertEquals(
             StorageSize.ZERO,
             storedMessageDao.observeTotalSize().first()
@@ -43,6 +44,7 @@ class StoredMessageDaoTest {
             (1..3)
                 .map { StoredMessageFactory.build() }
                 .also { it.map { c -> storedMessageDao.insert(c) } }
+
         assertEquals(
             messages.map { it.size.bytes }.sum(),
             storedMessageDao.observeTotalSize().first().bytes
@@ -50,7 +52,7 @@ class StoredMessageDaoTest {
     }
 
     @Test
-    fun getExpiredBy() = runBlockingTest {
+    fun getExpiredBy() = runTest(testDispatcher) {
         val date = Date()
         val expiredMessage = StoredMessageFactory.build()
             .copy(expirationTimeUtc = Date(date.time - 1))

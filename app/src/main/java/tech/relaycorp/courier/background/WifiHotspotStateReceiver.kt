@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import tech.relaycorp.courier.common.BehaviorChannel
@@ -35,7 +35,7 @@ class WifiHotspotStateReceiver
 
         val stateFlag = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)
         logger.info("Wifi State $stateFlag")
-        state.sendBlocking(
+        state.trySendBlocking(
             if (stateFlag == WIFI_AP_STATE_ENABLED) {
                 WifiHotspotState.Enabled
             } else {

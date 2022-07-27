@@ -1,6 +1,6 @@
 package tech.relaycorp.courier.ui.sync.internet
 
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,7 +20,7 @@ class InternetSyncViewModel
 
     // Inputs
 
-    fun stopClicked() = stopClicks.sendBlocking(Click)
+    fun stopClicked() = stopClicks.trySendBlocking(Click)
     private val stopClicks = PublishChannel<Click>()
 
     // Outputs

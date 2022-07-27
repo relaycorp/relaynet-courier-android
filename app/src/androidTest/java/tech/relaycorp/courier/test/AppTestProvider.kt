@@ -31,5 +31,5 @@ object AppTestProvider {
     val flowSharedPreferences
         get() = FlowSharedPreferences(PreferenceManager.getDefaultSharedPreferences(context), testDispatcher)
 
-    private val testDispatcher by lazy { TestCoroutineDispatcher() }
+    val testDispatcher by lazy { TestCoroutineDispatcher() }
 }
