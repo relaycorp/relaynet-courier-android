@@ -49,5 +49,4 @@ jobs:
       android_keystore_password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       android_key_alias: ${{ secrets.ANDROID_KEYSTORE_KEY_NAME }}
       android_key_password: ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       android_publisher_credentials: ${{ secrets.PUBLISHER_GCP_SERVICE_ACCOUNT }}
