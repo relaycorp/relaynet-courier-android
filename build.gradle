@@ -20,7 +20,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.7.2'
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.9.0'
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$aboutLibsVersion"
         classpath 'com.github.triplet.gradle:play-publisher:3.7.0'
     }
