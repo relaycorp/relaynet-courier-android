@@ -120,8 +120,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
 
     // Dependency Injection
-    api 'com.google.dagger:dagger:2.43'
-    kapt 'com.google.dagger:dagger-compiler:2.42'
+    api 'com.google.dagger:dagger:2.43.1'
+    kapt 'com.google.dagger:dagger-compiler:2.43.1'
 
     // Awala
     implementation 'tech.relaycorp:awala:1.65.3'
