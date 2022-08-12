@@ -1,23 +1,19 @@
 package tech.relaycorp.courier.domain.client
 
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.flow.collect
+import java.util.logging.Level
+import javax.inject.Inject
 import tech.relaycorp.cogrpc.okhttp.OkHTTPChannelBuilderProvider
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
-import tech.relaycorp.courier.data.model.MessageAddress
+import tech.relaycorp.courier.data.model.GatewayType
 import tech.relaycorp.courier.data.model.MessageType
-import tech.relaycorp.courier.data.model.PublicAddressResolutionException
-import tech.relaycorp.courier.data.model.PublicMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
-import tech.relaycorp.doh.DoHClient
 import tech.relaycorp.relaynet.CargoDeliveryRequest
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
-import java.util.logging.Level
-import javax.inject.Inject
 
 class CargoDelivery
 @Inject constructor(
@@ -27,25 +23,25 @@ class CargoDelivery
     private val deleteMessage: DeleteMessage
 ) {
 
-    suspend fun deliver(dohClient: DoHClient) {
+    suspend fun deliver(resolver: InternetAddressResolver) {
         getCargoesToDeliver()
             .groupByRecipient()
             .forEach { (recipientAddress, cargoes) ->
                 try {
-                    deliverToRecipient(recipientAddress as PublicMessageAddress, cargoes, dohClient)
+                    deliverToRecipient(recipientAddress, cargoes, resolver)
                 } catch (e: IncompleteDeliveryException) {
                     logger.log(Level.WARNING, "Server failed to acknowledge one or more cargoes")
                 } catch (e: CogRPCClient.CogRPCException) {
                     logger.log(Level.WARNING, "Cargo delivery error", e)
-                } catch (e: PublicAddressResolutionException) {
-                    logger.log(Level.WARNING, "Failed to resolve ${recipientAddress.value}", e)
+                } catch (e: InternetAddressResolutionException) {
+                    logger.log(Level.WARNING, "Failed to resolve $recipientAddress", e)
                 }
             }
     }
 
     private suspend fun getCargoesToDeliver() =
         storedMessageDao.getByRecipientTypeAndMessageType(
-            MessageAddress.Type.Public,
+            GatewayType.Internet,
             MessageType.Cargo
         )
 
@@ -55,15 +51,15 @@ class CargoDelivery
     @Throws(IncompleteDeliveryException::class, CogRPCClient.CogRPCException::class)
     @VisibleForTesting
     internal suspend fun deliverToRecipient(
-        recipientAddress: PublicMessageAddress,
+        recipientAddress: String,
         cargoes: List<StoredMessage>,
-        dohClient: DoHClient
+        resolver: InternetAddressResolver
     ) {
         val cargoesWithId =
             cargoes.map { StoredMessage.generateLocalId() to it }.toMap().toMutableMap()
         val requests = cargoesWithId.toRequests()
         val client = clientBuilder.build(
-            recipientAddress.resolve(dohClient),
+            resolver.resolve(recipientAddress),
             OkHTTPChannelBuilderProvider.Companion::makeBuilder
         )
         try {
