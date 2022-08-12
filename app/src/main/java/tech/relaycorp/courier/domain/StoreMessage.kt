@@ -1,12 +1,14 @@
 package tech.relaycorp.courier.domain
 
+import java.io.InputStream
+import java.util.Date
+import javax.inject.Inject
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
-import tech.relaycorp.courier.data.model.MessageAddress
+import tech.relaycorp.courier.data.model.GatewayType
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
-import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.relaynet.cogrpc.readBytesAndClose
@@ -14,10 +16,6 @@ import tech.relaycorp.relaynet.messages.Cargo
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
 import tech.relaycorp.relaynet.ramf.RAMFException
 import tech.relaycorp.relaynet.ramf.RAMFMessage
-import tech.relaycorp.relaynet.ramf.RecipientAddressType
-import java.io.InputStream
-import java.util.Date
-import javax.inject.Inject
 
 class StoreMessage
 @Inject constructor(
@@ -26,7 +24,7 @@ class StoreMessage
     private val getStorageUsage: GetStorageUsage
 ) {
 
-    suspend fun storeCargo(cargoInputStream: InputStream): Result {
+    suspend fun storeCargo(cargoInputStream: InputStream, recipientType: GatewayType): Result {
         val cargoBytes = cargoInputStream.readBytesAndClose()
         val cargo = try {
             Cargo.deserialize(cargoBytes)
@@ -42,7 +40,7 @@ class StoreMessage
             return Result.Error.Invalid
         }
 
-        return storeMessage(MessageType.Cargo, cargo, cargoBytes)
+        return storeMessage(MessageType.Cargo, cargo, cargoBytes, recipientType)
     }
 
     suspend fun storeCCA(ccaSerialized: ByteArray): Result {
@@ -54,25 +52,32 @@ class StoreMessage
         }
 
         try {
-            cca.validate(RecipientAddressType.PUBLIC)
+            cca.validate()
         } catch (exc: RAMFException) {
             logger.warning("Invalid CCA received: ${exc.message}")
             return Result.Error.Invalid
         }
 
-        return storeMessage(MessageType.CCA, cca, ccaSerialized)
+        return storeMessage(MessageType.CCA, cca, ccaSerialized, GatewayType.Internet)
     }
 
     private suspend fun storeMessage(
         type: MessageType,
         message: RAMFMessage<*>,
-        data: ByteArray
+        data: ByteArray,
+        recipientType: GatewayType,
     ): Result {
         val dataSize = StorageSize(data.size.toLong())
         if (!checkForAvailableSpace(dataSize)) return Result.Error.NoSpaceAvailable
 
+        val recipientAddress = if (recipientType == GatewayType.Internet)
+            message.recipient.internetAddress ?: return Result.Error.Invalid
+        else
+            message.recipient.id
+
         val storagePath = diskRepository.writeMessage(data)
-        val storedMessage = message.toStoredMessage(type, storagePath, dataSize)
+        val storedMessage =
+            message.toStoredMessage(type, storagePath, dataSize, recipientAddress, recipientType)
         storedMessageDao.insert(storedMessage)
         return Result.Success(storedMessage)
     }
@@ -83,13 +88,14 @@ class StoreMessage
     private fun RAMFMessage<*>.toStoredMessage(
         type: MessageType,
         storagePath: String,
-        dataSize: StorageSize
+        dataSize: StorageSize,
+        recipientAddress: String,
+        recipientType: GatewayType,
     ): StoredMessage {
-        val recipientAddress = MessageAddress.of(recipientAddress)
         return StoredMessage(
-            recipientAddress = recipientAddress,
-            recipientType = recipientAddress.type,
-            senderAddress = PrivateMessageAddress(senderCertificate.subjectPrivateAddress),
+            recipientAddress,
+            recipientType,
+            senderId = senderCertificate.subjectId,
             messageId = MessageId(id),
             messageType = type,
             creationTimeUtc = Date.from(creationDate.toInstant()),
