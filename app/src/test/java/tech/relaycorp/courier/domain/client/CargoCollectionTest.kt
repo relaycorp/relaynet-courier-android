@@ -36,7 +36,7 @@ internal class CargoCollectionTest {
     private val resolver = mock<InternetAddressResolver>()
 
     private val internetGatewayAddress = "example.com"
-    private val publicGatewayTargetURL = "https://cogrpc.example.com:443"
+    private val internetGatewayTargetURL = "https://cogrpc.example.com:443"
 
     private val cca = StoredMessageFactory.build(
         Recipient(KeyPairSet.INTERNET_GW.public.nodeId, internetGatewayAddress),
@@ -48,9 +48,9 @@ internal class CargoCollectionTest {
 
     @BeforeEach
     internal fun setUp() = runTest {
-        whenever(resolver.resolve(internetGatewayAddress)).thenReturn(publicGatewayTargetURL)
+        whenever(resolver.resolve(internetGatewayAddress)).thenReturn(internetGatewayTargetURL)
 
-        whenever(clientBuilder.build(eq(publicGatewayTargetURL), any(), any())).thenReturn(client)
+        whenever(clientBuilder.build(eq(internetGatewayTargetURL), any(), any())).thenReturn(client)
         whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
     }
 

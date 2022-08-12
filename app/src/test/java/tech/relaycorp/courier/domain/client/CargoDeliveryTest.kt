@@ -37,7 +37,7 @@ internal class CargoDeliveryTest {
     private val resolver = mock<InternetAddressResolver>()
 
     private val internetGatewayAddress = "example.com"
-    private val publicGatewayTargetURL = "https://cogrpc.example.com:443"
+    private val internetGatewayTargetURL = "https://cogrpc.example.com:443"
 
     private val cargo = StoredMessageFactory.build(
         Recipient(KeyPairSet.INTERNET_GW.public.nodeId, internetGatewayAddress),
@@ -49,9 +49,9 @@ internal class CargoDeliveryTest {
 
     @BeforeEach
     internal fun setUp() = runTest {
-        whenever(resolver.resolve(internetGatewayAddress)).thenReturn(publicGatewayTargetURL)
+        whenever(resolver.resolve(internetGatewayAddress)).thenReturn(internetGatewayTargetURL)
 
-        whenever(clientBuilder.build(eq(publicGatewayTargetURL), any(), any())).thenReturn(client)
+        whenever(clientBuilder.build(eq(internetGatewayTargetURL), any(), any())).thenReturn(client)
         whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
     }
 
@@ -122,7 +122,7 @@ internal class CargoDeliveryTest {
     @Test
     fun `deliver to multiple recipients even if one fails`() = runTest {
         val internetGatewayAddress2 = "other.$internetGatewayAddress"
-        whenever(resolver.resolve(internetGatewayAddress2)).thenReturn(publicGatewayTargetURL)
+        whenever(resolver.resolve(internetGatewayAddress2)).thenReturn(internetGatewayTargetURL)
         val cargo2 = cargo.copy(recipientAddress = internetGatewayAddress2)
         whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
             .thenReturn(listOf(cargo, cargo2))
