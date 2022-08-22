@@ -121,7 +121,7 @@ dependencies {
 
     // Dependency Injection
     api 'com.google.dagger:dagger:2.43.2'
-    kapt 'com.google.dagger:dagger-compiler:2.43.1'
+    kapt 'com.google.dagger:dagger-compiler:2.43.2'
 
     // Awala
     implementation 'tech.relaycorp:awala:1.66.1'
@@ -169,7 +169,7 @@ dependencies {
     androidTestImplementation('com.adevinta.android:barista:4.2.0') {
         exclude group: 'org.jetbrains.kotlin'
     }
-    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.42'
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.43.2'
 }
 
 spotless {
