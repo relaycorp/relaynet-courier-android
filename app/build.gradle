@@ -124,7 +124,7 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.43.2'
 
     // Awala
-    implementation 'tech.relaycorp:awala:1.66.1'
+    implementation 'tech.relaycorp:awala:1.66.3'
     implementation 'tech.relaycorp:cogrpc:1.1.27'
     implementation 'tech.relaycorp:cogrpc-okhttp:1.1.15'
     implementation 'tech.relaycorp:doh:1.0.13'
