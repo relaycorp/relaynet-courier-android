@@ -28,13 +28,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     ndkVersion '21.3.6528147'
 
     defaultConfig {
         applicationId "tech.relaycorp.courier"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName project.findProperty("versionName") ?: "0.1"
 
