@@ -8,7 +8,6 @@ import android.net.wifi.WifiManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -25,7 +24,7 @@ import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
 
 @Singleton
-class WifiHotspotStateReceiver
+class WifiHotspotStateWatcher
 @Inject constructor(
     private val context: Context
 ) {
@@ -33,10 +32,9 @@ class WifiHotspotStateReceiver
     private val state = BehaviorChannel(WifiHotspotState.Disabled)
     fun state() = state.asFlow().distinctUntilChanged()
 
-    private val coroutineContext = SupervisorJob() + Dispatchers.IO
     private var pollingGatewayAddressesJob: Job? = null
 
-    fun register() {
+    fun start() {
         if (isWifiApStateChangeAvailable) {
             context.registerReceiver(
                 wifiApStateChangeReceiver,
@@ -47,7 +45,7 @@ class WifiHotspotStateReceiver
         }
     }
 
-    fun unregister() {
+    fun stop() {
         if (isWifiApStateChangeAvailable) {
             context.unregisterReceiver(wifiApStateChangeReceiver)
         } else {
@@ -56,7 +54,7 @@ class WifiHotspotStateReceiver
     }
 
     private fun startPollingGatewayAddresses() {
-        pollingGatewayAddressesJob = tickerFlow(delayDuration)
+        pollingGatewayAddressesJob = tickerFlow(POLLING_GATEWAY_ADDRESS_INTERVAL)
             .map {
                 try {
                     Networking.getGatewayIpAddress()
@@ -65,33 +63,33 @@ class WifiHotspotStateReceiver
                     WifiHotspotState.Disabled
                 }
             }
-            .distinctUntilChanged { oldWifiHotspotState, newWifiHotspotState ->
-                oldWifiHotspotState == newWifiHotspotState
-            }
+            .distinctUntilChanged()
             .onEach {
                 logger.info("Hotspot State $it")
                 state.send(it)
             }
-            .launchIn(CoroutineScope(coroutineContext))
+            .launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     private fun stopPollingGatewayAddresses() {
         pollingGatewayAddressesJob?.cancel()
     }
 
-    private val wifiApStateChangeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != WIFI_AP_STATE_CHANGED_ACTION) return
+    private val wifiApStateChangeReceiver by lazy {
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (intent.action != WIFI_AP_STATE_CHANGED_ACTION) return
 
-            val stateFlag = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)
-            logger.info("Wifi State $stateFlag")
-            state.trySendBlocking(
-                if (stateFlag == WIFI_AP_STATE_ENABLED) {
-                    WifiHotspotState.Enabled
-                } else {
-                    WifiHotspotState.Disabled
-                }
-            )
+                val stateFlag = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)
+                logger.info("Wifi State $stateFlag")
+                state.trySendBlocking(
+                    if (stateFlag == WIFI_AP_STATE_ENABLED) {
+                        WifiHotspotState.Enabled
+                    } else {
+                        WifiHotspotState.Disabled
+                    }
+                )
+            }
         }
     }
 
@@ -99,10 +97,10 @@ class WifiHotspotStateReceiver
         // From WifiManager documentation
         private const val WIFI_AP_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_AP_STATE_CHANGED"
         private const val WIFI_AP_STATE_ENABLED = 13
+
+        private val POLLING_GATEWAY_ADDRESS_INTERVAL = 2.seconds
     }
 
     private val isWifiApStateChangeAvailable =
         android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU
-
-    private val delayDuration = 2.seconds
 }
