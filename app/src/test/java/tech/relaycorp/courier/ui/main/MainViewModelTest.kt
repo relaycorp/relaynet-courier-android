@@ -37,7 +37,7 @@ internal class MainViewModelTest {
     @BeforeEach
     internal fun setUp() {
         whenever(connectionObserver.observe()).thenReturn(emptyFlow())
-        whenever(hotspotStateReceiver.state()).thenReturn(emptyFlow())
+        whenever(hotspotStateReceiver.state()).thenReturn(MutableStateFlow(WifiHotspotState.Disabled))
         whenever(getStorageUsage.observe()).thenReturn(emptyFlow())
         whenever(observeCCACount.observe()).thenReturn(emptyFlow())
     }
@@ -45,7 +45,7 @@ internal class MainViewModelTest {
     @Test
     internal fun syncPeopleState() = runBlockingTest {
         val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
-        whenever(hotspotStateReceiver.state()).thenReturn(flowOf(WifiHotspotState.Disabled))
+        whenever(hotspotStateReceiver.state()).thenReturn(MutableStateFlow(WifiHotspotState.Disabled))
         whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
         val viewModel = buildViewModel()
 
