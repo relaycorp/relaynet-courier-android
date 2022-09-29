@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,18 +16,23 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.cogrpc.server.GatewayIPAddressException
-import tech.relaycorp.cogrpc.server.Networking
+import tech.relaycorp.courier.AppModule.WifiApStateAvailability
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.common.tickerFlow
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class WifiHotspotStateWatcher
 @Inject constructor(
     private val context: Context,
-    private val foregroundAppMonitor: ForegroundAppMonitor
+    private val wifiApState: WifiApStateAvailability,
+    private val foregroundAppMonitor: ForegroundAppMonitor,
+    @Named("GetGatewayIpAddress") private val getGatewayIpAddress: () -> String,
+    @Named("BackgroundCoroutineContext") private val backgroundCoroutineContext: CoroutineContext
 ) {
 
     private val state = MutableStateFlow(WifiHotspotState.Disabled)
@@ -37,21 +41,27 @@ class WifiHotspotStateWatcher
     private var pollingGatewayAddressesJob: Job? = null
 
     fun start() {
-        if (isWifiApStateChangeAvailable) {
-            context.registerReceiver(
-                wifiApStateChangeReceiver,
-                IntentFilter(WIFI_AP_STATE_CHANGED_ACTION)
-            )
-        } else {
-            startPollingGatewayAddresses()
+        when (wifiApState) {
+            WifiApStateAvailability.Available -> {
+                context.registerReceiver(
+                    wifiApStateChangeReceiver,
+                    IntentFilter(WIFI_AP_STATE_CHANGED_ACTION)
+                )
+            }
+            WifiApStateAvailability.Unavailable -> {
+                startPollingGatewayAddresses()
+            }
         }
     }
 
     fun stop() {
-        if (isWifiApStateChangeAvailable) {
-            context.unregisterReceiver(wifiApStateChangeReceiver)
-        } else {
-            stopPollingGatewayAddresses()
+        when (wifiApState) {
+            WifiApStateAvailability.Available -> {
+                context.unregisterReceiver(wifiApStateChangeReceiver)
+            }
+            WifiApStateAvailability.Unavailable -> {
+                stopPollingGatewayAddresses()
+            }
         }
     }
 
@@ -65,7 +75,7 @@ class WifiHotspotStateWatcher
                 }
             }.map {
                 try {
-                    Networking.getGatewayIpAddress()
+                    getGatewayIpAddress()
                     WifiHotspotState.Enabled
                 } catch (exception: GatewayIPAddressException) {
                     WifiHotspotState.Disabled
@@ -76,7 +86,7 @@ class WifiHotspotStateWatcher
                 logger.info("Hotspot State $it")
                 state.value = it
             }
-            .launchIn(CoroutineScope(Dispatchers.IO))
+            .launchIn(CoroutineScope(backgroundCoroutineContext))
     }
 
     private fun stopPollingGatewayAddresses() {
@@ -108,7 +118,4 @@ class WifiHotspotStateWatcher
 
         private val POLLING_GATEWAY_ADDRESS_INTERVAL = 2.seconds
     }
-
-    private val isWifiApStateChangeAvailable =
-        android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU
 }
