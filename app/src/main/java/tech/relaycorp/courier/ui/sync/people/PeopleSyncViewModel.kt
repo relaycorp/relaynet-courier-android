@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import tech.relaycorp.courier.background.WifiHotspotState
-import tech.relaycorp.courier.background.WifiHotspotStateReceiver
+import tech.relaycorp.courier.background.WifiHotspotStateWatcher
 import tech.relaycorp.courier.common.BehaviorChannel
 import tech.relaycorp.courier.common.PublishChannel
 import tech.relaycorp.courier.domain.PrivateSync
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class PeopleSyncViewModel
 @Inject constructor(
     private val privateSync: PrivateSync,
-    wifiHotspotStateReceiver: WifiHotspotStateReceiver
+    wifiHotspotStateWatcher: WifiHotspotStateWatcher
 ) : BaseViewModel() {
 
     // Inputs
@@ -49,7 +49,7 @@ class PeopleSyncViewModel
     private var hadFirstClient = false
 
     init {
-        wifiHotspotStateReceiver
+        wifiHotspotStateWatcher
             .state()
             .take(1)
             .onEach {
@@ -63,7 +63,7 @@ class PeopleSyncViewModel
             }
             .launchIn(scope)
 
-        wifiHotspotStateReceiver
+        wifiHotspotStateWatcher
             .state()
             .drop(1)
             .filter { it == WifiHotspotState.Disabled }
