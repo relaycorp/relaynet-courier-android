@@ -181,9 +181,9 @@ spotless {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions.freeCompilerArgs += [
-            '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
-            '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
-            '-Xuse-experimental=kotlin.time.ExperimentalTime'
+            '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
+            '-opt-in=kotlinx.coroutines.FlowPreview',
+            '-opt-in=kotlin.time.ExperimentalTime'
     ]
 }
 
