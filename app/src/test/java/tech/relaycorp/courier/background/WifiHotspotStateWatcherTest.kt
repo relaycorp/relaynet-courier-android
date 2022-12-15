@@ -11,13 +11,14 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import tech.relaycorp.cogrpc.server.GatewayIPAddressException
 import tech.relaycorp.courier.AppModule
+import tech.relaycorp.courier.domain.server.GetGatewayState
+import tech.relaycorp.courier.domain.server.GetGatewayState.GatewayState
 
 class WifiHotspotStateWatcherTest {
     private val context = mock<Context>()
     private val foregroundAppMonitor = mock<ForegroundAppMonitor>()
-    private val getGatewayIpAddress = mock<() -> String>()
+    private val getGatewayIpAddress = mock<GetGatewayState>()
     private val testCoroutineScope = TestCoroutineScope()
 
     private val wifiHotspotStateWatcher = WifiHotspotStateWatcher(
@@ -39,6 +40,7 @@ class WifiHotspotStateWatcherTest {
     @Test
     fun foregroundPollingCheck() = runBlockingTest(testCoroutineScope.coroutineContext) {
         whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
+        whenever(getGatewayIpAddress.invoke()).thenReturn(GatewayState.Available)
         wifiHotspotStateWatcher.start()
 
         verify(getGatewayIpAddress).invoke()
@@ -48,7 +50,7 @@ class WifiHotspotStateWatcherTest {
     @Test
     fun hotspotDisabledCheck() = runBlockingTest(testCoroutineScope.coroutineContext) {
         whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
-        whenever(getGatewayIpAddress.invoke()).thenAnswer { throw GatewayIPAddressException("") }
+        whenever(getGatewayIpAddress.invoke()).thenReturn(GatewayState.Unavailable)
         wifiHotspotStateWatcher.start()
         val hotspotState = wifiHotspotStateWatcher.state().first()
 
@@ -59,7 +61,7 @@ class WifiHotspotStateWatcherTest {
     @Test
     fun hotspotEnabledCheck() = runBlockingTest(testCoroutineScope.coroutineContext) {
         whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
-        whenever(getGatewayIpAddress.invoke()).thenReturn("")
+        whenever(getGatewayIpAddress.invoke()).thenReturn(GatewayState.Available)
         wifiHotspotStateWatcher.start()
         val hotspotState = wifiHotspotStateWatcher.state().first()
 

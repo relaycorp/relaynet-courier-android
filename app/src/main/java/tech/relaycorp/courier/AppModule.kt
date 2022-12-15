@@ -6,8 +6,9 @@ import android.net.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.Dispatchers
+import tech.relaycorp.cogrpc.server.GatewayIPAddressException
 import tech.relaycorp.cogrpc.server.Networking
-import javax.inject.Named
+import javax.inject.Qualifier
 import kotlin.coroutines.CoroutineContext
 
 @Module
@@ -40,14 +41,22 @@ class AppModule(
         }
 
     @Provides
-    @Named("GetGatewayIpAddress")
+    @GetGatewayIpAddress
     fun getGatewayIpAddress(): () -> String = Networking::getGatewayIpAddress
 
     @Provides
-    @Named("BackgroundCoroutineContext")
+    @BackgroundCoroutineContext
     fun backgroundCoroutineContext(): CoroutineContext = Dispatchers.IO
 
     enum class WifiApStateAvailability {
         Available, Unavailable
     }
 }
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class BackgroundCoroutineContext
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class GetGatewayIpAddress

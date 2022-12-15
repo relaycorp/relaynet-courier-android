@@ -15,12 +15,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import tech.relaycorp.cogrpc.server.GatewayIPAddressException
 import tech.relaycorp.courier.AppModule.WifiApStateAvailability
+import tech.relaycorp.courier.BackgroundCoroutineContext
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.common.tickerFlow
+import tech.relaycorp.courier.domain.server.GetGatewayState
+import tech.relaycorp.courier.domain.server.GetGatewayState.GatewayState
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.seconds
@@ -31,8 +32,8 @@ class WifiHotspotStateWatcher
     private val context: Context,
     private val wifiApState: WifiApStateAvailability,
     private val foregroundAppMonitor: ForegroundAppMonitor,
-    @Named("GetGatewayIpAddress") private val getGatewayIpAddress: () -> String,
-    @Named("BackgroundCoroutineContext") private val backgroundCoroutineContext: CoroutineContext
+    private val gatewayIpAddress: GetGatewayState,
+    @BackgroundCoroutineContext private val backgroundCoroutineContext: CoroutineContext
 ) {
 
     private val state = MutableStateFlow(WifiHotspotState.Disabled)
@@ -74,11 +75,9 @@ class WifiHotspotStateWatcher
                     emptyFlow()
                 }
             }.map {
-                try {
-                    getGatewayIpAddress()
-                    WifiHotspotState.Enabled
-                } catch (exception: GatewayIPAddressException) {
-                    WifiHotspotState.Disabled
+                when (gatewayIpAddress()) {
+                    GatewayState.Available -> WifiHotspotState.Enabled
+                    GatewayState.Unavailable -> WifiHotspotState.Disabled
                 }
             }
             .distinctUntilChanged()
