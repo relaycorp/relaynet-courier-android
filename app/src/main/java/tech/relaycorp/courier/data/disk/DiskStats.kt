@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import tech.relaycorp.courier.data.model.StorageSize
 import javax.inject.Inject
-import kotlin.time.seconds
+import kotlin.time.Duration.Companion.seconds
 
 class DiskStats
 @Inject constructor() {

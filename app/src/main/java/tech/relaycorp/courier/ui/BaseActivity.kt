@@ -4,11 +4,11 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.common_app_bar.appBar
-import kotlinx.android.synthetic.main.common_app_bar.toolbar
-import kotlinx.android.synthetic.main.common_app_bar.toolbarTitle
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.appbar.AppBarLayout
 import tech.relaycorp.courier.App
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
@@ -20,6 +20,10 @@ abstract class BaseActivity : AppCompatActivity() {
     val component by lazy { app.component.activityComponent() }
 
     protected val messageManager by lazy { MessageManager(this) }
+
+    private val appBar get() = findViewById<AppBarLayout?>(R.id.appBar)
+    private val toolbar get() = findViewById<Toolbar?>(R.id.toolbar)
+    private val toolbarTitle get() = findViewById<TextView?>(R.id.toolbarTitle)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +39,8 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    override fun setContentView(layoutResID: Int) {
-        super.setContentView(layoutResID)
+    override fun setContentView(view: View?) {
+        super.setContentView(view)
         toolbarTitle?.text = title
         appBar?.addSystemWindowInsetToPadding(top = true)
     }

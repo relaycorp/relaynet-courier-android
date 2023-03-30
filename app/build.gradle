@@ -14,7 +14,6 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.diffplug.spotless'
 apply plugin: 'com.github.triplet.play'
@@ -74,6 +73,9 @@ android {
             }
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -83,13 +85,12 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8
     }
     packagingOptions {
-        exclude 'META-INF/*'
-    }
-    lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
-        abortOnError true
-        lintConfig file('lint.xml')
+        jniLibs {
+            excludes += ['META-INF/*']
+        }
+        resources {
+            excludes += ['META-INF/*']
+        }
     }
     sourceSets {
         androidTest {
@@ -101,6 +102,13 @@ android {
             resources.srcDirs += "src/sharedTest/resources"
         }
     }
+    lint {
+        abortOnError true
+        checkAllWarnings true
+        lintConfig file('lint.xml')
+        warningsAsErrors true
+    }
+    namespace 'tech.relaycorp.courier'
 }
 
 dependencies {
@@ -124,11 +132,11 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.43.2'
 
     // Awala
-    implementation 'tech.relaycorp:awala:1.66.3'
-    implementation 'tech.relaycorp:cogrpc:1.1.27'
-    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.15'
-    implementation 'tech.relaycorp:doh:1.0.13'
-    testImplementation "tech.relaycorp:awala-testing:1.5.8"
+    implementation 'tech.relaycorp:awala:1.66.4'
+    implementation 'tech.relaycorp:cogrpc:1.1.29'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.16'
+    implementation 'tech.relaycorp:doh:1.0.21'
+    testImplementation "tech.relaycorp:awala-testing:1.5.10"
 
     // ORM
     implementation "androidx.room:room-runtime:$roomVersion"

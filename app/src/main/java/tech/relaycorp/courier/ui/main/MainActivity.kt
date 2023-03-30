@@ -4,27 +4,13 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.activity_main.hotspotIcon
-import kotlinx.android.synthetic.main.activity_main.hotspotLabel
-import kotlinx.android.synthetic.main.activity_main.innerContainer
-import kotlinx.android.synthetic.main.activity_main.internetIcon
-import kotlinx.android.synthetic.main.activity_main.internetLabel
-import kotlinx.android.synthetic.main.activity_main.lowStorageMessage
-import kotlinx.android.synthetic.main.activity_main.settings
-import kotlinx.android.synthetic.main.activity_main.storageProgress
-import kotlinx.android.synthetic.main.activity_main.storageValues
-import kotlinx.android.synthetic.main.activity_main.syncInternetButton
-import kotlinx.android.synthetic.main.activity_main.syncInternetLayout
-import kotlinx.android.synthetic.main.activity_main.syncInternetMessage
-import kotlinx.android.synthetic.main.activity_main.syncPeopleButton
-import kotlinx.android.synthetic.main.activity_main.syncPeopleLayout
-import kotlinx.android.synthetic.main.activity_main.syncPeopleMessage
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.background.WifiHotspotState
 import tech.relaycorp.courier.common.di.ViewModelFactory
 import tech.relaycorp.courier.data.model.StorageUsage
+import tech.relaycorp.courier.databinding.ActivityMainBinding
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
 import tech.relaycorp.courier.ui.common.format
@@ -42,16 +28,19 @@ class MainActivity : BaseActivity() {
         ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
         setTitle(R.string.main_title)
-        setContentView(R.layout.activity_main)
-        innerContainer.addSystemWindowInsetToPadding(bottom = true)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.innerContainer.addSystemWindowInsetToPadding(bottom = true)
 
-        settings.setOnClickListener { openSettings() }
-        syncPeopleButton.setOnClickListener { openSyncWithPeople() }
-        syncInternetButton.setOnClickListener { openSyncWithInternet() }
+        binding.settings.setOnClickListener { openSettings() }
+        binding.syncPeopleButton.setOnClickListener { openSyncWithPeople() }
+        binding.syncInternetButton.setOnClickListener { openSyncWithInternet() }
 
         viewModel
             .storageUsage()
@@ -60,7 +49,7 @@ class MainActivity : BaseActivity() {
 
         viewModel
             .lowStorageMessageIsVisible()
-            .onEach { lowStorageMessage.isVisible = it }
+            .onEach { binding.lowStorageMessage.isVisible = it }
             .launchIn(lifecycleScope)
 
         viewModel
@@ -84,8 +73,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateStorageUsage(usage: StorageUsage) {
-        storageProgress.progress = usage.percentage
-        storageValues.text = getString(
+        binding.storageProgress.progress = usage.percentage
+        binding.storageValues.text = getString(
             R.string.main_storage_usage_values,
             usage.usedByApp.format(this),
             usage.actualMax.format(this)
@@ -94,18 +83,18 @@ class MainActivity : BaseActivity() {
 
     private fun updateSyncPeopleState(state: MainViewModel.SyncPeopleState) {
         val isEnabled = state is MainViewModel.SyncPeopleState.Enabled
-        syncPeopleLayout.isEnabled = isEnabled
-        syncPeopleButton.isEnabled = isEnabled
-        syncPeopleMessage.setText(
+        binding.syncPeopleLayout.isEnabled = isEnabled
+        binding.syncPeopleButton.isEnabled = isEnabled
+        binding.syncPeopleMessage.setText(
             if (isEnabled) R.string.sync_people_enabled else R.string.sync_people_disabled
         )
 
-        hotspotLabel.isVisible = isEnabled
-        hotspotIcon.isVisible = isEnabled
+        binding.hotspotLabel.isVisible = isEnabled
+        binding.hotspotIcon.isVisible = isEnabled
         if (state is MainViewModel.SyncPeopleState.Enabled) {
             val isHotspotEnabled = state.hotspotState == WifiHotspotState.Enabled
-            hotspotIcon.isActivated = isHotspotEnabled
-            hotspotLabel.setText(
+            binding.hotspotIcon.isActivated = isHotspotEnabled
+            binding.hotspotLabel.setText(
                 if (isHotspotEnabled) R.string.hotspot_on else R.string.hotspot_off
             )
         }
@@ -113,9 +102,9 @@ class MainActivity : BaseActivity() {
 
     private fun updateSyncInternetState(state: MainViewModel.SyncInternetState) {
         val isEnabled = state is MainViewModel.SyncInternetState.Enabled
-        syncInternetLayout.isEnabled = isEnabled
-        syncInternetButton.isEnabled = isEnabled
-        syncInternetMessage.setText(
+        binding.syncInternetLayout.isEnabled = isEnabled
+        binding.syncInternetButton.isEnabled = isEnabled
+        binding.syncInternetMessage.setText(
             when (state) {
                 is MainViewModel.SyncInternetState.Enabled -> R.string.sync_internet_enabled
                 is MainViewModel.SyncInternetState.Disabled.Offline -> R.string.sync_internet_disabled_offline
@@ -124,9 +113,9 @@ class MainActivity : BaseActivity() {
             }
         )
 
-        internetLabel.isVisible = isEnabled
-        internetIcon.isVisible = isEnabled
-        internetIcon.isActivated = isEnabled
+        binding.internetLabel.isVisible = isEnabled
+        binding.internetIcon.isVisible = isEnabled
+        binding.internetIcon.isActivated = isEnabled
     }
 
     private fun openSettings() {
