@@ -33,7 +33,7 @@ class AppModule(
 
     @Provides
     fun wifiApState(): WifiApStateAvailability =
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S_V2) {
             WifiApStateAvailability.Available
         } else {
             WifiApStateAvailability.Unavailable
