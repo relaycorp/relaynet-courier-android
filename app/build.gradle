@@ -133,8 +133,8 @@ dependencies {
 
     // Awala
     implementation 'tech.relaycorp:awala:1.66.4'
-    implementation 'tech.relaycorp:cogrpc:1.1.29'
-    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.16'
+    implementation 'tech.relaycorp:cogrpc:1.1.30'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.18'
     implementation 'tech.relaycorp:doh:1.0.21'
     testImplementation "tech.relaycorp:awala-testing:1.5.10"
 
