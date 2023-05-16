@@ -180,6 +180,19 @@ dependencies {
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.43.2'
 }
 
+/*
+ * Our TLS certificates are being rejected with OPENSSL_internal:NOT_ENOUGH_DATA
+ * on Netty 4.1.79.Final, so we're locking its version to 4.1.78.Final until we're able to fix the
+ * underlying issue.
+ */
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'io.netty') {
+            details.useVersion nettyVersion
+        }
+    }
+}
+
 spotless {
     kotlin {
         ktlint('0.43.2').userData(['disabled_rules': 'import-ordering'])
