@@ -1,10 +1,12 @@
 package tech.relaycorp.courier.domain
 
+import android.os.Build
 import io.grpc.internal.testing.StreamRecorder
 import io.grpc.stub.MetadataUtils
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import tech.relaycorp.cogrpc.okhttp.OkHTTPChannelBuilderProvider
@@ -30,6 +32,11 @@ class PrivateSyncTest {
 
     @Test
     fun privateSync() {
+        assumeTrue(
+            "Test is currently failing on API 23 and lower due to a grpc internal issue",
+            Build.VERSION.SDK_INT >= 24
+        )
+
         Networking.androidGatewaySubnetPrefix = null
         runBlocking { privateSync.startSync() }
 
