@@ -32,6 +32,7 @@ class PrivateSyncTest {
 
     @Test
     fun privateSync() {
+        // Related issue: https://github.com/relaycorp/relaynet-courier-android/issues/584
         assumeTrue(
             "Test is currently failing on API 23 and lower due to a grpc internal issue",
             Build.VERSION.SDK_INT >= 24
