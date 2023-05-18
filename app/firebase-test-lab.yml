@@ -4,6 +4,12 @@ spec:
   test: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
   timeout: 30m
   device:
+    # Nexus 5 (virtual)
+    - model: Nexus5
+      version: 23   # Android 6.0
+      locale: en
+      orientation: portrait
+
     # Nexus 6 (virtual)
     - model: Nexus6
       version: 24   # Android 7.0
