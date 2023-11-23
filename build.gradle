@@ -4,7 +4,7 @@ buildscript {
     ext {
         kotlinVersion = '1.8.10'
         kotlinCoroutinesVersion = '1.6.4'
-        grpcVersion = '1.54.0'
+        grpcVersion = '1.59.0'
         nettyVersion = '4.1.78.Final'
         aboutLibsVersion = '8.6.3'
         junitVersion = '5.9.0'
@@ -16,7 +16,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.7.2'
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$aboutLibsVersion"
