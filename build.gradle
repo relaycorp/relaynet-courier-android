@@ -8,7 +8,7 @@ buildscript {
         nettyVersion = '4.1.78.Final'
         aboutLibsVersion = '8.6.3'
         junitVersion = '5.9.0'
-        roomVersion = '2.4.0-beta02'
+        roomVersion = '2.5.0-alpha03'
     }
     repositories {
         google()
