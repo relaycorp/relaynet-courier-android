@@ -2,12 +2,10 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.6.21'
+        kotlinVersion = '1.8.10'
         kotlinCoroutinesVersion = '1.6.4'
-        grpcVersion = '1.48.0'
-        protobufVersion = '3.21.2'
-        protobufGradleVersion = '0.8.18'
-        nettyVersion = '4.1.77.Final'
+        grpcVersion = '1.59.0'
+        nettyVersion = '4.1.78.Final'
         aboutLibsVersion = '8.6.3'
         junitVersion = '5.9.0'
         roomVersion = '2.4.0-beta02'
@@ -18,7 +16,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.9.1'
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$aboutLibsVersion"

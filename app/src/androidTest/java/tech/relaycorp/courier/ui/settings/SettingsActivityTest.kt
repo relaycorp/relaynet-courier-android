@@ -1,5 +1,6 @@
 package tech.relaycorp.courier.ui.settings
 
+import androidx.test.espresso.Espresso.onIdle
 import com.google.android.material.slider.Slider
 import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertDisabled
 import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertEnabled
@@ -7,6 +8,9 @@ import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assert
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -51,11 +55,11 @@ class SettingsActivityTest {
     }
 
     @Test
-    fun clearButtonDisabledWithData() {
-        runBlocking {
-            storedMessageDao.insert(StoredMessageFactory.build())
-        }
+    fun clearButtonDisabledWithData() = runTest(StandardTestDispatcher()) {
+        storedMessageDao.insert(StoredMessageFactory.build())
+        advanceUntilIdle()
         testRule.start()
+        onIdle()
         assertEnabled(R.id.deleteData)
     }
 

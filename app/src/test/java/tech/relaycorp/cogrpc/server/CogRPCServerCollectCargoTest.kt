@@ -133,19 +133,19 @@ internal class CogRPCServerCollectCargoTest {
     private fun buildClient() = CargoRelayGrpc.newStub(testServer.channel)
 
     private fun buildClientWithCCA(cca: ByteArray = "CCA".toByteArray()) =
-        MetadataUtils.attachHeaders(
-            buildClient(),
-            AuthorizationMetadata.makeMetadata(cca)
+        buildClient().withInterceptors(
+            MetadataUtils.newAttachHeadersInterceptor(AuthorizationMetadata.makeMetadata(cca))
         )
 
     private fun buildClientWithInvalidAuthorization() =
-        MetadataUtils.attachHeaders(
-            buildClient(),
-            Metadata().also {
-                it.put(
-                    Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER),
-                    "INVALID"
-                )
-            }
+        buildClient().withInterceptors(
+            MetadataUtils.newAttachHeadersInterceptor(
+                Metadata().also {
+                    it.put(
+                        Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER),
+                        "INVALID"
+                    )
+                }
+            )
         )
 }

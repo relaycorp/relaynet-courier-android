@@ -35,7 +35,7 @@ For the views material components were preferred whenever possible.
 ## Development
 
 The project should build and run out-of-the-box with Android Studio 4+. 
-The minimum Android OS version supported is Android 5 (Lollipop, API 21).
+The minimum Android OS version supported is Android 6 (Marshmallow, API 23).
 
 ### Run Android lint
 

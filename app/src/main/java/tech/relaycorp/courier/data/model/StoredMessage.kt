@@ -7,14 +7,14 @@ import java.util.UUID
 
 @Entity(
     tableName = "Message",
-    primaryKeys = ["senderAddress", "messageId"]
+    primaryKeys = ["senderId", "messageId"]
 )
 data class StoredMessage(
     @ColumnInfo(index = true)
-    val recipientAddress: MessageAddress,
+    val recipientAddress: String,
     @ColumnInfo(index = true)
-    val recipientType: MessageAddress.Type,
-    val senderAddress: PrivateMessageAddress,
+    val recipientType: GatewayType,
+    val senderId: String,
     val messageId: MessageId,
     @ColumnInfo(index = true)
     val messageType: MessageType,

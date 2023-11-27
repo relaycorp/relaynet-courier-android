@@ -1,29 +1,16 @@
 package tech.relaycorp.courier.data.database
 
 import androidx.room.TypeConverter
-import tech.relaycorp.courier.data.model.MessageAddress
+import tech.relaycorp.courier.data.model.GatewayType
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
-import tech.relaycorp.courier.data.model.PrivateMessageAddress
 
 class MessageConverter {
     @TypeConverter
-    fun toAddress(value: String) = MessageAddress.of(value)
+    fun toAddressType(value: String) = GatewayType.fromValue(value)
 
     @TypeConverter
-    fun fromAddress(address: MessageAddress) = address.value
-
-    @TypeConverter
-    fun toPrivateAddress(value: String) = PrivateMessageAddress(value)
-
-    @TypeConverter
-    fun fromPrivateAddress(address: PrivateMessageAddress) = address.value
-
-    @TypeConverter
-    fun toAddressType(value: String) = MessageAddress.Type.fromValue(value)
-
-    @TypeConverter
-    fun fromAddressType(type: MessageAddress.Type) = type.value
+    fun fromAddressType(gatewayType: GatewayType) = gatewayType.value
 
     @TypeConverter
     fun toId(value: String) = MessageId(value)

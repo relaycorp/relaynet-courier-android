@@ -12,6 +12,7 @@ import tech.relaycorp.courier.domain.StoreMessage
 import tech.relaycorp.relaynet.CargoDeliveryRequest
 import java.io.InputStream
 import javax.inject.Inject
+import tech.relaycorp.courier.data.model.GatewayType
 
 class ServerService
 @Inject constructor(
@@ -30,7 +31,7 @@ class ServerService
             (ccaMessageResult as? StoreMessage.Result.Success)?.message ?: return emptyList()
 
         val messages = storedMessageDao
-            .getByRecipientAddressAndMessageType(ccaMessage.senderAddress, MessageType.Cargo)
+            .getByRecipientAddressAndMessageType(ccaMessage.senderId, MessageType.Cargo)
         val messagesWithId = messages
             .map { StoredMessage.generateLocalId() to it }
             .toMap()
@@ -45,7 +46,7 @@ class ServerService
     }
 
     override suspend fun deliverCargo(cargoSerialized: InputStream) =
-        when (storeMessage.storeCargo(cargoSerialized)) {
+        when (storeMessage.storeCargo(cargoSerialized, GatewayType.Internet)) {
             is StoreMessage.Result.Success -> CogRPCServer.DeliverResult.Successful
             is StoreMessage.Result.Error.NoSpaceAvailable -> CogRPCServer.DeliverResult.UnavailableStorage
             is StoreMessage.Result.Error.Invalid -> CogRPCServer.DeliverResult.Invalid
