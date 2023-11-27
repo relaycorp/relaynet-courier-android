@@ -30,7 +30,7 @@
 
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightStatusBar">true</item>
 
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Courier.Dialog</item>
 
@@ -61,7 +61,7 @@
         <item name="colorOnBackground">@color/white</item>
         <item name="colorOnSurface">@color/white</item>
 
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="ThemeOverlay.Courier.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">

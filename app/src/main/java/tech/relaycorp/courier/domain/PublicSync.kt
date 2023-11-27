@@ -9,8 +9,8 @@ import tech.relaycorp.courier.domain.client.CargoDelivery
 import tech.relaycorp.doh.DoHClient
 import java.util.logging.Level
 import javax.inject.Inject
-import kotlin.time.seconds
 import tech.relaycorp.courier.domain.client.InternetAddressResolver
+import kotlin.time.Duration.Companion.seconds
 
 class PublicSync
 @Inject constructor(

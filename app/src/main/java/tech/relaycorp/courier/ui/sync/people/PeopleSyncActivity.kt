@@ -9,16 +9,12 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.activity_people_sync.animation
-import kotlinx.android.synthetic.main.activity_people_sync.clientsConnected
-import kotlinx.android.synthetic.main.activity_people_sync.close
-import kotlinx.android.synthetic.main.activity_people_sync.stop
-import kotlinx.android.synthetic.main.activity_people_sync.syncMessage
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.common.di.ViewModelFactory
+import tech.relaycorp.courier.databinding.ActivityPeopleSyncBinding
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToMargin
 import tech.relaycorp.courier.ui.common.startLoopingAvd
@@ -34,40 +30,43 @@ class PeopleSyncActivity : BaseActivity() {
         ViewModelProvider(this, viewModelFactory).get(PeopleSyncViewModel::class.java)
     }
 
+    private lateinit var binding: ActivityPeopleSyncBinding
+
     private var stopConfirmDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_people_sync)
-        stop.addSystemWindowInsetToMargin(bottom = true)
-        close.addSystemWindowInsetToMargin(bottom = true)
+        binding = ActivityPeopleSyncBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.stop.addSystemWindowInsetToMargin(bottom = true)
+        binding.close.addSystemWindowInsetToMargin(bottom = true)
 
-        stop.setOnClickListener { viewModel.stopClicked() }
-        close.setOnClickListener { finish() }
+        binding.stop.setOnClickListener { viewModel.stopClicked() }
+        binding.close.setOnClickListener { finish() }
 
         viewModel
             .state()
             .onEach { state ->
-                syncMessage.setText(state.toSyncMessageRes())
+                binding.syncMessage.setText(state.toSyncMessageRes())
 
-                clientsConnected.isInvisible =
+                binding.clientsConnected.isInvisible =
                     state !is PeopleSyncViewModel.State.Syncing.HadFirstClient
-                clientsConnected.text = state.clientsConnectedValue.toString()
+                binding.clientsConnected.text = state.clientsConnectedValue.toString()
 
-                stop.isInvisible = state !is PeopleSyncViewModel.State.Syncing
-                close.isVisible = state == PeopleSyncViewModel.State.Error
+                binding.stop.isInvisible = state !is PeopleSyncViewModel.State.Syncing
+                binding.close.isVisible = state == PeopleSyncViewModel.State.Error
 
                 when {
                     state is PeopleSyncViewModel.State.Syncing.HadFirstClient && state.clientsConnected > 0 ->
-                        animation.startLoopingAvd(R.drawable.ic_sync_animation_fast)
+                        binding.animation.startLoopingAvd(R.drawable.ic_sync_animation_fast)
                     state is PeopleSyncViewModel.State.Syncing ->
-                        animation.startLoopingAvd(R.drawable.ic_sync_animation)
+                        binding.animation.startLoopingAvd(R.drawable.ic_sync_animation)
                     else ->
-                        animation.stopLoopingAvd()
+                        binding.animation.stopLoopingAvd()
                 }
             }
-            .onCompletion { animation.stopLoopingAvd() }
+            .onCompletion { binding.animation.stopLoopingAvd() }
             .launchIn(lifecycleScope)
 
         viewModel
@@ -92,7 +91,7 @@ class PeopleSyncActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        stop.performClick()
+        binding.stop.performClick()
     }
 
     override fun onDestroy() {

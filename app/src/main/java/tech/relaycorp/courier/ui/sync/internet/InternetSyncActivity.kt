@@ -8,10 +8,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.activity_internet_sync.animation
-import kotlinx.android.synthetic.main.activity_internet_sync.close
-import kotlinx.android.synthetic.main.activity_internet_sync.stateMessage
-import kotlinx.android.synthetic.main.activity_internet_sync.stop
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -19,6 +15,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.common.di.ViewModelFactory
+import tech.relaycorp.courier.databinding.ActivityInternetSyncBinding
 import tech.relaycorp.courier.domain.PublicSync
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToMargin
@@ -35,33 +32,36 @@ class InternetSyncActivity : BaseActivity() {
         ViewModelProvider(this, viewModelFactory).get(InternetSyncViewModel::class.java)
     }
 
+    private lateinit var binding: ActivityInternetSyncBinding
+
     private var stopConfirmDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_internet_sync)
-        stop.addSystemWindowInsetToMargin(bottom = true)
-        close.addSystemWindowInsetToMargin(bottom = true)
+        binding = ActivityInternetSyncBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.stop.addSystemWindowInsetToMargin(bottom = true)
+        binding.close.addSystemWindowInsetToMargin(bottom = true)
 
-        stop.setOnClickListener { showStopConfirmDialog() }
-        close.setOnClickListener { finish() }
+        binding.stop.setOnClickListener { showStopConfirmDialog() }
+        binding.close.setOnClickListener { finish() }
 
         viewModel
             .state
-            .onEach { stateMessage.setText(it.toStringRes()) }
+            .onEach { binding.stateMessage.setText(it.toStringRes()) }
             .map { it != PublicSync.State.Finished && it != PublicSync.State.Error }
             .distinctUntilChanged()
             .onEach { isSyncing ->
-                stop.isVisible = isSyncing
-                close.isVisible = !isSyncing
+                binding.stop.isVisible = isSyncing
+                binding.close.isVisible = !isSyncing
                 if (isSyncing) {
-                    animation.startLoopingAvd(R.drawable.ic_sync_animation)
+                    binding.animation.startLoopingAvd(R.drawable.ic_sync_animation)
                 } else {
-                    animation.stopLoopingAvd()
+                    binding.animation.stopLoopingAvd()
                 }
             }
-            .onCompletion { animation.stopLoopingAvd() }
+            .onCompletion { binding.animation.stopLoopingAvd() }
             .launchIn(lifecycleScope)
 
         viewModel
@@ -71,7 +71,7 @@ class InternetSyncActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        stop.performClick()
+        binding.stop.performClick()
     }
 
     override fun onDestroy() {
