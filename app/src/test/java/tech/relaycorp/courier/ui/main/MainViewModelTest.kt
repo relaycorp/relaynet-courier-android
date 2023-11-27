@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
 import tech.relaycorp.courier.background.WifiHotspotState
-import tech.relaycorp.courier.background.WifiHotspotStateReceiver
+import tech.relaycorp.courier.background.WifiHotspotStateWatcher
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.domain.DeleteExpiredMessages
@@ -27,7 +27,7 @@ import tech.relaycorp.courier.test.factory.StoredMessageFactory
 internal class MainViewModelTest {
 
     private val connectionObserver = mock<InternetConnectionObserver>()
-    private val hotspotStateReceiver = mock<WifiHotspotStateReceiver>()
+    private val hotspotStateReceiver = mock<WifiHotspotStateWatcher>()
     private val getStorageUsage = mock<GetStorageUsage>()
     private val observeCCACount = mock<ObserveCCACount>()
     private val deleteExpiredMessages = mock<DeleteExpiredMessages> {
@@ -37,7 +37,7 @@ internal class MainViewModelTest {
     @BeforeEach
     internal fun setUp() {
         whenever(connectionObserver.observe()).thenReturn(emptyFlow())
-        whenever(hotspotStateReceiver.state()).thenReturn(emptyFlow())
+        whenever(hotspotStateReceiver.state()).thenReturn(MutableStateFlow(WifiHotspotState.Disabled))
         whenever(getStorageUsage.observe()).thenReturn(emptyFlow())
         whenever(observeCCACount.observe()).thenReturn(emptyFlow())
     }
@@ -45,7 +45,7 @@ internal class MainViewModelTest {
     @Test
     internal fun syncPeopleState() = runBlockingTest {
         val connectionStateFlow = MutableStateFlow(InternetConnection.Offline)
-        whenever(hotspotStateReceiver.state()).thenReturn(flowOf(WifiHotspotState.Disabled))
+        whenever(hotspotStateReceiver.state()).thenReturn(MutableStateFlow(WifiHotspotState.Disabled))
         whenever(connectionObserver.observe()).thenReturn(connectionStateFlow)
         val viewModel = buildViewModel()
 

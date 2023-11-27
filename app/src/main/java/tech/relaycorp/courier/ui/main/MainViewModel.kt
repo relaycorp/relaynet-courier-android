@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import tech.relaycorp.courier.background.InternetConnection
 import tech.relaycorp.courier.background.InternetConnectionObserver
 import tech.relaycorp.courier.background.WifiHotspotState
-import tech.relaycorp.courier.background.WifiHotspotStateReceiver
+import tech.relaycorp.courier.background.WifiHotspotStateWatcher
 import tech.relaycorp.courier.common.BehaviorChannel
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StorageUsage
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class MainViewModel
 @Inject constructor(
     internetConnectionObserver: InternetConnectionObserver,
-    hotspotStateReceiver: WifiHotspotStateReceiver,
+    hotspotStateReceiver: WifiHotspotStateWatcher,
     getStorageUsage: GetStorageUsage,
     observeCCACount: ObserveCCACount,
     deleteExpiredMessages: DeleteExpiredMessages

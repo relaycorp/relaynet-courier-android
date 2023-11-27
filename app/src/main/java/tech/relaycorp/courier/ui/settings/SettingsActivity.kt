@@ -8,22 +8,13 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.mikepenz.aboutlibraries.LibsBuilder
-import kotlinx.android.synthetic.main.activity_settings.deleteData
-import kotlinx.android.synthetic.main.activity_settings.innerContainer
-import kotlinx.android.synthetic.main.activity_settings.knowMore
-import kotlinx.android.synthetic.main.activity_settings.licenses
-import kotlinx.android.synthetic.main.activity_settings.storageAvailable
-import kotlinx.android.synthetic.main.activity_settings.storageMaxSlider
-import kotlinx.android.synthetic.main.activity_settings.storageMaxValue
-import kotlinx.android.synthetic.main.activity_settings.storageTotal
-import kotlinx.android.synthetic.main.activity_settings.storageUsed
-import kotlinx.android.synthetic.main.activity_settings.version
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import tech.relaycorp.courier.BuildConfig
 import tech.relaycorp.courier.R
 import tech.relaycorp.courier.common.di.ViewModelFactory
+import tech.relaycorp.courier.databinding.ActivitySettingsBinding
 import tech.relaycorp.courier.ui.BaseActivity
 import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
 import tech.relaycorp.courier.ui.common.format
@@ -39,53 +30,56 @@ class SettingsActivity : BaseActivity() {
         ViewModelProvider(this, viewModelFactory).get(SettingsViewModel::class.java)
     }
 
+    private lateinit var binding: ActivitySettingsBinding
+
     private var deleteDataDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupNavigation(R.drawable.ic_close)
-        innerContainer.addSystemWindowInsetToPadding(bottom = true)
+        binding.innerContainer.addSystemWindowInsetToPadding(bottom = true)
 
-        version.text =
+        binding.version.text =
             getString(R.string.about_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
 
-        knowMore.setOnClickListener { openKnowMore() }
-        licenses.setOnClickListener { openLicenses() }
-        deleteData.setOnClickListener { openDeleteDataDialog() }
+        binding.knowMore.setOnClickListener { openKnowMore() }
+        binding.licenses.setOnClickListener { openLicenses() }
+        binding.deleteData.setOnClickListener { openDeleteDataDialog() }
 
         viewModel
             .deleteDataEnabled()
-            .onEach { deleteData.set(it) }
+            .onEach { binding.deleteData.set(it) }
             .launchIn(lifecycleScope)
 
         viewModel
             .storageStats()
             .onEach {
-                storageUsed.text = it.used.format(this)
-                storageAvailable.text = it.available.format(this)
-                storageTotal.text = it.total.format(this)
+                binding.storageUsed.text = it.used.format(this)
+                binding.storageAvailable.text = it.available.format(this)
+                binding.storageTotal.text = it.total.format(this)
             }
             .launchIn(lifecycleScope)
 
         viewModel
             .maxStorageBoundary()
-            .onEach { storageMaxSlider.sizeBoundary = it }
+            .onEach { binding.storageMaxSlider.sizeBoundary = it }
             .launchIn(lifecycleScope)
 
-        storageMaxSlider.addOnChangeListener { _, _, _ ->
-            viewModel.maxStorageChanged(storageMaxSlider.size)
+        binding.storageMaxSlider.addOnChangeListener { _, _, _ ->
+            viewModel.maxStorageChanged(binding.storageMaxSlider.size)
         }
 
         viewModel.maxStorage()
             .take(1)
-            .onEach { storageMaxSlider.size = it }
+            .onEach { binding.storageMaxSlider.size = it }
             .launchIn(lifecycleScope)
 
         viewModel
             .maxStorage()
-            .onEach { storageMaxValue.text = it.format(this) }
+            .onEach { binding.storageMaxValue.text = it.format(this) }
             .launchIn(lifecycleScope)
     }
 

@@ -15,9 +15,8 @@ import java.net.InetSocketAddress
 import java.security.Security
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
-import kotlin.math.roundToLong
-import kotlin.time.minutes
-import kotlin.time.seconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class CogRPCServer
 internal constructor(
@@ -54,12 +53,9 @@ internal constructor(
                 .maxInboundMessageSize(MAX_MESSAGE_SIZE)
                 .maxInboundMetadataSize(MAX_METADATA_SIZE)
                 .maxConcurrentCallsPerConnection(MAX_CONCURRENT_CALLS_PER_CONNECTION)
-                .maxConnectionAge(MAX_CONNECTION_AGE.inSeconds.roundToLong(), TimeUnit.SECONDS)
-                .maxConnectionAgeGrace(
-                    MAX_CONNECTION_AGE_GRACE.inSeconds.roundToLong(),
-                    TimeUnit.SECONDS
-                )
-                .maxConnectionIdle(MAX_CONNECTION_IDLE.inSeconds.roundToLong(), TimeUnit.SECONDS)
+                .maxConnectionAge(MAX_CONNECTION_AGE.inWholeSeconds, TimeUnit.SECONDS)
+                .maxConnectionAgeGrace(MAX_CONNECTION_AGE_GRACE.inWholeSeconds, TimeUnit.SECONDS)
+                .maxConnectionIdle(MAX_CONNECTION_IDLE.inWholeSeconds, TimeUnit.SECONDS)
                 .useTransportSecurity(
                     certGenerator.exportCertificate().inputStream(),
                     certGenerator.exportPrivateKey().inputStream()
@@ -83,7 +79,7 @@ internal constructor(
     fun stop() {
         server
             ?.shutdown()
-            ?.awaitTermination(TERMINATION_TIMEOUT.inSeconds.toLong(), TimeUnit.SECONDS)
+            ?.awaitTermination(TERMINATION_TIMEOUT.inWholeSeconds, TimeUnit.SECONDS)
         server = null
 
         job.cancel()

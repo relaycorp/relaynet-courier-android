@@ -9,7 +9,8 @@ import tech.relaycorp.courier.domain.client.CargoDelivery
 import tech.relaycorp.doh.DoHClient
 import java.util.logging.Level
 import javax.inject.Inject
-import kotlin.time.seconds
+import tech.relaycorp.courier.domain.client.InternetAddressResolver
+import kotlin.time.Duration.Companion.seconds
 
 class PublicSync
 @Inject constructor(
@@ -30,16 +31,17 @@ class PublicSync
     }
 
     private suspend fun syncUnhandled() {
-        val dohClient = DoHClient(DOH_RESOLVER_URL)
-        dohClient.use {
+        DoHClient(DOH_RESOLVER_URL).use {
+            val resolver = InternetAddressResolver(it)
+
             state.send(State.DeliveringCargo)
-            cargoDelivery.deliver(dohClient)
+            cargoDelivery.deliver(resolver)
 
             state.send(State.Waiting)
             delay(WAIT_PERIOD)
 
             state.send(State.CollectingCargo)
-            cargoCollection.collect(dohClient)
+            cargoCollection.collect(resolver)
         }
 
         state.send(State.Finished)
