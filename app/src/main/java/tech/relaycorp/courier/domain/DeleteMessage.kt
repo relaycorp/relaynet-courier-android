@@ -1,11 +1,10 @@
 package tech.relaycorp.courier.domain
 
+import javax.inject.Inject
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.model.MessageId
-import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
-import javax.inject.Inject
 
 class DeleteMessage
 @Inject constructor(
@@ -13,8 +12,8 @@ class DeleteMessage
     private val diskRepository: DiskRepository
 ) {
 
-    suspend fun delete(senderAddress: PrivateMessageAddress, messageId: MessageId) {
-        delete(storedMessageDao.get(senderAddress, messageId))
+    suspend fun delete(senderId: String, messageId: MessageId) {
+        delete(storedMessageDao.get(senderId, messageId))
     }
 
     suspend fun delete(message: StoredMessage) {

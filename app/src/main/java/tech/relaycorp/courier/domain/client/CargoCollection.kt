@@ -1,23 +1,19 @@
 package tech.relaycorp.courier.domain.client
 
-import kotlinx.coroutines.flow.collect
+import java.io.InputStream
+import java.util.logging.Level
+import javax.inject.Inject
 import tech.relaycorp.cogrpc.okhttp.OkHTTPChannelBuilderProvider
 import tech.relaycorp.courier.common.Logging.logger
 import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.data.disk.DiskRepository
 import tech.relaycorp.courier.data.disk.MessageDataNotFoundException
-import tech.relaycorp.courier.data.model.MessageAddress
+import tech.relaycorp.courier.data.model.GatewayType
 import tech.relaycorp.courier.data.model.MessageType
-import tech.relaycorp.courier.data.model.PublicAddressResolutionException
-import tech.relaycorp.courier.data.model.PublicMessageAddress
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.courier.domain.DeleteMessage
 import tech.relaycorp.courier.domain.StoreMessage
-import tech.relaycorp.doh.DoHClient
 import tech.relaycorp.relaynet.cogrpc.client.CogRPCClient
-import java.io.InputStream
-import java.util.logging.Level
-import javax.inject.Inject
 
 class CargoCollection
 @Inject constructor(
@@ -28,29 +24,32 @@ class CargoCollection
     private val diskRepository: DiskRepository
 ) {
 
-    suspend fun collect(dohClient: DoHClient) {
+    suspend fun collect(resolver: InternetAddressResolver) {
         getCCAs()
             .forEach { cca ->
                 try {
-                    collectAndStoreCargoForCCA(cca, dohClient)
+                    collectAndStoreCargoForCCA(cca, resolver)
                     deleteCCA(cca)
                 } catch (e: CogRPCClient.CogRPCException) {
                     logger.log(Level.WARNING, "Cargo collection error", e)
-                } catch (e: PublicAddressResolutionException) {
-                    logger.log(Level.WARNING, "Failed to resolve ${cca.recipientAddress.value}", e)
+                } catch (e: InternetAddressResolutionException) {
+                    logger.log(Level.WARNING, "Failed to resolve ${cca.recipientAddress}", e)
                 }
             }
     }
 
     private suspend fun getCCAs() =
         storedMessageDao.getByRecipientTypeAndMessageType(
-            MessageAddress.Type.Public,
+            GatewayType.Internet,
             MessageType.CCA
         )
 
     @Throws(CogRPCClient.CogRPCException::class)
-    private suspend fun collectAndStoreCargoForCCA(cca: StoredMessage, dohClient: DoHClient) {
-        val resolvedAddress = (cca.recipientAddress as PublicMessageAddress).resolve(dohClient)
+    private suspend fun collectAndStoreCargoForCCA(
+        cca: StoredMessage,
+        resolver: InternetAddressResolver
+    ) {
+        val resolvedAddress = resolver.resolve(cca.recipientAddress)
         val client = clientBuilder.build(
             resolvedAddress,
             OkHTTPChannelBuilderProvider.Companion::makeBuilder
@@ -69,7 +68,7 @@ class CargoCollection
     }
 
     private suspend fun storeCargo(data: InputStream) =
-        storeMessage.storeCargo(data)
+        storeMessage.storeCargo(data, GatewayType.Private)
 
     private suspend fun deleteCCA(cca: StoredMessage) =
         deleteMessage.delete(cca)

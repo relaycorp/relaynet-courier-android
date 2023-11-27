@@ -5,14 +5,13 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import java.util.Date
 import kotlinx.coroutines.flow.Flow
-import tech.relaycorp.courier.data.model.MessageAddress
+import tech.relaycorp.courier.data.model.GatewayType
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
-import tech.relaycorp.courier.data.model.PrivateMessageAddress
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.model.StoredMessage
-import java.util.Date
 
 @Dao
 interface StoredMessageDao {
@@ -32,8 +31,8 @@ interface StoredMessageDao {
     @Query("SELECT COALESCE(SUM(Message.size), 0) FROM Message")
     fun observeTotalSize(): Flow<StorageSize>
 
-    @Query("SELECT * FROM Message WHERE senderAddress = :senderAddress AND messageId = :messageId LIMIT 1")
-    suspend fun get(senderAddress: PrivateMessageAddress, messageId: MessageId): StoredMessage
+    @Query("SELECT * FROM Message WHERE senderId = :senderId AND messageId = :messageId LIMIT 1")
+    suspend fun get(senderId: String, messageId: MessageId): StoredMessage
 
     @Query(
         """
@@ -43,7 +42,7 @@ interface StoredMessageDao {
             """
     )
     suspend fun getByRecipientTypeAndMessageType(
-        recipientType: MessageAddress.Type,
+        recipientType: GatewayType,
         type: MessageType
     ): List<StoredMessage>
 
@@ -55,7 +54,7 @@ interface StoredMessageDao {
             """
     )
     suspend fun getByRecipientAddressAndMessageType(
-        recipientAddress: MessageAddress,
+        recipientAddress: String,
         type: MessageType
     ): List<StoredMessage>
 

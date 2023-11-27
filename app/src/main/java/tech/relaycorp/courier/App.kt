@@ -3,7 +3,8 @@ package tech.relaycorp.courier
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
-import tech.relaycorp.courier.background.WifiHotspotStateReceiver
+import tech.relaycorp.courier.background.ForegroundAppMonitor
+import tech.relaycorp.courier.background.WifiHotspotStateWatcher
 import tech.relaycorp.courier.common.Logging
 import tech.relaycorp.courier.common.di.AppComponent
 import tech.relaycorp.courier.common.di.DaggerAppComponent
@@ -14,7 +15,10 @@ import javax.inject.Inject
 open class App : Application() {
 
     @Inject
-    lateinit var wifiHotspotStateReceiver: WifiHotspotStateReceiver
+    lateinit var wifiHotspotStateWatcher: WifiHotspotStateWatcher
+
+    @Inject
+    lateinit var foregroundAppMonitor: ForegroundAppMonitor
 
     open val component: AppComponent by lazy {
         DaggerAppComponent.builder()
@@ -36,12 +40,13 @@ open class App : Application() {
         component.inject(this)
         setupLogger()
         setupStrictMode()
-        wifiHotspotStateReceiver.register()
+        registerActivityLifecycleCallbacks(foregroundAppMonitor)
+        wifiHotspotStateWatcher.start()
     }
 
     override fun onTerminate() {
         super.onTerminate()
-        wifiHotspotStateReceiver.unregister()
+        wifiHotspotStateWatcher.stop()
     }
 
     private fun setupLogger() {

@@ -6,7 +6,7 @@
     "entities": [
       {
         "tableName": "Message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `recipientType` TEXT NOT NULL, `senderAddress` TEXT NOT NULL, `messageId` TEXT NOT NULL, `messageType` TEXT NOT NULL, `creationTimeUtc` INTEGER NOT NULL, `expirationTimeUtc` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, PRIMARY KEY(`senderAddress`, `messageId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recipientAddress` TEXT NOT NULL, `recipientType` TEXT NOT NULL, `senderId` TEXT NOT NULL, `messageId` TEXT NOT NULL, `messageType` TEXT NOT NULL, `creationTimeUtc` INTEGER NOT NULL, `expirationTimeUtc` INTEGER NOT NULL, `storagePath` TEXT NOT NULL, `size` INTEGER NOT NULL, PRIMARY KEY(`senderId`, `messageId`))",
         "fields": [
           {
             "fieldPath": "recipientAddress",
@@ -21,8 +21,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "senderAddress",
-            "columnName": "senderAddress",
+            "fieldPath": "senderId",
+            "columnName": "senderId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -65,7 +65,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "senderAddress",
+            "senderId",
             "messageId"
           ],
           "autoGenerate": false

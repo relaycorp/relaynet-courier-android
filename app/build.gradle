@@ -8,13 +8,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.triplet.gradle:play-publisher:3.4.0'
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.7.0.0"
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.8.2.1"
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.diffplug.spotless'
 apply plugin: 'com.github.triplet.play'
@@ -28,13 +27,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdk 33
     ndkVersion '21.3.6528147'
 
     defaultConfig {
         applicationId "tech.relaycorp.courier"
-        minSdkVersion 21
-        targetSdkVersion 32
+        minSdk 23
+        targetSdk 33
         versionCode 1
         versionName project.findProperty("versionName") ?: "0.1"
 
@@ -74,22 +73,24 @@ android {
             }
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17
     }
     packagingOptions {
-        exclude 'META-INF/*'
-    }
-    lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
-        abortOnError true
-        lintConfig file('lint.xml')
+        jniLibs {
+            excludes += ['META-INF/*']
+        }
+        resources {
+            excludes += ['META-INF/*']
+        }
     }
     sourceSets {
         androidTest {
@@ -101,6 +102,13 @@ android {
             resources.srcDirs += "src/sharedTest/resources"
         }
     }
+    lint {
+        abortOnError true
+        checkAllWarnings true
+        lintConfig file('lint.xml')
+        warningsAsErrors true
+    }
+    namespace 'tech.relaycorp.courier'
 }
 
 dependencies {
@@ -112,22 +120,23 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
 
     // Android
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
 
     // Dependency Injection
-    api 'com.google.dagger:dagger:2.42'
-    kapt 'com.google.dagger:dagger-compiler:2.42'
+    api 'com.google.dagger:dagger:2.43.2'
+    kapt 'com.google.dagger:dagger-compiler:2.43.2'
 
     // Awala
-    implementation 'tech.relaycorp:awala:1.65.0'
-    implementation 'tech.relaycorp:cogrpc:1.1.27'
-    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.15'
-    implementation 'tech.relaycorp:doh:1.0.10'
+    implementation 'tech.relaycorp:awala:1.66.4'
+    implementation 'tech.relaycorp:cogrpc:1.1.30'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.18'
+    implementation 'tech.relaycorp:doh:1.0.21'
+    testImplementation "tech.relaycorp:awala-testing:1.5.10"
 
     // ORM
     implementation "androidx.room:room-runtime:$roomVersion"
@@ -155,7 +164,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
-    testImplementation 'org.mockito:mockito-inline:4.6.0'
+    testImplementation 'org.mockito:mockito-inline:4.7.0'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation "io.grpc:grpc-testing:$grpcVersion"
 
@@ -164,11 +173,27 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
     androidTestImplementation "io.grpc:grpc-testing:$grpcVersion"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation('com.adevinta.android:barista:4.2.0') {
-        exclude group: 'org.jetbrains.kotlin'
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1') {
+        exclude group: 'com.google.protobuf'
     }
-    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.42'
+    androidTestImplementation('com.adevinta.android:barista:4.3.0') {
+        exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'com.google.protobuf'
+    }
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.43.2'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        /*
+         * Our TLS certificates are being rejected with OPENSSL_internal:NOT_ENOUGH_DATA
+         * on Netty 4.1.79.Final, so we're locking its version to 4.1.78.Final until we're able to fix the
+         * underlying issue
+         */
+        if (details.requested.group == 'io.netty') {
+            details.useVersion nettyVersion
+        }
+    }
 }
 
 spotless {
@@ -180,9 +205,9 @@ spotless {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions.freeCompilerArgs += [
-            '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
-            '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
-            '-Xuse-experimental=kotlin.time.ExperimentalTime'
+            '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
+            '-opt-in=kotlinx.coroutines.FlowPreview',
+            '-opt-in=kotlin.time.ExperimentalTime'
     ]
 }
 
