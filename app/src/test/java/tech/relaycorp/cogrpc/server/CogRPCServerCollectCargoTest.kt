@@ -18,7 +18,6 @@ import tech.relaycorp.relaynet.cogrpc.toCargoDeliveryAck
 import java.util.concurrent.TimeUnit
 
 internal class CogRPCServerCollectCargoTest {
-
     private lateinit var mockService: MockCogRPCServerService
     private lateinit var testServer: TestCogRPCServer
 
@@ -28,68 +27,73 @@ internal class CogRPCServerCollectCargoTest {
     }
 
     @Test
-    internal fun `collectCargo with correct CCA and all cargo acked`() = runBlockingTest {
-        setupAndStartServer()
+    internal fun `collectCargo with correct CCA and all cargo acked`() =
+        runBlockingTest {
+            setupAndStartServer()
 
-        val cca = "ABC".toByteArray()
-        val authClient = buildClientWithCCA(cca)
+            val cca = "ABC".toByteArray()
+            val authClient = buildClientWithCCA(cca)
 
-        val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
-        val ackObserver = authClient.collectCargo(deliveryRecorder)
-        val cargoReceived = deliveryRecorder.values.first()
-        ackObserver.onNext(cargoReceived.id.toCargoDeliveryAck())
+            val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
+            val ackObserver = authClient.collectCargo(deliveryRecorder)
+            val cargoReceived = deliveryRecorder.values.first()
+            ackObserver.onNext(cargoReceived.id.toCargoDeliveryAck())
 
-        assertEquals(
-            cca.toList(),
-            mockService.collectCargoCalls.last().toList()
-        )
+            assertEquals(
+                cca.toList(),
+                mockService.collectCargoCalls.last().toList(),
+            )
 
-        assertEquals(
-            MockCogRPCServerService.CARGO_DELIVERED,
-            cargoReceived.cargo
-        )
+            assertEquals(
+                MockCogRPCServerService.CARGO_DELIVERED,
+                cargoReceived.cargo,
+            )
 
-        ackObserver.onNext(buildDeliveryAck(cargoReceived.id))
-        ackObserver.onCompleted()
-        assertEquals(
-            cargoReceived.id,
-            mockService.processCargoCollectionAckCalls.last()
-        )
+            ackObserver.onNext(buildDeliveryAck(cargoReceived.id))
+            ackObserver.onCompleted()
+            assertEquals(
+                cargoReceived.id,
+                mockService.processCargoCollectionAckCalls.last(),
+            )
 
-        assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
-    }
-
-    @Test
-    internal fun `collectCargo with missing CCA`() = runBlockingTest {
-        setupAndStartServer()
-
-        val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
-        buildClient().collectCargo(deliveryRecorder)
-
-        assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
-        assertTrue(deliveryRecorder.values.isEmpty())
-    }
+            assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
+        }
 
     @Test
-    internal fun `collectCargo with invalid CCA`() = runBlockingTest {
-        setupAndStartServer()
+    internal fun `collectCargo with missing CCA`() =
+        runBlockingTest {
+            setupAndStartServer()
 
-        val invalidAuthClient = buildClientWithInvalidAuthorization()
-        val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
-        invalidAuthClient.collectCargo(deliveryRecorder)
+            val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
+            buildClient().collectCargo(deliveryRecorder)
 
-        assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
-        assertTrue(deliveryRecorder.values.isEmpty())
-    }
+            assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
+            assertTrue(deliveryRecorder.values.isEmpty())
+        }
+
+    @Test
+    internal fun `collectCargo with invalid CCA`() =
+        runBlockingTest {
+            setupAndStartServer()
+
+            val invalidAuthClient = buildClientWithInvalidAuthorization()
+            val deliveryRecorder = StreamRecorder.create<CargoDelivery>()
+            invalidAuthClient.collectCargo(deliveryRecorder)
+
+            assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
+            assertTrue(deliveryRecorder.values.isEmpty())
+        }
 
     @Test
     internal fun `collectCargo with no cargo to collect`() {
-        setupAndStartServer(object : MockCogRPCServerService() {
-            override suspend fun collectCargo(ccaSerialized: ByteArray): Iterable<CargoDeliveryRequest> {
-                super.collectCargo(ccaSerialized)
-                return emptyList()
-            }
-        })
+        setupAndStartServer(
+            object : MockCogRPCServerService() {
+                override suspend fun collectCargo(ccaSerialized: ByteArray): Iterable<CargoDeliveryRequest> {
+                    super.collectCargo(ccaSerialized)
+                    return emptyList()
+                }
+            },
+        )
 
         val cca = "CCA".toByteArray()
         val authClient = buildClientWithCCA(cca)
@@ -98,7 +102,7 @@ internal class CogRPCServerCollectCargoTest {
 
         assertEquals(
             cca.toList(),
-            mockService.collectCargoCalls.last().toList()
+            mockService.collectCargoCalls.last().toList(),
         )
 
         assertTrue(deliveryRecorder.awaitCompletion(100, TimeUnit.MILLISECONDS))
@@ -117,7 +121,7 @@ internal class CogRPCServerCollectCargoTest {
         // Got cargo but didn't ack
         assertEquals(
             MockCogRPCServerService.CARGO_DELIVERED,
-            cargoReceived.cargo
+            cargoReceived.cargo,
         )
 
         // Stream does not end because it's waiting for an ack
@@ -134,7 +138,7 @@ internal class CogRPCServerCollectCargoTest {
 
     private fun buildClientWithCCA(cca: ByteArray = "CCA".toByteArray()) =
         buildClient().withInterceptors(
-            MetadataUtils.newAttachHeadersInterceptor(AuthorizationMetadata.makeMetadata(cca))
+            MetadataUtils.newAttachHeadersInterceptor(AuthorizationMetadata.makeMetadata(cca)),
         )
 
     private fun buildClientWithInvalidAuthorization() =
@@ -143,9 +147,9 @@ internal class CogRPCServerCollectCargoTest {
                 Metadata().also {
                     it.put(
                         Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER),
-                        "INVALID"
+                        "INVALID",
                     )
-                }
-            )
+                },
+            ),
         )
 }

@@ -2,13 +2,13 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.8.10'
-        kotlinCoroutinesVersion = '1.6.4'
+        kotlinVersion = '1.9.21'
+        kotlinCoroutinesVersion = '1.7.3'
         grpcVersion = '1.59.0'
         nettyVersion = '4.1.78.Final'
         aboutLibsVersion = '8.6.3'
         junitVersion = '5.9.0'
-        roomVersion = '2.5.0-alpha03'
+        roomVersion = '2.6.0'
     }
     repositories {
         google()
@@ -18,7 +18,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.7.2'
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.23.0'
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$aboutLibsVersion"
         classpath 'com.github.triplet.gradle:play-publisher:3.7.0'
     }

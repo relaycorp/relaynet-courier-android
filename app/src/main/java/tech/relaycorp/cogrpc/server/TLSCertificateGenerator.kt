@@ -27,13 +27,16 @@ import java.util.Date
 
 class TLSCertificateGenerator(
     val privateKey: PrivateKey,
-    val certificateHolder: X509CertificateHolder
+    val certificateHolder: X509CertificateHolder,
 ) {
     fun exportPrivateKey() = derToPem(this.privateKey.encoded, "PRIVATE KEY")
 
     fun exportCertificate() = derToPem(this.certificateHolder.encoded, "CERTIFICATE")
 
-    private fun derToPem(valueDer: ByteArray, pemLabel: String): ByteArray {
+    private fun derToPem(
+        valueDer: ByteArray,
+        pemLabel: String,
+    ): ByteArray {
         val valueBase64 = Base64.toBase64String(valueDer)
         val valuePem = "-----BEGIN $pemLabel-----\n${valueBase64}\n-----END $pemLabel-----"
         return valuePem.toByteArray()
@@ -50,21 +53,23 @@ class TLSCertificateGenerator(
             val distinguishedName = buildDistinguishedName(ipAddress)
 
             val now = ZonedDateTime.now(UTC)
-            val builder = X509v3CertificateBuilder(
-                distinguishedName,
-                generateRandomBigInteger(),
-                Date.from(now.minusHours(2).toInstant()), // Account for clock drift
-                Date.from(now.plusHours(24).toInstant()),
-                distinguishedName,
-                SubjectPublicKeyInfo.getInstance(keyPair.public.encoded)
-            )
+            val builder =
+                X509v3CertificateBuilder(
+                    distinguishedName,
+                    generateRandomBigInteger(),
+                    // Account for clock drift
+                    Date.from(now.minusHours(2).toInstant()),
+                    Date.from(now.plusHours(24).toInstant()),
+                    distinguishedName,
+                    SubjectPublicKeyInfo.getInstance(keyPair.public.encoded),
+                )
 
             val sanExtensionBuilder = GeneralNamesBuilder()
             sanExtensionBuilder.addName(GeneralName(GeneralName.iPAddress, ipAddress))
             builder.addExtension(
                 Extension.subjectAlternativeName,
                 true,
-                sanExtensionBuilder.build()
+                sanExtensionBuilder.build(),
             )
 
             val signerBuilder = makeSigner(keyPair.private)

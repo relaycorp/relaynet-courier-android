@@ -23,93 +23,98 @@ import tech.relaycorp.courier.ui.BaseViewModel
 import tech.relaycorp.courier.ui.common.EnableState
 
 internal class SettingsViewModelTest {
-
     private val observeStorageUsage = mock<GetStorageUsage>()
     private val deleteAllStorage = mock<DeleteAllStorage>()
     private val storagePreferences = mock<StoragePreferences>()
-    private val diskStats = mock<DiskStats>() {
-        onBlocking { getTotalStorage() }.thenReturn(StorageSize.ZERO)
-    }
+    private val diskStats =
+        mock<DiskStats> {
+            onBlocking { getTotalStorage() }.thenReturn(StorageSize.ZERO)
+        }
 
     @BeforeEach
     internal fun setUp() {
-        BaseViewModel.VIEW_MODEL_DISPATCHER = TestCoroutineDispatcher()
+        BaseViewModel.viewModelDispatcher = TestCoroutineDispatcher()
         whenever(observeStorageUsage.observe()).thenReturn(emptyFlow())
         whenever(storagePreferences.getMaxStorageSize()).thenReturn(emptyFlow())
         whenever(diskStats.observeAvailableStorage()).thenReturn(emptyFlow())
     }
 
     @Test
-    fun `deleteData clicked called right domain method`() = runBlockingTest {
-        val vm = buildViewModel()
-        vm.deleteDataClicked()
-        verify(deleteAllStorage).delete()
-    }
+    fun `deleteData clicked called right domain method`() =
+        runBlockingTest {
+            val vm = buildViewModel()
+            vm.deleteDataClicked()
+            verify(deleteAllStorage).delete()
+        }
 
     @Test
-    fun `deleteData is disabled when data is empty`() = runBlockingTest {
-        val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(0L))
-        whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
+    fun `deleteData is disabled when data is empty`() =
+        runBlockingTest {
+            val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(0L))
+            whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
-        val vm = buildViewModel()
-        waitForAssertEquals(
-            EnableState.Disabled,
-            vm.deleteDataEnabled()::first
-        )
-    }
-
-    @Test
-    fun `deleteData is enabled when there's data`() = runBlockingTest {
-        val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(1L))
-        whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
-
-        val vm = buildViewModel()
-        waitForAssertEquals(
-            EnableState.Enabled,
-            vm.deleteDataEnabled()::first
-        )
-    }
+            val vm = buildViewModel()
+            waitForAssertEquals(
+                EnableState.Disabled,
+                vm.deleteDataEnabled()::first,
+            )
+        }
 
     @Test
-    fun `observe storage stats`() = runBlockingTest {
-        val total = StorageSize(1_000_000)
-        val available = StorageSize(500_000)
-        val used = StorageSize(100_000)
-        val usage = StorageUsage(used, total, available)
-        whenever(observeStorageUsage.observe()).thenReturn(flowOf(usage))
-        whenever(diskStats.getTotalStorage()).thenReturn(total)
-        whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(available))
+    fun `deleteData is enabled when there's data`() =
+        runBlockingTest {
+            val emptyUsage = StorageUsageFactory.build().copy(usedByApp = StorageSize(1L))
+            whenever(observeStorageUsage.observe()).thenReturn(flowOf(emptyUsage))
 
-        val vm = buildViewModel()
-        waitForAssertEquals(
-            StorageStats(used, 20, available, total),
-            vm.storageStats()::first
-        )
-    }
+            val vm = buildViewModel()
+            waitForAssertEquals(
+                EnableState.Enabled,
+                vm.deleteDataEnabled()::first,
+            )
+        }
 
     @Test
-    fun `max storage boundary`() = runBlockingTest {
-        val totalStorage = SettingsViewModel.MIN_STORAGE_SIZE * 10
-        whenever(diskStats.getTotalStorage()).thenReturn(totalStorage)
+    fun `observe storage stats`() =
+        runBlockingTest {
+            val total = StorageSize(1_000_000)
+            val available = StorageSize(500_000)
+            val used = StorageSize(100_000)
+            val usage = StorageUsage(used, total, available)
+            whenever(observeStorageUsage.observe()).thenReturn(flowOf(usage))
+            whenever(diskStats.getTotalStorage()).thenReturn(total)
+            whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(available))
 
-        val vm = buildViewModel()
-        waitForAssertEquals(
-            SizeBoundary(
-                SettingsViewModel.MIN_STORAGE_SIZE,
-                totalStorage,
-                SettingsViewModel.STORAGE_SIZE_STEP
-            ),
-            vm.maxStorageBoundary()::first
-        )
-    }
+            val vm = buildViewModel()
+            waitForAssertEquals(
+                StorageStats(used, 20, available, total),
+                vm.storageStats()::first,
+            )
+        }
 
     @Test
-    internal fun `max storage value changed`() = runBlockingTest {
-        val newValue = StorageSize(1_000_000_00)
-        buildViewModel().maxStorageChanged(newValue)
-        verify(storagePreferences).setMaxStorageSize(eq(newValue))
-    }
+    fun `max storage boundary`() =
+        runBlockingTest {
+            val totalStorage = SettingsViewModel.MIN_STORAGE_SIZE * 10
+            whenever(diskStats.getTotalStorage()).thenReturn(totalStorage)
 
-    private fun buildViewModel() =
-        SettingsViewModel(observeStorageUsage, deleteAllStorage, storagePreferences, diskStats)
+            val vm = buildViewModel()
+            waitForAssertEquals(
+                SizeBoundary(
+                    SettingsViewModel.MIN_STORAGE_SIZE,
+                    totalStorage,
+                    SettingsViewModel.STORAGE_SIZE_STEP,
+                ),
+                vm.maxStorageBoundary()::first,
+            )
+        }
+
+    @Test
+    internal fun `max storage value changed`() =
+        runBlockingTest {
+            val newValue = StorageSize(1_000_000_00)
+            buildViewModel().maxStorageChanged(newValue)
+            verify(storagePreferences).setMaxStorageSize(eq(newValue))
+        }
+
+    private fun buildViewModel() = SettingsViewModel(observeStorageUsage, deleteAllStorage, storagePreferences, diskStats)
 }

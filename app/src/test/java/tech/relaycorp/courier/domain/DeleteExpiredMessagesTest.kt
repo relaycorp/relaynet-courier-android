@@ -12,22 +12,22 @@ import tech.relaycorp.courier.data.database.StoredMessageDao
 import tech.relaycorp.courier.test.factory.StoredMessageFactory
 
 internal class DeleteExpiredMessagesTest {
-
     private val storedMessageDao = mock<StoredMessageDao>()
     private val deleteMessage = mock<DeleteMessage>()
     private val subject = DeleteExpiredMessages(storedMessageDao, deleteMessage)
 
     @Test
-    internal fun delete() = runBlockingTest {
-        val message = StoredMessageFactory.build()
-        whenever(storedMessageDao.getExpiredBy(any())).thenReturn(listOf(message))
+    internal fun delete() =
+        runBlockingTest {
+            val message = StoredMessageFactory.build()
+            whenever(storedMessageDao.getExpiredBy(any())).thenReturn(listOf(message))
 
-        val result = subject.delete()
+            val result = subject.delete()
 
-        verify(deleteMessage).delete(eq(message))
-        assertEquals(
-            result,
-            listOf(message)
-        )
-    }
+            verify(deleteMessage).delete(eq(message))
+            assertEquals(
+                result,
+                listOf(message),
+            )
+        }
 }

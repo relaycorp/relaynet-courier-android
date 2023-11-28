@@ -15,10 +15,12 @@ import javax.inject.Singleton
 
 @Module
 class DataModule {
-
     @Provides
     @Singleton
-    fun database(context: Context, appMode: App.Mode): AppDatabase =
+    fun database(
+        context: Context,
+        appMode: App.Mode,
+    ): AppDatabase =
         when (appMode) {
             App.Mode.Normal ->
                 Room.databaseBuilder(context, AppDatabase::class.java, "courier")
@@ -40,13 +42,11 @@ class DataModule {
     @Provides
     fun sharedPreferences(
         context: Context,
-        @Named("preferences_name") preferencesName: String
-    ): SharedPreferences =
-        context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
+        @Named("preferences_name") preferencesName: String,
+    ): SharedPreferences = context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
 
     @Provides
-    fun flowSharedPreferences(sharedPreferences: SharedPreferences) =
-        FlowSharedPreferences(sharedPreferences)
+    fun flowSharedPreferences(sharedPreferences: SharedPreferences) = FlowSharedPreferences(sharedPreferences)
 
     @Provides
     fun cogRPCClientBuilder(): CogRPCClient.Builder = CogRPCClient.Builder

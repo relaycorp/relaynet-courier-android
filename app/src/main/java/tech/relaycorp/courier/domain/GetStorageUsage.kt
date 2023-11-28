@@ -10,31 +10,31 @@ import tech.relaycorp.courier.data.preference.StoragePreferences
 import javax.inject.Inject
 
 class GetStorageUsage
-@Inject constructor(
-    private val storedMessageDao: StoredMessageDao,
-    private val storagePreferences: StoragePreferences,
-    private val diskStats: DiskStats
-) {
+    @Inject
+    constructor(
+        private val storedMessageDao: StoredMessageDao,
+        private val storagePreferences: StoragePreferences,
+        private val diskStats: DiskStats,
+    ) {
+        suspend fun get() = observe().first()
 
-    suspend fun get() = observe().first()
+        fun observe() =
+            combine(
+                storedMessageDao.observeTotalSize(),
+                storagePreferences.getMaxStorageSize(),
+                observeActualMax(),
+            ) { usedByApp, definedMax, actualMax ->
+                StorageUsage(usedByApp, definedMax, actualMax)
+            }
 
-    fun observe() =
-        combine(
-            storedMessageDao.observeTotalSize(),
-            storagePreferences.getMaxStorageSize(),
-            observeActualMax()
-        ) { usedByApp, definedMax, actualMax ->
-            StorageUsage(usedByApp, definedMax, actualMax)
-        }
-
-    // If there's less than the user-defined max storage available,
-    // return the actually available storage size
-    private fun observeActualMax() =
-        combine(
-            storagePreferences.getMaxStorageSize(),
-            storedMessageDao.observeTotalSize(),
-            diskStats.observeAvailableStorage()
-        ) { definedMax, usedByApp, available ->
-            min(definedMax, usedByApp + available)
-        }
-}
+        // If there's less than the user-defined max storage available,
+        // return the actually available storage size
+        private fun observeActualMax() =
+            combine(
+                storagePreferences.getMaxStorageSize(),
+                storedMessageDao.observeTotalSize(),
+                diskStats.observeAvailableStorage(),
+            ) { definedMax, usedByApp, available ->
+                min(definedMax, usedByApp + available)
+            }
+    }

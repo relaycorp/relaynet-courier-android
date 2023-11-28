@@ -5,8 +5,9 @@ import tech.relaycorp.courier.data.model.MessageType
 import javax.inject.Inject
 
 class ObserveCCACount
-@Inject constructor(
-    private val storedMessageDao: StoredMessageDao
-) {
-    fun observe() = storedMessageDao.observeCountByMessageType(MessageType.CCA)
-}
+    @Inject
+    constructor(
+        private val storedMessageDao: StoredMessageDao,
+    ) {
+        fun observe() = storedMessageDao.observeCountByMessageType(MessageType.CCA)
+    }

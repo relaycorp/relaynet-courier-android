@@ -5,16 +5,15 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class MessageTypeTest {
-
     @Test
     internal fun type() {
         assertEquals(
             MessageType.Cargo,
-            MessageType.fromValue(MessageType.Cargo.value)
+            MessageType.fromValue(MessageType.Cargo.value),
         )
         assertEquals(
             MessageType.CCA,
-            MessageType.fromValue(MessageType.CCA.value)
+            MessageType.fromValue(MessageType.CCA.value),
         )
         assertThrows<IllegalArgumentException> {
             MessageType.fromValue("invalid")

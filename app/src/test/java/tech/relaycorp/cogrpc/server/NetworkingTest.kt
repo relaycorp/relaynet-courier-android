@@ -22,14 +22,14 @@ class NetworkingTest {
 
             assertEquals(
                 "No address with the prefix 192.168. was found",
-                exception.message
+                exception.message,
             )
         }
 
         @Test
         fun `An exception should be thrown if multiple IP addresses are found`() {
             whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(
-                listOf(localIPAddress, "192.168.43.200")
+                listOf(localIPAddress, "192.168.43.200"),
             )
 
             val exception =
@@ -37,14 +37,14 @@ class NetworkingTest {
 
             assertEquals(
                 "Multiple addresses with the prefix 192.168. were found",
-                exception.message
+                exception.message,
             )
         }
 
         @Test
         fun `Addresses that do not start with the Android gateway prefix should be ignored`() {
             whenever(spiedNetworking.getAllLocalIpAddresses()).thenReturn(
-                listOf("10.0.0.1", localIPAddress)
+                listOf("10.0.0.1", localIPAddress),
             )
 
             assertEquals(spiedNetworking.getGatewayIpAddress(), localIPAddress)

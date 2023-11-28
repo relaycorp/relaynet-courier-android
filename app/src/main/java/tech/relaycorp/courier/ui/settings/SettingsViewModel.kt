@@ -1,14 +1,14 @@
 package tech.relaycorp.courier.ui.settings
 
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import tech.relaycorp.courier.common.BehaviorChannel
-import tech.relaycorp.courier.common.PublishChannel
+import tech.relaycorp.courier.common.PublishFlow
 import tech.relaycorp.courier.data.disk.DiskStats
 import tech.relaycorp.courier.data.model.StorageSize
 import tech.relaycorp.courier.data.preference.StoragePreferences
@@ -21,89 +21,92 @@ import tech.relaycorp.courier.ui.common.toEnableState
 import javax.inject.Inject
 
 class SettingsViewModel
-@Inject constructor(
-    getStorageUsage: GetStorageUsage,
-    deleteAllStorage: DeleteAllStorage,
-    storagePreferences: StoragePreferences,
-    diskStats: DiskStats
-) : BaseViewModel() {
+    @Inject
+    constructor(
+        getStorageUsage: GetStorageUsage,
+        deleteAllStorage: DeleteAllStorage,
+        storagePreferences: StoragePreferences,
+        diskStats: DiskStats,
+    ) : BaseViewModel() {
+        // Inputs
 
-    // Inputs
+        private val deleteDataClicks = PublishFlow<Click>()
 
-    private val deleteDataClicks = PublishChannel<Click>()
-    fun deleteDataClicked() = deleteDataClicks.trySendBlocking(Click)
+        fun deleteDataClicked() = deleteDataClicks.tryEmit(Click)
 
-    private val maxStorageChanged = PublishChannel<StorageSize>()
-    fun maxStorageChanged(value: StorageSize) = maxStorageChanged.trySendBlocking(value)
+        private val maxStorageChanged = PublishFlow<StorageSize>()
 
-    // Outputs
+        fun maxStorageChanged(value: StorageSize) = maxStorageChanged.tryEmit(value)
 
-    private val deleteDataEnabled = BehaviorChannel<EnableState>()
-    fun deleteDataEnabled() = deleteDataEnabled.asFlow()
+        // Outputs
 
-    private val maxStorage = BehaviorChannel<StorageSize>()
-    fun maxStorage() = maxStorage.asFlow()
+        private val deleteDataEnabled = MutableStateFlow<EnableState?>(null)
 
-    private val maxStorageBoundary = BehaviorChannel<SizeBoundary>()
-    fun maxStorageBoundary() = maxStorageBoundary.asFlow()
+        fun deleteDataEnabled() = deleteDataEnabled.asStateFlow().filterNotNull()
 
-    private val storageStats = BehaviorChannel<StorageStats>()
-    fun storageStats() = storageStats.asFlow()
+        private val maxStorage = MutableStateFlow<StorageSize?>(null)
 
-    init {
-        getStorageUsage
-            .observe()
-            .onEach {
-                deleteDataEnabled.send((!it.usedByApp.isZero).toEnableState())
-            }
-            .launchIn(scope)
+        fun maxStorage() = maxStorage.asStateFlow().filterNotNull()
 
-        combine(
-            getStorageUsage.observe(),
-            diskStats.observeAvailableStorage()
-        ) { usage, available ->
-            StorageStats(
-                used = usage.usedByApp,
-                usedPercentage = usage.percentage,
-                available = available,
-                total = diskStats.getTotalStorage()
-            )
-        }
-            .onEach(storageStats::send)
-            .launchIn(scope)
+        private val maxStorageBoundary = MutableStateFlow<SizeBoundary?>(null)
 
-        deleteDataClicks
-            .asFlow()
-            .onEach { deleteAllStorage.delete() }
-            .launchIn(scope)
+        fun maxStorageBoundary() = maxStorageBoundary.asStateFlow().filterNotNull()
 
-        storagePreferences
-            .getMaxStorageSize()
-            .onEach(maxStorage::send)
-            .launchIn(scope)
+        private val storageStats = MutableStateFlow<StorageStats?>(null)
 
-        maxStorageChanged
-            .asFlow()
-            .onEach { storagePreferences.setMaxStorageSize(it) }
-            .launchIn(scope)
+        fun storageStats() = storageStats.asStateFlow().filterNotNull()
 
-        scope.launch {
-            val totalStorageValue = diskStats.getTotalStorage()
-            maxStorageBoundary.send(
-                SizeBoundary(
-                    MIN_STORAGE_SIZE,
-                    totalStorageValue,
-                    STORAGE_SIZE_STEP
+        init {
+            getStorageUsage
+                .observe()
+                .onEach {
+                    deleteDataEnabled.value = (!it.usedByApp.isZero).toEnableState()
+                }
+                .launchIn(scope)
+
+            combine(
+                getStorageUsage.observe(),
+                diskStats.observeAvailableStorage(),
+            ) { usage, available ->
+                StorageStats(
+                    used = usage.usedByApp,
+                    usedPercentage = usage.percentage,
+                    available = available,
+                    total = diskStats.getTotalStorage(),
                 )
-            )
+            }
+                .onEach { storageStats.value = it }
+                .launchIn(scope)
+
+            deleteDataClicks
+                .onEach { deleteAllStorage.delete() }
+                .launchIn(scope)
+
+            storagePreferences
+                .getMaxStorageSize()
+                .onEach { maxStorage.value = it }
+                .launchIn(scope)
+
+            maxStorageChanged
+                .onEach { storagePreferences.setMaxStorageSize(it) }
+                .launchIn(scope)
+
+            scope.launch {
+                val totalStorageValue = diskStats.getTotalStorage()
+                maxStorageBoundary.value =
+                    SizeBoundary(
+                        MIN_STORAGE_SIZE,
+                        totalStorageValue,
+                        STORAGE_SIZE_STEP,
+                    )
+            }
+        }
+
+        companion object {
+            @VisibleForTesting
+            val MIN_STORAGE_SIZE = StorageSize(100_000_000)
+
+            @VisibleForTesting
+            val STORAGE_SIZE_STEP = StorageSize(100_000_000)
         }
     }
-
-    companion object {
-        @VisibleForTesting
-        val MIN_STORAGE_SIZE = StorageSize(100_000_000)
-
-        @VisibleForTesting
-        val STORAGE_SIZE_STEP = StorageSize(100_000_000)
-    }
-}

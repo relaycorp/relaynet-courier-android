@@ -27,7 +27,6 @@ import tech.relaycorp.relaynet.testing.pki.KeyPairSet
 import tech.relaycorp.relaynet.wrappers.nodeId
 
 internal class CargoDeliveryTest {
-
     private val clientBuilder = mock<CogRPCClient.Builder>()
     private val storedMessageDao = mock<StoredMessageDao>()
     private val diskRepository = mock<DiskRepository>()
@@ -39,104 +38,115 @@ internal class CargoDeliveryTest {
     private val internetGatewayAddress = "example.com"
     private val internetGatewayTargetURL = "https://cogrpc.example.com:443"
 
-    private val cargo = StoredMessageFactory.build(
-        Recipient(KeyPairSet.INTERNET_GW.public.nodeId, internetGatewayAddress),
-    )
+    private val cargo =
+        StoredMessageFactory.build(
+            Recipient(KeyPairSet.INTERNET_GW.public.nodeId, internetGatewayAddress),
+        )
 
-    private val subject = CargoDelivery(
-        clientBuilder, storedMessageDao, diskRepository, deleteMessage
-    )
+    private val subject =
+        CargoDelivery(
+            clientBuilder,
+            storedMessageDao,
+            diskRepository,
+            deleteMessage,
+        )
 
     @BeforeEach
-    internal fun setUp() = runTest {
-        whenever(resolver.resolve(internetGatewayAddress)).thenReturn(internetGatewayTargetURL)
+    internal fun setUp() =
+        runTest {
+            whenever(resolver.resolve(internetGatewayAddress)).thenReturn(internetGatewayTargetURL)
 
-        whenever(clientBuilder.build(eq(internetGatewayTargetURL), any(), any())).thenReturn(client)
-        whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
-    }
-
-    @Test
-    fun `deliver cargo successfully`() = runTest {
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
-            .thenReturn(listOf(cargo))
-        whenever(client.deliverCargo(any()))
-            .thenAnswer { inv ->
-                @Suppress("UNCHECKED_CAST")
-                (inv.arguments[0] as Iterable<CargoDeliveryRequest>)
-                    .map { it.localId }
-                    .asFlow()
-            }
-
-        subject.deliver(resolver)
-
-        verify(client).deliverCargo(any())
-        verify(deleteMessage).delete(eq(cargo))
-    }
+            whenever(clientBuilder.build(eq(internetGatewayTargetURL), any(), any())).thenReturn(client)
+            whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
+        }
 
     @Test
-    internal fun `deliver when unknown ack is received ignore it`() = runTest {
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
-            .thenReturn(listOf(cargo))
-        whenever(client.deliverCargo(any()))
-            .thenAnswer { inv ->
-                @Suppress("UNCHECKED_CAST")
-                flowOf(
-                    (inv.arguments[0] as Iterable<CargoDeliveryRequest>).first().localId,
-                    "unknown_ack"
-                )
-            }
+    fun `deliver cargo successfully`() =
+        runTest {
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
+                .thenReturn(listOf(cargo))
+            whenever(client.deliverCargo(any()))
+                .thenAnswer { inv ->
+                    @Suppress("UNCHECKED_CAST")
+                    (inv.arguments[0] as Iterable<CargoDeliveryRequest>)
+                        .map { it.localId }
+                        .asFlow()
+                }
 
-        subject.deliver(resolver)
+            subject.deliver(resolver)
 
-        verify(deleteMessage, times(1)).delete(any())
-    }
+            verify(client).deliverCargo(any())
+            verify(deleteMessage).delete(eq(cargo))
+        }
 
     @Test
-    fun `deliverToRecipient throws exception when cargo was not acknowledged`() = runTest {
-        val cargo2 = cargo.copy(messageId = MessageId("id"))
-        whenever(client.deliverCargo(any()))
-            .thenAnswer { inv ->
-                @Suppress("UNCHECKED_CAST")
-                flowOf((inv.arguments[0] as Iterable<CargoDeliveryRequest>).first().localId)
-            }
+    internal fun `deliver when unknown ack is received ignore it`() =
+        runTest {
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
+                .thenReturn(listOf(cargo))
+            whenever(client.deliverCargo(any()))
+                .thenAnswer { inv ->
+                    @Suppress("UNCHECKED_CAST")
+                    flowOf(
+                        (inv.arguments[0] as Iterable<CargoDeliveryRequest>).first().localId,
+                        "unknown_ack",
+                    )
+                }
 
-        assertThrows<CargoDelivery.IncompleteDeliveryException> {
-            runBlocking {
-                subject.deliverToRecipient(internetGatewayAddress, listOf(cargo, cargo2), resolver)
+            subject.deliver(resolver)
+
+            verify(deleteMessage, times(1)).delete(any())
+        }
+
+    @Test
+    fun `deliverToRecipient throws exception when cargo was not acknowledged`() =
+        runTest {
+            val cargo2 = cargo.copy(messageId = MessageId("id"))
+            whenever(client.deliverCargo(any()))
+                .thenAnswer { inv ->
+                    @Suppress("UNCHECKED_CAST")
+                    flowOf((inv.arguments[0] as Iterable<CargoDeliveryRequest>).first().localId)
+                }
+
+            assertThrows<CargoDelivery.IncompleteDeliveryException> {
+                runBlocking {
+                    subject.deliverToRecipient(internetGatewayAddress, listOf(cargo, cargo2), resolver)
+                }
             }
         }
-    }
 
     @Test
-    fun `Failing to resolve DNS should be ignored`() = runTest {
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
-            .thenReturn(listOf(cargo))
-        whenever(resolver.resolve(internetGatewayAddress))
-            .thenThrow(InternetAddressResolutionException("Whoops"))
+    fun `Failing to resolve DNS should be ignored`() =
+        runTest {
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
+                .thenReturn(listOf(cargo))
+            whenever(resolver.resolve(internetGatewayAddress))
+                .thenThrow(InternetAddressResolutionException("Whoops"))
 
-        subject.deliver(resolver)
+            subject.deliver(resolver)
 
-        verify(client, never()).deliverCargo(any())
-    }
+            verify(client, never()).deliverCargo(any())
+        }
 
     @Test
-    fun `deliver to multiple recipients even if one fails`() = runTest {
-        val internetGatewayAddress2 = "other.$internetGatewayAddress"
-        whenever(resolver.resolve(internetGatewayAddress2)).thenReturn(internetGatewayTargetURL)
-        val cargo2 = cargo.copy(recipientAddress = internetGatewayAddress2)
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
-            .thenReturn(listOf(cargo, cargo2))
-        whenever(client.deliverCargo(any()))
-            .thenAnswer { inv ->
-                @Suppress("UNCHECKED_CAST")
-                flowOf(
-                    (inv.arguments[0] as Iterable<CargoDeliveryRequest>).first().localId,
-                    "unknown_ack"
-                )
-            }
+    fun `deliver to multiple recipients even if one fails`() =
+        runTest {
+            val internetGatewayAddress2 = "other.$internetGatewayAddress"
+            whenever(resolver.resolve(internetGatewayAddress2)).thenReturn(internetGatewayTargetURL)
+            val cargo2 = cargo.copy(recipientAddress = internetGatewayAddress2)
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.Cargo)))
+                .thenReturn(listOf(cargo, cargo2))
+            whenever(client.deliverCargo(any()))
+                .thenAnswer { inv ->
+                    @Suppress("UNCHECKED_CAST")
+                    flowOf(
+                        (inv.arguments[0] as Iterable<CargoDeliveryRequest>).first().localId,
+                        "unknown_ack",
+                    )
+                }
 
-        subject.deliver(resolver)
+            subject.deliver(resolver)
 
-        verify(client, times(2)).deliverCargo(any())
-    }
+            verify(client, times(2)).deliverCargo(any())
+        }
 }

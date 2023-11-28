@@ -7,17 +7,18 @@ import tech.relaycorp.courier.data.database.AppDatabase
 import javax.inject.Inject
 
 class ClearTestDatabaseRule : TestRule {
-
     @Inject
     lateinit var database: AppDatabase
 
-    override fun apply(base: Statement, description: Description?) =
-        object : Statement() {
-            override fun evaluate() {
-                appComponent.inject(this@ClearTestDatabaseRule)
-                database.clearAllTables()
-                base.evaluate()
-                database.clearAllTables()
-            }
+    override fun apply(
+        base: Statement,
+        description: Description?,
+    ) = object : Statement() {
+        override fun evaluate() {
+            appComponent.inject(this@ClearTestDatabaseRule)
+            database.clearAllTables()
+            base.evaluate()
+            database.clearAllTables()
         }
+    }
 }

@@ -1,12 +1,13 @@
 package tech.relaycorp.courier.ui.sync.internet
 
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import tech.relaycorp.courier.common.BehaviorChannel
-import tech.relaycorp.courier.common.PublishChannel
+import tech.relaycorp.courier.common.PublishFlow
 import tech.relaycorp.courier.domain.PublicSync
 import tech.relaycorp.courier.ui.BaseViewModel
 import tech.relaycorp.courier.ui.common.Click
@@ -14,41 +15,42 @@ import tech.relaycorp.courier.ui.common.Finish
 import javax.inject.Inject
 
 class InternetSyncViewModel
-@Inject constructor(
-    private val publicSync: PublicSync
-) : BaseViewModel() {
+    @Inject
+    constructor(
+        private val publicSync: PublicSync,
+    ) : BaseViewModel() {
+        // Inputs
 
-    // Inputs
+        fun stopClicked() = stopClicks.tryEmit(Click)
 
-    fun stopClicked() = stopClicks.trySendBlocking(Click)
-    private val stopClicks = PublishChannel<Click>()
+        private val stopClicks = PublishFlow<Click>()
 
-    // Outputs
+        // Outputs
 
-    private val stateChannel = BehaviorChannel<PublicSync.State>()
-    val state get() = stateChannel.asFlow()
+        private val stateChannel = MutableStateFlow<PublicSync.State?>(null)
+        val state get() = stateChannel.asStateFlow().filterNotNull()
 
-    private val finishChannel = PublishChannel<Finish>()
-    val finish get() = finishChannel.asFlow()
+        private val finishChannel = PublishFlow<Finish>()
+        val finish get() = finishChannel.asSharedFlow()
 
-    init {
-        val syncJob = scope.launch {
-            publicSync.sync()
-        }
+        init {
+            val syncJob =
+                scope.launch {
+                    publicSync.sync()
+                }
 
-        val syncStateJob =
-            publicSync
-                .state()
-                .onEach { stateChannel.send(it) }
+            val syncStateJob =
+                publicSync
+                    .state()
+                    .onEach { stateChannel.emit(it) }
+                    .launchIn(scope)
+
+            stopClicks
+                .onEach {
+                    syncStateJob.cancel()
+                    syncJob.cancel()
+                    finishChannel.emit(Finish)
+                }
                 .launchIn(scope)
-
-        stopClicks
-            .asFlow()
-            .onEach {
-                syncStateJob.cancel()
-                syncJob.cancel()
-                finishChannel.send(Finish)
-            }
-            .launchIn(scope)
+        }
     }
-}

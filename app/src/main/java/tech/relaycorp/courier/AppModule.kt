@@ -12,9 +12,8 @@ import kotlin.coroutines.CoroutineContext
 
 @Module
 class AppModule(
-    private val app: App
+    private val app: App,
 ) {
-
     @Provides
     fun app() = app
 
@@ -28,8 +27,7 @@ class AppModule(
     fun resources(): Resources = app.resources
 
     @Provides
-    fun connectivityManager() =
-        app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun connectivityManager() = app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
     fun wifiApState(): WifiApStateAvailability =
@@ -48,6 +46,7 @@ class AppModule(
     fun backgroundCoroutineContext(): CoroutineContext = Dispatchers.IO
 
     enum class WifiApStateAvailability {
-        Available, Unavailable
+        Available,
+        Unavailable,
     }
 }
