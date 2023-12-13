@@ -4,7 +4,7 @@ buildscript {
     ext {
         kotlinVersion = '1.9.21'
         kotlinCoroutinesVersion = '1.7.3'
-        grpcVersion = '1.59.0'
+        grpcVersion = '1.60.0'
         nettyVersion = '4.1.78.Final'
         aboutLibsVersion = '8.6.3'
         junitVersion = '5.9.0'
