@@ -47,9 +47,9 @@ task jacocoAndroidTestReport(type: JacocoReport) {
 
     reports {
         html.required = true
-        html.destination file("${buildDir}/reports/coverage")
+        html.outputLocation = file("${buildDir}/reports/coverage")
         xml.required = true
-        xml.destination file("${buildDir}/reports/coverage.xml")
+        xml.outputLocation = file("${buildDir}/reports/coverage.xml")
         csv.required = false
     }
 
