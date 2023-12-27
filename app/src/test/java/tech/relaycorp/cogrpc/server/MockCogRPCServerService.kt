@@ -5,7 +5,6 @@ import tech.relaycorp.relaynet.CargoDeliveryRequest
 import java.io.InputStream
 
 open class MockCogRPCServerService : CogRPCServer.Service {
-
     var collectCargoCalls = mutableListOf<ByteArray>()
     var processCargoCollectionAckCalls = mutableListOf<String>()
     var deliverCargoCalls = mutableListOf<InputStream>()
@@ -15,8 +14,8 @@ open class MockCogRPCServerService : CogRPCServer.Service {
         return listOf(
             CargoDeliveryRequest(
                 "1234",
-                CARGO_DELIVERED::newInput
-            )
+                CARGO_DELIVERED::newInput,
+            ),
         )
     }
 

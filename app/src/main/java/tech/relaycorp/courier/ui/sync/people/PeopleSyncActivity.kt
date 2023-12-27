@@ -22,7 +22,6 @@ import tech.relaycorp.courier.ui.common.stopLoopingAvd
 import javax.inject.Inject
 
 class PeopleSyncActivity : BaseActivity() {
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory<PeopleSyncViewModel>
 
@@ -105,12 +104,13 @@ class PeopleSyncActivity : BaseActivity() {
     }
 
     private fun showStopConfirmDialog() {
-        stopConfirmDialog = MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.sync_stop_confirm_title)
-            .setMessage(R.string.sync_people_stop_confirm_message)
-            .setPositiveButton(R.string.stop) { _, _ -> viewModel.confirmStopClicked() }
-            .setNegativeButton(R.string.continue_, null)
-            .show()
+        stopConfirmDialog =
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.sync_stop_confirm_title)
+                .setMessage(R.string.sync_people_stop_confirm_message)
+                .setPositiveButton(R.string.stop) { _, _ -> viewModel.confirmStopClicked() }
+                .setNegativeButton(R.string.continue_, null)
+                .show()
     }
 
     private fun PeopleSyncViewModel.State.toSyncMessageRes() =

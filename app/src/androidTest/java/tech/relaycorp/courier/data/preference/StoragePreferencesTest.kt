@@ -11,7 +11,6 @@ import tech.relaycorp.courier.test.AppTestProvider.flowSharedPreferences
 import tech.relaycorp.courier.test.AppTestProvider.testDispatcher
 
 class StoragePreferencesTest {
-
     private val preferences = StoragePreferences { flowSharedPreferences }
 
     @Before
@@ -25,18 +24,19 @@ class StoragePreferencesTest {
     }
 
     @Test
-    fun maxStorage() = runTest(testDispatcher) {
-        assertEquals(
-            StoragePreferences.DEFAULT_MAX_STORAGE_SIZE,
-            preferences.getMaxStorageSize().first()
-        )
+    fun maxStorage() =
+        runTest(testDispatcher) {
+            assertEquals(
+                StoragePreferences.DEFAULT_MAX_STORAGE_SIZE,
+                preferences.getMaxStorageSize().first(),
+            )
 
-        val newSize = StorageSize(100)
-        preferences.setMaxStorageSize(newSize)
+            val newSize = StorageSize(100)
+            preferences.setMaxStorageSize(newSize)
 
-        assertEquals(
-            newSize,
-            preferences.getMaxStorageSize().first()
-        )
-    }
+            assertEquals(
+                newSize,
+                preferences.getMaxStorageSize().first(),
+            )
+        }
 }

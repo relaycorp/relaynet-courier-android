@@ -15,7 +15,6 @@ import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class StoredMessageDaoTest {
-
     private lateinit var storedMessageDao: StoredMessageDao
 
     @Before
@@ -24,47 +23,52 @@ class StoredMessageDaoTest {
     }
 
     @Test
-    fun insertAndGet() = runTest(testDispatcher) {
-        val messages = StoredMessageFactory.build()
-        storedMessageDao.insert(messages)
-        assertEquals(
-            listOf(messages),
-            storedMessageDao.observeAll().first()
-        )
-    }
+    fun insertAndGet() =
+        runTest(testDispatcher) {
+            val messages = StoredMessageFactory.build()
+            storedMessageDao.insert(messages)
+            assertEquals(
+                listOf(messages),
+                storedMessageDao.observeAll().first(),
+            )
+        }
 
     @Test
-    fun observeTotalSize() = runTest(testDispatcher) {
-        assertEquals(
-            StorageSize.ZERO,
-            storedMessageDao.observeTotalSize().first()
-        )
+    fun observeTotalSize() =
+        runTest(testDispatcher) {
+            assertEquals(
+                StorageSize.ZERO,
+                storedMessageDao.observeTotalSize().first(),
+            )
 
-        val messages =
-            (1..3)
-                .map { StoredMessageFactory.build() }
-                .also { it.map { c -> storedMessageDao.insert(c) } }
+            val messages =
+                (1..3)
+                    .map { StoredMessageFactory.build() }
+                    .also { it.map { c -> storedMessageDao.insert(c) } }
 
-        assertEquals(
-            messages.map { it.size.bytes }.sum(),
-            storedMessageDao.observeTotalSize().first().bytes
-        )
-    }
+            assertEquals(
+                messages.map { it.size.bytes }.sum(),
+                storedMessageDao.observeTotalSize().first().bytes,
+            )
+        }
 
     @Test
-    fun getExpiredBy() = runTest(testDispatcher) {
-        val date = Date()
-        val expiredMessage = StoredMessageFactory.build()
-            .copy(expirationTimeUtc = Date(date.time - 1))
-        val unexpiredMessage = StoredMessageFactory.build()
-            .copy(expirationTimeUtc = Date(date.time + 1))
+    fun getExpiredBy() =
+        runTest(testDispatcher) {
+            val date = Date()
+            val expiredMessage =
+                StoredMessageFactory.build()
+                    .copy(expirationTimeUtc = Date(date.time - 1))
+            val unexpiredMessage =
+                StoredMessageFactory.build()
+                    .copy(expirationTimeUtc = Date(date.time + 1))
 
-        storedMessageDao.insert(expiredMessage)
-        storedMessageDao.insert(unexpiredMessage)
+            storedMessageDao.insert(expiredMessage)
+            storedMessageDao.insert(unexpiredMessage)
 
-        assertEquals(
-            listOf(expiredMessage),
-            storedMessageDao.getExpiredBy(date)
-        )
-    }
+            assertEquals(
+                listOf(expiredMessage),
+                storedMessageDao.getExpiredBy(date),
+            )
+        }
 }

@@ -14,8 +14,8 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
-        DataModule::class
-    ]
+        DataModule::class,
+    ],
 )
 interface TestAppComponent : AppComponent {
     fun inject(app: TestApp)
@@ -27,6 +27,8 @@ interface TestAppComponent : AppComponent {
     // Tests
 
     fun inject(test: MainActivityTest)
+
     fun inject(test: PrivateSyncTest)
+
     fun inject(test: SettingsActivityTest)
 }

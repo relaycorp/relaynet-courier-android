@@ -24,7 +24,6 @@ import tech.relaycorp.courier.ui.common.stopLoopingAvd
 import javax.inject.Inject
 
 class InternetSyncActivity : BaseActivity() {
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory<InternetSyncViewModel>
 
@@ -81,12 +80,13 @@ class InternetSyncActivity : BaseActivity() {
     }
 
     private fun showStopConfirmDialog() {
-        stopConfirmDialog = MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.sync_stop_confirm_title)
-            .setMessage(R.string.sync_internet_stop_confirm_message)
-            .setPositiveButton(R.string.stop) { _, _ -> viewModel.stopClicked() }
-            .setNegativeButton(R.string.continue_, null)
-            .show()
+        stopConfirmDialog =
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.sync_stop_confirm_title)
+                .setMessage(R.string.sync_internet_stop_confirm_message)
+                .setPositiveButton(R.string.stop) { _, _ -> viewModel.stopClicked() }
+                .setNegativeButton(R.string.continue_, null)
+                .show()
     }
 
     private fun PublicSync.State.toStringRes() =

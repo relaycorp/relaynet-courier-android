@@ -35,46 +35,51 @@ class InternetAddressResolverTest {
                 whenever(dohClient.lookUp(srvRecordName, "SRV")).thenReturn(
                     Answer(
                         listOf(
-                            srvRecordData
-                        )
-                    )
+                            srvRecordData,
+                        ),
+                    ),
                 )
             }
         }
 
         @Test
-        fun `Target host and port should be returned`() = runTest {
-            val resolvedAddress = resolver.resolve(internetAddress)
+        fun `Target host and port should be returned`() =
+            runTest {
+                val resolvedAddress = resolver.resolve(internetAddress)
 
-            assertEquals("https://$targetHost:$targetPort", resolvedAddress)
-        }
-
-        @Test
-        fun `SRV data with fewer than four fields should be refused`() = runTest {
-            val malformedSRVData = "1 2 3"
-            whenever(dohClient.lookUp(any(), any())).thenReturn(Answer(listOf(malformedSRVData)))
-
-            val exception = assertThrows<InternetAddressResolutionException> {
-                resolver.resolve(internetAddress)
+                assertEquals("https://$targetHost:$targetPort", resolvedAddress)
             }
 
-            assertEquals(
-                "Malformed SRV for $internetAddress ($malformedSRVData)",
-                exception.message
-            )
-        }
-
         @Test
-        fun `Lookup errors should be wrapped`() = runTest {
-            val lookupException = LookupFailureException("Whoops")
-            whenever(dohClient.lookUp(any(), any())).thenThrow(lookupException)
+        fun `SRV data with fewer than four fields should be refused`() =
+            runTest {
+                val malformedSRVData = "1 2 3"
+                whenever(dohClient.lookUp(any(), any())).thenReturn(Answer(listOf(malformedSRVData)))
 
-            val exception = assertThrows<InternetAddressResolutionException> {
-                resolver.resolve(internetAddress)
+                val exception =
+                    assertThrows<InternetAddressResolutionException> {
+                        resolver.resolve(internetAddress)
+                    }
+
+                assertEquals(
+                    "Malformed SRV for $internetAddress ($malformedSRVData)",
+                    exception.message,
+                )
             }
 
-            assertEquals("Failed to resolve SRV for $internetAddress", exception.message)
-            assertEquals(lookupException, exception.cause)
-        }
+        @Test
+        fun `Lookup errors should be wrapped`() =
+            runTest {
+                val lookupException = LookupFailureException("Whoops")
+                whenever(dohClient.lookUp(any(), any())).thenThrow(lookupException)
+
+                val exception =
+                    assertThrows<InternetAddressResolutionException> {
+                        resolver.resolve(internetAddress)
+                    }
+
+                assertEquals("Failed to resolve SRV for $internetAddress", exception.message)
+                assertEquals(lookupException, exception.cause)
+            }
     }
 }

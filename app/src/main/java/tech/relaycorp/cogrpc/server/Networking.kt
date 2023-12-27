@@ -16,9 +16,10 @@ internal object Networking {
     @Throws(GatewayIPAddressException::class)
     fun getGatewayIpAddress(): String {
         val localAddresses = getAllLocalIpAddresses()
-        val prefix = androidGatewaySubnetPrefix
-            ?: return localAddresses.firstOrNull { it != "127.0.0.1" }
-                ?: throw GatewayIPAddressException("No valid local address found")
+        val prefix =
+            androidGatewaySubnetPrefix
+                ?: return localAddresses.firstOrNull { it != "127.0.0.1" }
+                    ?: throw GatewayIPAddressException("No valid local address found")
 
         val gatewayAddresses = localAddresses.filter { it.startsWith(prefix) }
         if (gatewayAddresses.isEmpty()) {
@@ -31,13 +32,14 @@ internal object Networking {
 
     fun getAllLocalIpAddresses(): List<String> {
         val networkInterfaces = NetworkInterface.getNetworkInterfaces().iterator().asSequence()
-        val localAddresses = networkInterfaces.flatMap {
-            it.inetAddresses.asSequence()
-                .filter { inetAddress ->
-                    inetAddress.isSiteLocalAddress && !inetAddress.hostAddress.contains(":")
-                }
-                .map { inetAddress -> inetAddress.hostAddress }
-        }
+        val localAddresses =
+            networkInterfaces.flatMap {
+                it.inetAddresses.asSequence()
+                    .filter { inetAddress ->
+                        inetAddress.isSiteLocalAddress && !inetAddress.hostAddress.contains(":")
+                    }
+                    .map { inetAddress -> inetAddress.hostAddress }
+            }
         return localAddresses.toList()
     }
 }

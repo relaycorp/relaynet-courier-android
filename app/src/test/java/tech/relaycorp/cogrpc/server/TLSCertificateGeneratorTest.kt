@@ -58,7 +58,7 @@ class TLSCertificateGeneratorTest {
             val serialNumber = generator.certificateHolder.serialNumber
             assertTrue(
                 serialNumber.bitLength() in 48..64,
-                "Value should be between 48 and 64 bits; got ${serialNumber.bitLength()}"
+                "Value should be between 48 and 64 bits; got ${serialNumber.bitLength()}",
             )
         }
 
@@ -115,7 +115,7 @@ class TLSCertificateGeneratorTest {
             val altNames = GeneralNames.getInstance(extension.parsedValue)
             assertEquals(
                 GeneralName(GeneralName.iPAddress, ipAddress).encoded.asList(),
-                altNames.names.first().encoded.asList()
+                altNames.names.first().encoded.asList(),
             )
         }
 
@@ -125,7 +125,7 @@ class TLSCertificateGeneratorTest {
 
             assertEquals(
                 PKCSObjectIdentifiers.sha256WithRSAEncryption,
-                generator.certificateHolder.signatureAlgorithm.algorithm
+                generator.certificateHolder.signatureAlgorithm.algorithm,
             )
         }
     }

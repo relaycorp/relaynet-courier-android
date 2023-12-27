@@ -7,7 +7,6 @@ import tech.relaycorp.courier.R
 import tech.relaycorp.courier.test.BaseActivityTestRule
 
 class InternetSyncActivityTest {
-
     @JvmField
     @Rule
     val activityTestRule = BaseActivityTestRule(InternetSyncActivity::class)

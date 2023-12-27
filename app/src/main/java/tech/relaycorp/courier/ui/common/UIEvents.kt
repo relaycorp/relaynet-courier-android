@@ -3,6 +3,7 @@ package tech.relaycorp.courier.ui.common
 import android.view.View
 
 object Click
+
 object Finish
 
 enum class EnableState { Enabled, Disabled }

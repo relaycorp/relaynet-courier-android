@@ -9,7 +9,7 @@ object StorageUsageFactory {
         val used = Random().nextInt(1_000).toLong()
         return StorageUsage(
             StorageSize(used),
-            StorageSize(used + Random().nextInt(1_000_000).toLong())
+            StorageSize(used + Random().nextInt(1_000_000).toLong()),
         )
     }
 }

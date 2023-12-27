@@ -12,8 +12,9 @@ object RAMFMessageFactory {
     val senderKeyPair = KeyPairSet.PRIVATE_GW
     val senderCertificate = CDACertPath.PRIVATE_GW
 
-    fun buildCargoSerialized() = Cargo(recipient, "".toByteArray(), senderCertificate)
-        .serialize(senderKeyPair.private)
+    fun buildCargoSerialized() =
+        Cargo(recipient, "".toByteArray(), senderCertificate)
+            .serialize(senderKeyPair.private)
 
     fun buildCCASerialized() =
         CargoCollectionAuthorization(recipient, "".toByteArray(), senderCertificate)

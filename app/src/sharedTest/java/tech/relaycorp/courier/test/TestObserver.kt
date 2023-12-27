@@ -12,12 +12,13 @@ fun <T> Flow<T>.test(scope: CoroutineScope): TestObserver<T> {
 
 class TestObserver<T>(
     scope: CoroutineScope,
-    flow: Flow<T>
+    flow: Flow<T>,
 ) {
     private val values = mutableListOf<T>()
-    private val job: Job = scope.launch {
-        flow.collect { values.add(it) }
-    }
+    private val job: Job =
+        scope.launch {
+            flow.collect { values.add(it) }
+        }
 
     fun assertNoValues(): TestObserver<T> {
         assert(emptyList<T>() == this.values) { "Values is not empty: $values" }

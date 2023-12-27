@@ -20,50 +20,55 @@ class WifiHotspotStateWatcherTest {
     private val getGatewayIpAddress = mock<() -> String>()
     private val testCoroutineScope = TestCoroutineScope()
 
-    private val wifiHotspotStateWatcher = WifiHotspotStateWatcher(
-        context,
-        AppModule.WifiApStateAvailability.Unavailable,
-        foregroundAppMonitor,
-        getGatewayIpAddress,
-        testCoroutineScope.coroutineContext
-    )
+    private val wifiHotspotStateWatcher =
+        WifiHotspotStateWatcher(
+            context,
+            AppModule.WifiApStateAvailability.Unavailable,
+            foregroundAppMonitor,
+            getGatewayIpAddress,
+            testCoroutineScope.coroutineContext,
+        )
 
     @Test
-    fun backgroundPollingCheck() = runBlockingTest(testCoroutineScope.coroutineContext) {
-        whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Background))
-        wifiHotspotStateWatcher.start()
+    fun backgroundPollingCheck() =
+        runBlockingTest(testCoroutineScope.coroutineContext) {
+            whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Background))
+            wifiHotspotStateWatcher.start()
 
-        verify(getGatewayIpAddress, never()).invoke()
-    }
-
-    @Test
-    fun foregroundPollingCheck() = runBlockingTest(testCoroutineScope.coroutineContext) {
-        whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
-        wifiHotspotStateWatcher.start()
-
-        verify(getGatewayIpAddress).invoke()
-        wifiHotspotStateWatcher.stop()
-    }
+            verify(getGatewayIpAddress, never()).invoke()
+        }
 
     @Test
-    fun hotspotDisabledCheck() = runBlockingTest(testCoroutineScope.coroutineContext) {
-        whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
-        whenever(getGatewayIpAddress.invoke()).thenAnswer { throw GatewayIPAddressException("") }
-        wifiHotspotStateWatcher.start()
-        val hotspotState = wifiHotspotStateWatcher.state().first()
+    fun foregroundPollingCheck() =
+        runBlockingTest(testCoroutineScope.coroutineContext) {
+            whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
+            wifiHotspotStateWatcher.start()
 
-        assertEquals(WifiHotspotState.Disabled, hotspotState)
-        wifiHotspotStateWatcher.stop()
-    }
+            verify(getGatewayIpAddress).invoke()
+            wifiHotspotStateWatcher.stop()
+        }
 
     @Test
-    fun hotspotEnabledCheck() = runBlockingTest(testCoroutineScope.coroutineContext) {
-        whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
-        whenever(getGatewayIpAddress.invoke()).thenReturn("")
-        wifiHotspotStateWatcher.start()
-        val hotspotState = wifiHotspotStateWatcher.state().first()
+    fun hotspotDisabledCheck() =
+        runBlockingTest(testCoroutineScope.coroutineContext) {
+            whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
+            whenever(getGatewayIpAddress.invoke()).thenAnswer { throw GatewayIPAddressException("") }
+            wifiHotspotStateWatcher.start()
+            val hotspotState = wifiHotspotStateWatcher.state().first()
 
-        assertEquals(WifiHotspotState.Enabled, hotspotState)
-        wifiHotspotStateWatcher.stop()
-    }
+            assertEquals(WifiHotspotState.Disabled, hotspotState)
+            wifiHotspotStateWatcher.stop()
+        }
+
+    @Test
+    fun hotspotEnabledCheck() =
+        runBlockingTest(testCoroutineScope.coroutineContext) {
+            whenever(foregroundAppMonitor.observe()).thenReturn(flowOf(ForegroundAppMonitor.State.Foreground))
+            whenever(getGatewayIpAddress.invoke()).thenReturn("")
+            wifiHotspotStateWatcher.start()
+            val hotspotState = wifiHotspotStateWatcher.state().first()
+
+            assertEquals(WifiHotspotState.Enabled, hotspotState)
+            wifiHotspotStateWatcher.stop()
+        }
 }

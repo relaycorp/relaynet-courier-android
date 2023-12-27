@@ -25,7 +25,6 @@ import tech.relaycorp.relaynet.wrappers.nodeId
 
 // TODO: Factor out code duplicated with CargoDeliveryTest
 internal class CargoCollectionTest {
-
     private val clientBuilder = mock<CogRPCClient.Builder>()
     private val storedMessageDao = mock<StoredMessageDao>()
     private val storeMessage = mock<StoreMessage>()
@@ -38,70 +37,81 @@ internal class CargoCollectionTest {
     private val internetGatewayAddress = "example.com"
     private val internetGatewayTargetURL = "https://cogrpc.example.com:443"
 
-    private val cca = StoredMessageFactory.build(
-        Recipient(KeyPairSet.INTERNET_GW.public.nodeId, internetGatewayAddress),
-    )
+    private val cca =
+        StoredMessageFactory.build(
+            Recipient(KeyPairSet.INTERNET_GW.public.nodeId, internetGatewayAddress),
+        )
 
-    private val subject = CargoCollection(
-        clientBuilder, storedMessageDao, storeMessage, deleteMessage, diskRepository
-    )
+    private val subject =
+        CargoCollection(
+            clientBuilder,
+            storedMessageDao,
+            storeMessage,
+            deleteMessage,
+            diskRepository,
+        )
 
     @BeforeEach
-    internal fun setUp() = runTest {
-        whenever(resolver.resolve(internetGatewayAddress)).thenReturn(internetGatewayTargetURL)
+    internal fun setUp() =
+        runTest {
+            whenever(resolver.resolve(internetGatewayAddress)).thenReturn(internetGatewayTargetURL)
 
-        whenever(clientBuilder.build(eq(internetGatewayTargetURL), any(), any())).thenReturn(client)
-        whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
-    }
-
-    @Test
-    internal fun `collect with CCA successfully`() = runTest {
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
-            .thenReturn(listOf(cca))
-        val serializedCargo = buildSerializedCargo()
-        whenever(client.collectCargo(any())).thenReturn(flowOf(serializedCargo))
-
-        subject.collect(resolver)
-
-        verify(storeMessage).storeCargo(eq(serializedCargo), eq(GatewayType.Private))
-        verify(deleteMessage).delete(eq(cca))
-    }
+            whenever(clientBuilder.build(eq(internetGatewayTargetURL), any(), any())).thenReturn(client)
+            whenever(diskRepository.readMessage(any())).thenReturn { "".byteInputStream() }
+        }
 
     @Test
-    internal fun `collect with CCA refused deletes CCA`() = runTest {
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
-            .thenReturn(listOf(cca))
-        whenever(client.collectCargo(any())).thenReturn(flow { throw CogRPCClient.CCARefusedException() })
+    internal fun `collect with CCA successfully`() =
+        runTest {
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
+                .thenReturn(listOf(cca))
+            val serializedCargo = buildSerializedCargo()
+            whenever(client.collectCargo(any())).thenReturn(flowOf(serializedCargo))
 
-        subject.collect(resolver)
+            subject.collect(resolver)
 
-        verify(deleteMessage).delete(eq(cca))
-    }
-
-    @Test
-    internal fun `collect with unhandled CogRPC exception`() = runTest {
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
-            .thenReturn(listOf(cca))
-        whenever(client.collectCargo(any())).thenReturn(flow { throw CogRPCClient.CogRPCException() })
-
-        subject.collect(resolver)
-
-        verify(storeMessage, never()).storeCargo(any(), any())
-        verify(deleteMessage, never()).delete(any())
-    }
+            verify(storeMessage).storeCargo(eq(serializedCargo), eq(GatewayType.Private))
+            verify(deleteMessage).delete(eq(cca))
+        }
 
     @Test
-    fun `Failing to resolve DNS should be ignored`() = runTest {
-        whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
-            .thenReturn(listOf(cca))
-        whenever(client.collectCargo(any()))
-            .thenReturn(flow { throw InternetAddressResolutionException("Whoops") })
+    internal fun `collect with CCA refused deletes CCA`() =
+        runTest {
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
+                .thenReturn(listOf(cca))
+            whenever(client.collectCargo(any())).thenReturn(flow { throw CogRPCClient.CCARefusedException() })
 
-        subject.collect(resolver)
+            subject.collect(resolver)
 
-        verify(storeMessage, never()).storeCargo(any(), any())
-        verify(deleteMessage, never()).delete(any())
-    }
+            verify(deleteMessage).delete(eq(cca))
+        }
+
+    @Test
+    internal fun `collect with unhandled CogRPC exception`() =
+        runTest {
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
+                .thenReturn(listOf(cca))
+            whenever(client.collectCargo(any())).thenReturn(flow { throw CogRPCClient.CogRPCException() })
+
+            subject.collect(resolver)
+
+            verify(storeMessage, never()).storeCargo(any(), any())
+            verify(deleteMessage, never()).delete(any())
+        }
+
+    @Test
+    fun `Failing to resolve DNS should be ignored`() =
+        runTest {
+            whenever(storedMessageDao.getByRecipientTypeAndMessageType(any(), eq(MessageType.CCA)))
+                .thenReturn(listOf(cca))
+            whenever(client.collectCargo(any()))
+                .thenReturn(flow { throw InternetAddressResolutionException("Whoops") })
+
+            subject.collect(resolver)
+
+            verify(storeMessage, never()).storeCargo(any(), any())
+            verify(deleteMessage, never()).delete(any())
+        }
 
     private fun buildSerializedCargo() = "".byteInputStream()
 }
