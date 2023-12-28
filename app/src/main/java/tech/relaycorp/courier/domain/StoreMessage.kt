@@ -11,6 +11,7 @@ import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.relaynet.cogrpc.readBytesAndClose
 import tech.relaycorp.relaynet.messages.Cargo
 import tech.relaycorp.relaynet.messages.CargoCollectionAuthorization
+import tech.relaycorp.relaynet.messages.InvalidMessageException
 import tech.relaycorp.relaynet.ramf.RAMFException
 import tech.relaycorp.relaynet.ramf.RAMFMessage
 import java.io.InputStream
@@ -38,8 +39,22 @@ class StoreMessage
                 }
 
             try {
-                cargo.validate(null)
+                cargo.validate(
+                    when (recipientType) {
+                        GatewayType.Internet -> null
+                        GatewayType.Private ->
+                            cargo.recipientCertificate
+                                ?.let { setOf(it) }
+                                ?: run {
+                                    logger.warning("Invalid cargo received with missing recipient certificate")
+                                    return Result.Error.Invalid
+                                }
+                    },
+                )
             } catch (exc: RAMFException) {
+                logger.warning("Invalid cargo received: ${exc.message}")
+                return Result.Error.Invalid
+            } catch (exc: InvalidMessageException) {
                 logger.warning("Invalid cargo received: ${exc.message}")
                 return Result.Error.Invalid
             }
