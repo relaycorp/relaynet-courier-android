@@ -14,33 +14,34 @@ import tech.relaycorp.courier.data.model.StorageUsage
 import tech.relaycorp.courier.data.preference.StoragePreferences
 
 internal class GetStorageUsageTest {
-
     private val storedMessageDao = mock<StoredMessageDao>()
     private val storagePreferences = mock<StoragePreferences>()
     private val diskStats = mock<DiskStats>()
     private val subject = GetStorageUsage(storedMessageDao, storagePreferences, diskStats)
 
     @Test
-    internal fun `observe when there is enough space`() = runBlockingTest {
-        whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
-        whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
-        whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(999_999)))
+    internal fun `observe when there is enough space`() =
+        runBlockingTest {
+            whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
+            whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
+            whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(999_999)))
 
-        assertEquals(
-            StorageUsage(StorageSize(1), StorageSize(100_000), StorageSize(100_000)),
-            subject.observe().first()
-        )
-    }
+            assertEquals(
+                StorageUsage(StorageSize(1), StorageSize(100_000), StorageSize(100_000)),
+                subject.observe().first(),
+            )
+        }
 
     @Test
-    internal fun `observe when there is less space than configured`() = runBlockingTest {
-        whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
-        whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
-        whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(10_000)))
+    internal fun `observe when there is less space than configured`() =
+        runBlockingTest {
+            whenever(storedMessageDao.observeTotalSize()).thenReturn(flowOf(StorageSize(1)))
+            whenever(storagePreferences.getMaxStorageSize()).thenReturn(flowOf(StorageSize(100_000)))
+            whenever(diskStats.observeAvailableStorage()).thenReturn(flowOf(StorageSize(10_000)))
 
-        assertEquals(
-            StorageUsage(StorageSize(1), StorageSize(100_000), StorageSize(10_001)),
-            subject.observe().first()
-        )
-    }
+            assertEquals(
+                StorageUsage(StorageSize(1), StorageSize(100_000), StorageSize(10_001)),
+                subject.observe().first(),
+            )
+        }
 }

@@ -7,14 +7,14 @@ import tech.relaycorp.courier.data.model.StoredMessage
 
 @Database(
     entities = [StoredMessage::class],
-    version = 1
+    version = 1,
 )
 @TypeConverters(
     value = [
         DateConverter::class,
         MessageConverter::class,
-        StorageSizeConverter::class
-    ]
+        StorageSizeConverter::class,
+    ],
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun storedMessageDao(): StoredMessageDao

@@ -1,10 +1,10 @@
 package tech.relaycorp.courier.ui.settings
 
 import androidx.test.espresso.Espresso.onIdle
-import com.google.android.material.slider.Slider
 import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertDisabled
 import com.adevinta.android.barista.assertion.BaristaEnabledAssertions.assertEnabled
 import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertContains
+import com.google.android.material.slider.Slider
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -25,7 +25,6 @@ import tech.relaycorp.courier.test.factory.StoredMessageFactory
 import javax.inject.Inject
 
 class SettingsActivityTest {
-
     @Rule
     @JvmField
     val testRule = BaseActivityTestRule(SettingsActivity::class, false)
@@ -55,13 +54,14 @@ class SettingsActivityTest {
     }
 
     @Test
-    fun clearButtonDisabledWithData() = runTest(StandardTestDispatcher()) {
-        storedMessageDao.insert(StoredMessageFactory.build())
-        advanceUntilIdle()
-        testRule.start()
-        onIdle()
-        assertEnabled(R.id.deleteData)
-    }
+    fun clearButtonDisabledWithData() =
+        runTest(StandardTestDispatcher()) {
+            storedMessageDao.insert(StoredMessageFactory.build())
+            advanceUntilIdle()
+            testRule.start()
+            onIdle()
+            assertEnabled(R.id.deleteData)
+        }
 
     @Test
     fun setMaxStorageToMinimum() {
@@ -72,7 +72,7 @@ class SettingsActivityTest {
                 slider.value = slider.valueFrom
                 assertEquals(
                     SettingsViewModel.MIN_STORAGE_SIZE,
-                    storagePreferences.getMaxStorageSize().first()
+                    storagePreferences.getMaxStorageSize().first(),
                 )
             }
         }

@@ -4,7 +4,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 object WaitAssertions {
-
     fun waitFor(check: () -> Unit) {
         val initialTime = System.currentTimeMillis()
         var lastError: Throwable?
@@ -20,10 +19,12 @@ object WaitAssertions {
         throw AssertionError("Timeout waiting", lastError)
     }
 
-    suspend fun suspendWaitFor(check: suspend () -> Unit) =
-        waitFor { runBlocking { check.invoke() } }
+    suspend fun suspendWaitFor(check: suspend () -> Unit) = waitFor { runBlocking { check.invoke() } }
 
-    suspend fun waitForAssertEquals(expected: Any, actualCheck: suspend () -> Any) {
+    suspend fun waitForAssertEquals(
+        expected: Any,
+        actualCheck: suspend () -> Any,
+    ) {
         val initialTime = System.currentTimeMillis()
         var value = actualCheck.invoke()
 
@@ -39,7 +40,7 @@ object WaitAssertions {
     suspend fun waitForAssertTrue(actualCheck: suspend () -> Boolean) {
         waitForAssertEquals(
             true,
-            actualCheck
+            actualCheck,
         )
     }
 

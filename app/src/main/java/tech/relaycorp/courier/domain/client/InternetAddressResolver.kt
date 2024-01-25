@@ -7,19 +7,20 @@ class InternetAddressResolver(private val dohClient: DoHClient) {
     @Throws(InternetAddressResolutionException::class)
     suspend fun resolve(internetAddress: String): String {
         val srvName = "_awala-crc._tcp.$internetAddress"
-        val answer = try {
-            dohClient.lookUp(srvName, "SRV")
-        } catch (exc: LookupFailureException) {
-            throw InternetAddressResolutionException(
-                "Failed to resolve SRV for $internetAddress",
-                exc
-            )
-        }
+        val answer =
+            try {
+                dohClient.lookUp(srvName, "SRV")
+            } catch (exc: LookupFailureException) {
+                throw InternetAddressResolutionException(
+                    "Failed to resolve SRV for $internetAddress",
+                    exc,
+                )
+            }
         val srvRecordData = answer.data.first()
         val recordFields = srvRecordData.split(" ")
         if (recordFields.size < 4) {
             throw InternetAddressResolutionException(
-                "Malformed SRV for $internetAddress ($srvRecordData)"
+                "Malformed SRV for $internetAddress ($srvRecordData)",
             )
         }
         val targetHost = recordFields[3].trimEnd('.')

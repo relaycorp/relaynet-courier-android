@@ -1,7 +1,11 @@
 package tech.relaycorp.courier.common
 
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
-typealias BehaviorChannel<E> = ConflatedBroadcastChannel<E>
-fun <E> PublishChannel() = BroadcastChannel<E>(1)
+@Suppress("ktlint:standard:function-naming")
+fun <E> PublishFlow() =
+    MutableSharedFlow<E>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.SUSPEND,
+    )

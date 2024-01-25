@@ -6,13 +6,17 @@ import androidx.annotation.DrawableRes
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 
-fun ImageView.startLoopingAvd(@DrawableRes avdResId: Int) {
+fun ImageView.startLoopingAvd(
+    @DrawableRes avdResId: Int,
+) {
     val animated = AnimatedVectorDrawableCompat.create(context, avdResId)
-    animated?.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
-        override fun onAnimationEnd(drawable: Drawable?) {
-            this@startLoopingAvd.post { animated.start() }
-        }
-    })
+    animated?.registerAnimationCallback(
+        object : Animatable2Compat.AnimationCallback() {
+            override fun onAnimationEnd(drawable: Drawable?) {
+                this@startLoopingAvd.post { animated.start() }
+            }
+        },
+    )
     setImageDrawable(animated)
     animated?.start()
 }

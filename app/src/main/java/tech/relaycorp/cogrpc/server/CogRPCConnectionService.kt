@@ -16,9 +16,8 @@ import java.util.logging.Level
 
 class CogRPCConnectionService(
     private val coroutineScope: CoroutineScope,
-    private val serverService: CogRPCServer.Service
+    private val serverService: CogRPCServer.Service,
 ) : CargoRelayGrpc.CargoRelayImplBase() {
-
     override fun deliverCargo(responseObserver: StreamObserver<CargoDeliveryAck>) =
         object : StreamObserver<CargoDelivery> {
             private var isResponseFinished = false
@@ -41,7 +40,8 @@ class CogRPCConnectionService(
                             isResponseFinished = true
                         }
                         CogRPCServer.DeliverResult.Invalid,
-                        CogRPCServer.DeliverResult.Malformed -> {
+                        CogRPCServer.DeliverResult.Malformed,
+                        -> {
                             logger.info("deliverCargo invalid or malformed cargo ${cargoDelivery.id}")
                             logger.info("deliverCargo closing with error")
                             responseObserver.onError(StatusRuntimeException(Status.INVALID_ARGUMENT))
@@ -117,6 +117,5 @@ class CogRPCConnectionService(
         }
     }
 
-    private suspend fun getDeliveriesForCCA(cca: ByteArray): Iterable<CargoDeliveryRequest> =
-        serverService.collectCargo(cca)
+    private suspend fun getDeliveriesForCCA(cca: ByteArray): Iterable<CargoDeliveryRequest> = serverService.collectCargo(cca)
 }
