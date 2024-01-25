@@ -6,9 +6,8 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import java.util.UUID
 
 class TestCogRPCServer(
-    private val cogRPCServerService: CogRPCServer.Service
+    private val cogRPCServerService: CogRPCServer.Service,
 ) {
-
     private val name = UUID.randomUUID().toString()
 
     val channel by lazy {

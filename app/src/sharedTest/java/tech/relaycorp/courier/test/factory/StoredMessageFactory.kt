@@ -1,12 +1,12 @@
 package tech.relaycorp.courier.test.factory
 
-import java.util.Date
-import java.util.Random
 import tech.relaycorp.courier.data.model.GatewayType
 import tech.relaycorp.courier.data.model.MessageId
 import tech.relaycorp.courier.data.model.MessageType
 import tech.relaycorp.courier.data.model.StoredMessage
 import tech.relaycorp.relaynet.messages.Recipient
+import java.util.Date
+import java.util.Random
 
 object StoredMessageFactory {
     fun build(recipient: Recipient = Recipient("0deadbeef")): StoredMessage {
@@ -22,7 +22,7 @@ object StoredMessageFactory {
             creationTimeUtc = Date(),
             expirationTimeUtc = Date(),
             storagePath = "",
-            size = StorageSizeFactory.build()
+            size = StorageSizeFactory.build(),
         )
     }
 }

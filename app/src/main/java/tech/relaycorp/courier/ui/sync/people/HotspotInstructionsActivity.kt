@@ -16,7 +16,6 @@ import tech.relaycorp.courier.ui.BaseActivity
 import javax.inject.Inject
 
 class HotspotInstructionsActivity : BaseActivity() {
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory<HotspotInstructionsViewModel>
 
@@ -48,13 +47,13 @@ class HotspotInstructionsActivity : BaseActivity() {
             when (state) {
                 HotspotInstructionsViewModel.State.ReadyToSync -> R.string.hotspot_instructions_enabled
                 HotspotInstructionsViewModel.State.NotReadyToSync -> R.string.hotspot_instructions_disabled
-            }
+            },
         )
         binding.text.setText(
             when (state) {
                 HotspotInstructionsViewModel.State.ReadyToSync -> R.string.hotspot_instructions_enabled_text
                 HotspotInstructionsViewModel.State.NotReadyToSync -> R.string.hotspot_instructions_disabled_text
-            }
+            },
         )
         binding.openSettings.isVisible = state == HotspotInstructionsViewModel.State.NotReadyToSync
         binding.startSync.isVisible = state == HotspotInstructionsViewModel.State.ReadyToSync
@@ -67,10 +66,10 @@ class HotspotInstructionsActivity : BaseActivity() {
                 .setComponent(
                     ComponentName(
                         "com.android.settings",
-                        "com.android.settings.TetherSettings"
-                    )
+                        "com.android.settings.TetherSettings",
+                    ),
                 )
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         )
     }
 

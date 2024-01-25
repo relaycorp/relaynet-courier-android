@@ -22,7 +22,6 @@ import tech.relaycorp.courier.ui.common.set
 import javax.inject.Inject
 
 class SettingsActivity : BaseActivity() {
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory<SettingsViewModel>
 
@@ -105,11 +104,12 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun openDeleteDataDialog() {
-        deleteDataDialog = AlertDialog.Builder(this)
-            .setTitle(R.string.settings_clear_dialog_title)
-            .setPositiveButton(R.string.delete) { _, _ -> viewModel.deleteDataClicked() }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
+        deleteDataDialog =
+            AlertDialog.Builder(this)
+                .setTitle(R.string.settings_clear_dialog_title)
+                .setPositiveButton(R.string.delete) { _, _ -> viewModel.deleteDataClicked() }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
     }
 
     companion object {

@@ -20,7 +20,6 @@ import tech.relaycorp.courier.ui.sync.people.PeopleSyncActivity
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory<MainViewModel>
 
@@ -66,7 +65,7 @@ class MainActivity : BaseActivity() {
             .expiredMessagesDeleted()
             .onEach {
                 messageManager.showMessage(
-                    getString(R.string.main_deleted_expired_messages, it.format(this))
+                    getString(R.string.main_deleted_expired_messages, it.format(this)),
                 )
             }
             .launchIn(lifecycleScope)
@@ -74,11 +73,12 @@ class MainActivity : BaseActivity() {
 
     private fun updateStorageUsage(usage: StorageUsage) {
         binding.storageProgress.progress = usage.percentage
-        binding.storageValues.text = getString(
-            R.string.main_storage_usage_values,
-            usage.usedByApp.format(this),
-            usage.actualMax.format(this)
-        )
+        binding.storageValues.text =
+            getString(
+                R.string.main_storage_usage_values,
+                usage.usedByApp.format(this),
+                usage.actualMax.format(this),
+            )
     }
 
     private fun updateSyncPeopleState(state: MainViewModel.SyncPeopleState) {
@@ -86,7 +86,7 @@ class MainActivity : BaseActivity() {
         binding.syncPeopleLayout.isEnabled = isEnabled
         binding.syncPeopleButton.isEnabled = isEnabled
         binding.syncPeopleMessage.setText(
-            if (isEnabled) R.string.sync_people_enabled else R.string.sync_people_disabled
+            if (isEnabled) R.string.sync_people_enabled else R.string.sync_people_disabled,
         )
 
         binding.hotspotLabel.isVisible = isEnabled
@@ -95,7 +95,7 @@ class MainActivity : BaseActivity() {
             val isHotspotEnabled = state.hotspotState == WifiHotspotState.Enabled
             binding.hotspotIcon.isActivated = isHotspotEnabled
             binding.hotspotLabel.setText(
-                if (isHotspotEnabled) R.string.hotspot_on else R.string.hotspot_off
+                if (isHotspotEnabled) R.string.hotspot_on else R.string.hotspot_off,
             )
         }
     }
@@ -110,7 +110,7 @@ class MainActivity : BaseActivity() {
                 is MainViewModel.SyncInternetState.Disabled.Offline -> R.string.sync_internet_disabled_offline
                 is MainViewModel.SyncInternetState.Disabled.AlreadySynced -> R.string.sync_internet_disabled_synced
                 is MainViewModel.SyncInternetState.Disabled.NoData -> R.string.sync_internet_disabled_no_data
-            }
+            },
         )
 
         binding.internetLabel.isVisible = isEnabled

@@ -9,11 +9,11 @@ class GatewayTypeTest {
     internal fun fromValue() {
         Assertions.assertEquals(
             GatewayType.Private,
-            GatewayType.fromValue(GatewayType.Private.value)
+            GatewayType.fromValue(GatewayType.Private.value),
         )
         Assertions.assertEquals(
             GatewayType.Internet,
-            GatewayType.fromValue(GatewayType.Internet.value)
+            GatewayType.fromValue(GatewayType.Internet.value),
         )
         assertThrows<IllegalArgumentException> {
             GatewayType.fromValue("invalid")

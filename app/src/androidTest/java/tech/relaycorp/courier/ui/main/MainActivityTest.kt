@@ -21,7 +21,6 @@ import tech.relaycorp.courier.ui.common.format
 import javax.inject.Inject
 
 class MainActivityTest {
-
     @JvmField
     @Rule
     val activityTestRule = BaseActivityTestRule(MainActivity::class)

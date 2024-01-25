@@ -6,13 +6,13 @@ import org.junit.Test
 import tech.relaycorp.courier.data.model.StorageSize
 
 internal class DiskStatsTest {
-
     private val diskStats = DiskStats()
 
     @Test
-    internal fun basicCheck() = runBlocking {
-        assertTrue(diskStats.getTotalStorage() > StorageSize.ZERO)
-        assertTrue(diskStats.getAvailableStorage() > StorageSize.ZERO)
-        assertTrue(diskStats.getAvailableStorage() < diskStats.getTotalStorage())
-    }
+    internal fun basicCheck() =
+        runBlocking {
+            assertTrue(diskStats.getTotalStorage() > StorageSize.ZERO)
+            assertTrue(diskStats.getAvailableStorage() > StorageSize.ZERO)
+            assertTrue(diskStats.getAvailableStorage() < diskStats.getTotalStorage())
+        }
 }

@@ -13,7 +13,6 @@ import tech.relaycorp.courier.ui.common.Insets.addSystemWindowInsetToPadding
 import tech.relaycorp.courier.ui.common.MessageManager
 
 abstract class BaseActivity : AppCompatActivity() {
-
     private val app get() = applicationContext as App
     val component by lazy { app.component.activityComponent() }
 
@@ -41,7 +40,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected fun setupNavigation(
         @DrawableRes icon: Int = R.drawable.ic_close,
-        clickListener: (() -> Unit) = { finish() }
+        clickListener: (() -> Unit) = { finish() },
     ) {
         toolbar?.setNavigationIcon(icon)
         toolbar?.setNavigationOnClickListener { clickListener.invoke() }

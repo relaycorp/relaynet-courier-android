@@ -16,7 +16,7 @@ internal object AuthorizationContext {
             override fun <ReqT : Any?, RespT : Any?> interceptCall(
                 call: ServerCall<ReqT, RespT>,
                 headers: Metadata,
-                next: ServerCallHandler<ReqT, RespT>
+                next: ServerCallHandler<ReqT, RespT>,
             ): ServerCall.Listener<ReqT> {
                 val auth = AuthorizationMetadata.getCCASerialized(headers)
                 val context = Context.current().withValue(contextKey, auth)

@@ -17,11 +17,11 @@ internal class StorageUsageTest {
     internal fun available() {
         assertEquals(
             StorageSize(10),
-            StorageUsage(StorageSize(0), StorageSize(10)).available
+            StorageUsage(StorageSize(0), StorageSize(10)).available,
         )
         assertEquals(
             StorageSize(5),
-            StorageUsage(StorageSize(0), StorageSize(10), StorageSize(5)).available
+            StorageUsage(StorageSize(0), StorageSize(10), StorageSize(5)).available,
         )
     }
 
@@ -30,14 +30,14 @@ internal class StorageUsageTest {
         assertFalse(
             StorageUsage(
                 StorageSize(0),
-                StorageSize(StorageUsage.LOW_THRESHOLD.bytes + 1)
-            ).isLowOnSpace
+                StorageSize(StorageUsage.LOW_THRESHOLD.bytes + 1),
+            ).isLowOnSpace,
         )
         assertTrue(
             StorageUsage(
                 StorageSize(0),
-                StorageSize(StorageUsage.LOW_THRESHOLD.bytes - 1)
-            ).isLowOnSpace
+                StorageSize(StorageUsage.LOW_THRESHOLD.bytes - 1),
+            ).isLowOnSpace,
         )
     }
 }

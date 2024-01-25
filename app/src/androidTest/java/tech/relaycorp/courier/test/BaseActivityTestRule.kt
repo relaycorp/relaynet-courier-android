@@ -14,22 +14,26 @@ import kotlin.reflect.KClass
 
 class BaseActivityTestRule<T : Activity>(
     activityClass: KClass<T>,
-    launchActivity: Boolean = true
+    launchActivity: Boolean = true,
 ) : TestRule {
-
     private val clearPreferencesRule: ClearPreferencesRule = ClearPreferencesRule()
     private val clearDatabaseRule: ClearTestDatabaseRule = ClearTestDatabaseRule()
     private val clearFilesRule: ClearFilesRule = ClearFilesRule()
-    private val flakyTestRule: FlakyTestRule = FlakyTestRule().apply {
-        allowFlakyAttemptsByDefault(5)
-    }
-    private val activityTestRule: ActivityTestRule<T> = ActivityTestRule(
-        activityClass.java,
-        true,
-        launchActivity
-    )
+    private val flakyTestRule: FlakyTestRule =
+        FlakyTestRule().apply {
+            allowFlakyAttemptsByDefault(5)
+        }
+    private val activityTestRule: ActivityTestRule<T> =
+        ActivityTestRule(
+            activityClass.java,
+            true,
+            launchActivity,
+        )
 
-    override fun apply(base: Statement, description: Description): Statement {
+    override fun apply(
+        base: Statement,
+        description: Description,
+    ): Statement {
         return RuleChain
             .outerRule(flakyTestRule)
             .around(activityTestRule)

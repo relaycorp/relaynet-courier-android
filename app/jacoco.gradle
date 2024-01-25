@@ -1,7 +1,7 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion '0.8.5'
+    toolVersion '0.8.11'
 }
 
 task jacocoAndroidTestReport(type: JacocoReport) {
@@ -47,9 +47,9 @@ task jacocoAndroidTestReport(type: JacocoReport) {
 
     reports {
         html.required = true
-        html.destination file("${buildDir}/reports/coverage")
+        html.outputLocation = file("${buildDir}/reports/coverage")
         xml.required = true
-        xml.destination file("${buildDir}/reports/coverage.xml")
+        xml.outputLocation = file("${buildDir}/reports/coverage.xml")
         csv.required = false
     }
 

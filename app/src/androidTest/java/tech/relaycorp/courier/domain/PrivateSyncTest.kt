@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class PrivateSyncTest {
-
     @Inject
     lateinit var privateSync: PrivateSync
 
@@ -35,7 +34,7 @@ class PrivateSyncTest {
         // Related issue: https://github.com/relaycorp/relaynet-courier-android/issues/584
         assumeTrue(
             "Test is currently failing on API 23 and lower due to a grpc internal issue",
-            Build.VERSION.SDK_INT >= 24
+            Build.VERSION.SDK_INT >= 24,
         )
 
         Networking.androidGatewaySubnetPrefix = null
@@ -57,7 +56,7 @@ class PrivateSyncTest {
         OkHTTPChannelBuilderProvider
             .makeBuilder(
                 InetSocketAddress(gatewayIpAddress, 21473),
-                PrivateSubnetTrustManager.INSTANCE
+                PrivateSubnetTrustManager.INSTANCE,
             )
             .hostnameVerifier { _, _ -> true }
             .build()
@@ -66,8 +65,8 @@ class PrivateSyncTest {
     private val client by lazy {
         CargoRelayGrpc.newStub(clientChannel).withInterceptors(
             MetadataUtils.newAttachHeadersInterceptor(
-                AuthorizationMetadata.makeMetadata("CCA".toByteArray())
-            )
+                AuthorizationMetadata.makeMetadata("CCA".toByteArray()),
+            ),
         )
     }
 }

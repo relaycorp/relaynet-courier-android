@@ -4,43 +4,43 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class InternetConnectionObserver
-@Inject constructor(
-    connectivityManager: ConnectivityManager
-) {
+    @Inject
+    constructor(
+        connectivityManager: ConnectivityManager,
+    ) {
+        internal val state = MutableStateFlow(InternetConnection.Offline)
 
-    internal val state = ConflatedBroadcastChannel(InternetConnection.Offline)
+        private val networkRequest =
+            NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
 
-    private val networkRequest =
-        NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .build()
+        private val networkCallback =
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    state.value = InternetConnection.Online
+                }
 
-    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network) {
-            state.trySendBlocking(InternetConnection.Online)
+                override fun onUnavailable() {
+                    state.value = InternetConnection.Offline
+                }
+
+                override fun onLost(network: Network) {
+                    state.value = InternetConnection.Offline
+                }
+            }
+
+        init {
+            connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
         }
 
-        override fun onUnavailable() {
-            state.trySendBlocking(InternetConnection.Offline)
-        }
-
-        override fun onLost(network: Network) {
-            state.trySendBlocking(InternetConnection.Offline)
-        }
+        fun observe(): Flow<InternetConnection> = state.asStateFlow()
     }
-
-    init {
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-    }
-
-    fun observe() = state.asFlow().distinctUntilChanged()
-}

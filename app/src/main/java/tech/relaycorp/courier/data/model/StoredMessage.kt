@@ -7,7 +7,7 @@ import java.util.UUID
 
 @Entity(
     tableName = "Message",
-    primaryKeys = ["senderId", "messageId"]
+    primaryKeys = ["senderId", "messageId"],
 )
 data class StoredMessage(
     @ColumnInfo(index = true)
@@ -18,11 +18,11 @@ data class StoredMessage(
     val messageId: MessageId,
     @ColumnInfo(index = true)
     val messageType: MessageType,
-    val creationTimeUtc: Date, // in UTC
+    val creationTimeUtc: Date,
     @ColumnInfo(index = true)
-    val expirationTimeUtc: Date, // in UTC
+    val expirationTimeUtc: Date,
     val storagePath: String,
-    val size: StorageSize
+    val size: StorageSize,
 ) {
     companion object {
         fun generateLocalId() = UUID.randomUUID().toString()

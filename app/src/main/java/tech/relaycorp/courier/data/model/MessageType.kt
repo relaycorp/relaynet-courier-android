@@ -1,7 +1,9 @@
 package tech.relaycorp.courier.data.model
 
 enum class MessageType(val value: String) {
-    Cargo("cargo"), CCA("cca");
+    Cargo("cargo"),
+    CCA("cca"),
+    ;
 
     companion object {
         fun fromValue(value: String) =

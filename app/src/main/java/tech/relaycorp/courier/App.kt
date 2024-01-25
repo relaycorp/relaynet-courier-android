@@ -13,7 +13,6 @@ import java.util.logging.LogManager
 import javax.inject.Inject
 
 open class App : Application() {
-
     @Inject
     lateinit var wifiHotspotStateWatcher: WifiHotspotStateWatcher
 
@@ -57,7 +56,7 @@ open class App : Application() {
     private fun setupStrictMode() {
         if (BuildConfig.DEBUG && mode != Mode.Test) {
             StrictMode.setThreadPolicy(
-                StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build()
+                StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build(),
             )
             StrictMode.setVmPolicy(
                 /*
@@ -85,7 +84,7 @@ open class App : Application() {
                     }
                     .penaltyLog()
                     .penaltyDeath()
-                    .build()
+                    .build(),
             )
         }
     }
