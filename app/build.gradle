@@ -133,8 +133,8 @@ dependencies {
 
     // Awala
     implementation 'tech.relaycorp:awala:1.66.4'
-    implementation 'tech.relaycorp:cogrpc:1.1.31'
-    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.26'
+    implementation 'tech.relaycorp:cogrpc:1.1.32'
+    implementation 'tech.relaycorp:cogrpc-okhttp:1.1.28'
     implementation 'tech.relaycorp:doh:1.0.21'
     testImplementation "tech.relaycorp:awala-testing:1.5.26"
 
@@ -167,6 +167,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:4.7.0'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation "io.grpc:grpc-testing:$grpcVersion"
+    testImplementation "io.grpc:grpc-inprocess:$grpcVersion"
 
     // Instrumentation Testing
     androidTestImplementation 'androidx.test:runner:1.4.0'
