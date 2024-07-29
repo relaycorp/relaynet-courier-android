@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Common -->
+    <string name="app_name">Mensajero</string>
+    <string name="close">Cerrar</string>
+    <string name="delete">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="stop">Detener</string>
+    <string name="continue_">Continuar</string>
+
+    <!-- Main -->
+    <string name="main_title">Mensajero de Awala</string>
+    <string name="main_storage_usage">Uso de almacenamiento</string>
+    <string name="main_storage_usage_values">%1$s usado de %2$s asignado</string>
+    <string name="main_low_storage">
+        Tu almacenamiento disponible se está agotando.
+        Es posible que la aplicación no pueda recibir nuevos datos.
+    </string>
+    <string name="main_deleted_expired_messages">Se han eliminado %s de datos caducados</string>
+
+    <!-- Sync -->
+    <string name="sync">Sincronizar</string>
+    <string name="sync_people">Sincronizar con usuarios de Awala</string>
+    <string name="sync_internet">Sincronizar con Internet</string>
+    <string name="sync_people_disabled">
+      Solo puedes intercambiar datos con usuarios de Awala cuando no tienes acceso a Internet.
+    </string>
+    <string name="sync_people_enabled">
+      Recopilar datos de usuarios de Awala desconectados de Internet y entregar cualquier dato
+        dirigido a ellos.
+    </string>
+    <string name="sync_internet_enabled">
+      Entregar los datos que recopilaste de los usuarios y recopilar nuevos datos en su nombre.
+    </string>
+    <string name="sync_internet_disabled_offline">
+      Necesitas una conexión a Internet para entregar datos de los usuarios y recopilar nuevos datos
+        en su nombre.
+    </string>
+    <string name="sync_internet_disabled_no_data">
+      No tienes ningún dato de usuarios de Awala. Deberías sincronizar con ellos primero.
+    </string>
+    <string name="sync_internet_disabled_synced">
+      Estás al día. Ahora puedes volver a los usuarios de Awala desconectados de Internet.
+    </string>
+
+    <!-- States -->
+    <string name="hotspot_on">Punto de acceso activado</string>
+    <string name="hotspot_off">Punto de acceso desactivado</string>
+    <string name="internet_on">En línea</string>
+
+    <!-- Public / Internet Sync -->
+    <string name="sync_delivering_cargo">Entregando datos…</string>
+    <string name="sync_waiting">Esperando que los datos entrantes estén disponibles…</string>
+    <string name="sync_collecting_cargo">Recopilando datos…</string>
+    <string name="sync_finished">¡Listo!</string>
+    <string name="sync_error">Ha ocurrido un error. Puedes intentarlo de nuevo.</string>
+    <string name="sync_stop_confirm_title">
+        ¿Estás seguro de que quieres interrumpir la sincronización?
+    </string>
+    <string name="sync_internet_stop_confirm_message">La sincronización aún no ha terminado.</string>
+
+    <!-- Private / People Sync -->
+    <string name="sync_people_starting">Preparándose…</string>
+    <string name="sync_people_waiting_first_client">Esperando al primer usuario…</string>
+    <string name="sync_people_syncing_some">Usuarios sincronizando actualmente:</string>
+    <string name="sync_people_stop_confirm_message">
+        Algunos usuarios aún están sincronizando datos contigo.
+    </string>
+
+    <!-- Hotspot Instructions -->
+    <string name="hotspot_instructions">Punto de acceso Wi-Fi</string>
+    <string name="hotspot_instructions_disabled">El punto de acceso Wi-Fi está desactivado</string>
+    <string name="hotspot_instructions_disabled_text">
+      Necesitas activarlo para que los usuarios de Awala puedan conectarse a este dispositivo e intercambiar datos.
+    </string>
+    <string name="hotspot_instructions_open_settings">Abrir configuración del punto de acceso Wi-Fi</string>
+    <string name="hotspot_instructions_enabled">El punto de acceso Wi-Fi está activado</string>
+    <string name="hotspot_instructions_enabled_text">
+      Mantenlo activado durante toda la sincronización con los usuarios para evitar interrupciones.
+    </string>
+    <string name="hotspot_instructions_start_sync">Iniciar sincronización con usuarios</string>
+
+    <!-- Settings -->
+    <string name="settings">Configuración</string>
+    <string name="settings_manage_storage">Gestionar uso de almacenamiento</string>
+    <string name="settings_select_max_storage">
+        Especifica la cantidad máxima de espacio que los datos de los usuarios de Awala pueden ocupar en tu dispositivo.
+    </string>
+    <string name="settings_max_storage">Asignación máxima</string>
+    <string name="settings_used_storage">Utilización actual</string>
+    <string name="settings_available_storage">Almacenamiento disponible en el dispositivo</string>
+    <string name="settings_total_storage">Almacenamiento total en el dispositivo</string>
+    <string name="settings_clear_data">Borrar todos los datos de usuario</string>
+    <string name="settings_clear_data_description">
+        Awala mantiene copias de seguridad de los datos en tránsito, por lo que eliminar tus copias simplemente
+        retrasará su entrega.
+    </string>
+    <string name="settings_clear">Borrar</string>
+    <string name="settings_clear_dialog_title">¿Estás seguro?</string>
+
+    <!-- About -->
+    <string name="about">Acerca de</string>
+    <string name="about_version">Versión %1$s (%2$d)</string>
+    <string name="about_know_more">Aprende más sobre Awala</string>
+    <string name="about_open_licenses">Ver bibliotecas de código abierto</string>
+    <string name="about_licenses">Bibliotecas de código abierto</string>
+
+</resources>
