@@ -45,8 +45,8 @@
     </string>
 
     <!-- States -->
-    <string name="hotspot_on">Punto de acceso activado</string>
-    <string name="hotspot_off">Punto de acceso desactivado</string>
+    <string name="hotspot_on">Hotspot activado</string>
+    <string name="hotspot_off">Hotspot desactivado</string>
     <string name="internet_on">En línea</string>
 
     <!-- Public / Internet Sync -->
