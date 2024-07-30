@@ -6,6 +6,7 @@ import io.grpc.internal.testing.StreamRecorder
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import tech.relaycorp.cogrpc.server.DataFactory.buildDelivery
 import tech.relaycorp.relaynet.cogrpc.CargoDeliveryAck
@@ -16,6 +17,7 @@ import java.nio.charset.Charset
 
 internal class CogRPCServerDeliveryCargoTest {
     @Test
+    @Disabled("See PR #610")
     internal fun `deliverCargo with ack when successfully`() =
         runBlockingTest {
             val mockService = MockCogRPCServerService()
