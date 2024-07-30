@@ -17,7 +17,7 @@ import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
 import tech.relaycorp.relaynet.cogrpc.toCargoDeliveryAck
 import java.util.concurrent.TimeUnit
 
-internal class CogRPCServerCollectCargoTest {
+class CogRPCServerCollectCargoTest {
     private lateinit var mockService: MockCogRPCServerService
     private lateinit var testServer: TestCogRPCServer
 
@@ -110,7 +110,7 @@ internal class CogRPCServerCollectCargoTest {
     }
 
     @Test
-    internal fun `collectCargo without ack`() {
+    fun `collectCargo without ack`() {
         setupAndStartServer()
 
         val authClient = buildClientWithCCA()
