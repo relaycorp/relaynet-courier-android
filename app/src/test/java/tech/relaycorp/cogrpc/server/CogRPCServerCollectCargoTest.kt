@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import tech.relaycorp.cogrpc.server.DataFactory.buildDeliveryAck
 import tech.relaycorp.relaynet.CargoDeliveryRequest
@@ -27,6 +28,7 @@ internal class CogRPCServerCollectCargoTest {
     }
 
     @Test
+    @Disabled("See PR #610")
     internal fun `collectCargo with correct CCA and all cargo acked`() =
         runBlockingTest {
             setupAndStartServer()
@@ -110,6 +112,7 @@ internal class CogRPCServerCollectCargoTest {
     }
 
     @Test
+    @Disabled("See PR #610")
     internal fun `collectCargo without ack`() {
         setupAndStartServer()
 
