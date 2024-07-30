@@ -105,5 +105,6 @@
     <string name="about_know_more">Aprende más sobre Awala</string>
     <string name="about_open_licenses">Ver bibliotecas de código abierto</string>
     <string name="about_licenses">Bibliotecas de código abierto</string>
+    <string name="awala_website">https://awala.red</string>
 
 </resources>
