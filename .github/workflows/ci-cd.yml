@@ -15,6 +15,6 @@ jobs:
     secrets:
       android_keystore: ${{ secrets.ANDROID_KEYSTORE }}
       android_keystore_password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-      android_key_alias: ${{ secrets.ANDROID_KEYSTORE_KEY_ALIAS }}
+      android_key_alias: ${{ secrets.ANDROID_KEYSTORE_KEY_NAME }}
       android_key_password: ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
       android_publisher_credentials: ${{ secrets.PUBLISHER_GCP_SERVICE_ACCOUNT }}
