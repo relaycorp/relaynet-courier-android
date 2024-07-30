@@ -17,7 +17,6 @@ import java.nio.charset.Charset
 
 internal class CogRPCServerDeliveryCargoTest {
     @Test
-    @Disabled("See PR #610")
     internal fun `deliverCargo with ack when successfully`() =
         runBlockingTest {
             val mockService = MockCogRPCServerService()

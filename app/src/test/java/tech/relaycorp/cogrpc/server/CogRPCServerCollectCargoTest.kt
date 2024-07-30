@@ -28,7 +28,6 @@ class CogRPCServerCollectCargoTest {
     }
 
     @Test
-    @Disabled("See PR #610")
     internal fun `collectCargo with correct CCA and all cargo acked`() =
         runBlockingTest {
             setupAndStartServer()
@@ -112,7 +111,6 @@ class CogRPCServerCollectCargoTest {
     }
 
     @Test
-    @Disabled("See PR #610")
     fun `collectCargo without ack`() {
         setupAndStartServer()
 
