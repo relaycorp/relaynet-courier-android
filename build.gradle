@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.9.22'
+        kotlinVersion = '2.0.0'
         kotlinCoroutinesVersion = '1.7.3'
         grpcVersion = '1.65.1'
         nettyVersion = '4.1.107.Final'
