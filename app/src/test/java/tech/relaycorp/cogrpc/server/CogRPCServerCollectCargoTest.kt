@@ -18,7 +18,7 @@ import tech.relaycorp.relaynet.cogrpc.CargoRelayGrpc
 import tech.relaycorp.relaynet.cogrpc.toCargoDeliveryAck
 import java.util.concurrent.TimeUnit
 
-internal class CogRPCServerCollectCargoTest {
+class CogRPCServerCollectCargoTest {
     private lateinit var mockService: MockCogRPCServerService
     private lateinit var testServer: TestCogRPCServer
 
@@ -28,7 +28,6 @@ internal class CogRPCServerCollectCargoTest {
     }
 
     @Test
-    @Disabled("See PR #610")
     internal fun `collectCargo with correct CCA and all cargo acked`() =
         runBlockingTest {
             setupAndStartServer()
@@ -112,8 +111,7 @@ internal class CogRPCServerCollectCargoTest {
     }
 
     @Test
-    @Disabled("See PR #610")
-    internal fun `collectCargo without ack`() {
+    fun `collectCargo without ack`() {
         setupAndStartServer()
 
         val authClient = buildClientWithCCA()
